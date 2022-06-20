@@ -25,6 +25,8 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/Items/GroundItem.h"
 	"${SOURCE_DIR}/Items/InventoryItem.h"
 	"${SOURCE_DIR}/Items/Item.h"
+	"${SOURCE_DIR}/Papyrus/Papyrus.h"
+	"${SOURCE_DIR}/Papyrus/Papyrus.cpp"
 	"${SOURCE_DIR}/Scaleform/LootMenu.cpp"
 	"${SOURCE_DIR}/Scaleform/LootMenu.h"
 	"${SOURCE_DIR}/Scaleform/Scaleform.cpp"

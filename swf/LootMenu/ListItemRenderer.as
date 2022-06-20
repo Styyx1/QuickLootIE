@@ -1,4 +1,4 @@
-class LootMenu.ListItemRenderer extends gfx.controls.ListItemRenderer
+﻿class LootMenu.ListItemRenderer extends gfx.controls.ListItemRenderer
 {
 	/* PRIVATE VARIABLES */
 
@@ -9,6 +9,9 @@ class LootMenu.ListItemRenderer extends gfx.controls.ListItemRenderer
 	/* STAGE ELEMENTS */
 
 	public var textContainer: MovieClip;
+	public var dbmNew: MovieClip;
+	public var dbmFound: MovieClip;
+	public var dbmDisp: MovieClip;
 
 
 	/* INITIALIZATION */
@@ -18,6 +21,9 @@ class LootMenu.ListItemRenderer extends gfx.controls.ListItemRenderer
 	{
 		super();
 		textField = textContainer.textField;
+		dbmNew._visible = false;
+		dbmFound._visible = false;
+		dbmDisp._visible = false;
 	}
 
 
@@ -46,6 +52,17 @@ class LootMenu.ListItemRenderer extends gfx.controls.ListItemRenderer
 
 			label = displayName;
 			textField.textColor = stolen ? RED : WHITE;
+
+			dbmNew._visible = data.dbmNew != null ? data.dbmNew : false;
+			dbmFound._visible = data.dbmFound != null ? data.dbmFound : false;
+			dbmDisp._visible = data.dbmDisp != null ? data.dbmDisp : false;
 		}
+	}
+	
+	public function reset(): Void
+	{
+		dbmNew._visible = false;
+		dbmFound._visible = false;
+		dbmDisp._visible = false;
 	}
 }

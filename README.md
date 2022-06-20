@@ -1,4 +1,11 @@
-# QuickLootRE
+# QuickLootRE with TCC icons support
+
+Fork of QuickLootRE made just to show the TCC icons for LOTD. To be used with:
+
+https://www.nexusmods.com/skyrimspecialedition/mods/11802
+https://www.nexusmods.com/skyrimspecialedition/mods/38529
+
+![Demo screenshot](https://github.com/Eloquence4/QuickLootRE/raw/master/screenshot.png)
 
 ## Build Dependencies
 * [AutoTOML](https://github.com/Ryan-rsm-McKenzie/AutoTOML)

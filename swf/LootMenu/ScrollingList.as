@@ -1,4 +1,4 @@
-class LootMenu.ScrollingList extends gfx.controls.ScrollingList
+﻿class LootMenu.ScrollingList extends gfx.controls.ScrollingList
 {
 	/* INITIALIZATION */
 
@@ -23,4 +23,15 @@ class LootMenu.ScrollingList extends gfx.controls.ScrollingList
 	{
 		return Math.min(Math.max(a_lo, a_val), a_hi);
 	}
+	
+	private function populateData(data: Array): Void
+	{
+		for (var i: Number = 0; i < totalRenderers; i++) {
+			var renderer: MovieClip = renderers[i];
+			renderer.reset();
+		}
+
+		super.populateData(data);
+	}
+
 }

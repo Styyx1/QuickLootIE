@@ -18,7 +18,7 @@ struct Settings
 				<< "Error parsing file \'" << *e.source().path << "\':\n"
 				<< '\t' << e.description() << '\n'
 				<< "\t\t(" << e.source().begin << ')';
-			logger::error(ss.str());
+			logger::error("{}", ss.str());
 			throw std::runtime_error("failed to load settings"s);
 		}
 	}

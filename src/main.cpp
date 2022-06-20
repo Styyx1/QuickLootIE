@@ -4,6 +4,7 @@
 #include "Input/Input.h"
 #include "Loot.h"
 #include "Scaleform/Scaleform.h"
+#include "Papyrus/Papyrus.h"
 
 namespace
 {
@@ -152,6 +153,11 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	}
 
 	Hooks::Install();
+
+	if (!PapyrusQuickLootRE::Register()) {
+		logger::critical("Could not register papyrus functions"sv);
+		return false;
+	}
 
 	return true;
 }
