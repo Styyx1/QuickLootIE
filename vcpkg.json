@@ -13,17 +13,8 @@
     "spdlog",
     "srell",
     "tomlplusplus",
-    "xbyak"
+    "articuno",
+    "commonlibsse-ng-flatrim"
   ],
-  "builtin-baseline": "b49b2bdf22559c89eddbf29a29621a1dc6929320",
-  "overrides": [
-    {
-      "name": "tomlplusplus",
-      "version": "2.4.0"
-    },
-    {
-      "name": "fmt",
-      "version": "8.0.1"
-    }
-  ]
+  "builtin-baseline": "b49b2bdf22559c89eddbf29a29621a1dc6929320"
 }

@@ -44,8 +44,6 @@
 #define NODEFERWINDOWPOS
 #define NOMCX
 
-#include <xbyak/xbyak.h>
-
 namespace Events
 {
 	void CrosshairRefManager::Evaluate(RE::TESObjectREFRPtr a_ref)
@@ -63,41 +61,5 @@ namespace Events
 		auto& loot = Loot::GetSingleton();
 		loot.Close();
 	}
-
-	void LifeStateManager::Register()
-	{
-		struct Patch :
-			Xbyak::CodeGenerator
-		{
-			explicit Patch(std::uintptr_t a_target)
-			{
-				mov(rcx, rdi);  // rdi == Actor* this
-
-				pop(r15);
-				pop(r14);
-				pop(rdi);
-				pop(rsi);
-				pop(rbp);
-
-				mov(rax, a_target);
-				jmp(rax);
-			}
-		};
-
-		constexpr std::size_t begin = 0x494;
-		constexpr std::size_t end = 0x49B;
-		constexpr std::size_t size = end - begin;
-		static_assert(size >= 6);
-
-		REL::Relocation<std::uintptr_t> target{ REL::ID(37612), begin };  // Actor::SetLifeState
-		REL::safe_fill(target.address(), REL::INT3, size);
-
-		auto& trampoline = SKSE::GetTrampoline();
-		Patch p{ reinterpret_cast<std::uintptr_t>(OnLifeStateChanged) };
-		trampoline.write_branch<6>(
-			target.address(),
-			trampoline.allocate(p));
-
-		logger::info("Registered {}"sv, typeid(LifeStateManager).name());
-	}
 }
+

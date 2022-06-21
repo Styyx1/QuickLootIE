@@ -1,3 +1,6 @@
+add_compile_definitions(NOMINMAX)
+add_compile_definitions(SKSE_SUPPORT_XBYAK)
+
 set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
 set(SOURCE_DIR "${ROOT_DIR}/src")
@@ -63,9 +66,15 @@ configure_file(
 	@ONLY
 )
 
-add_library(
+find_package(AutoTOML REQUIRED CONFIG)
+find_package(frozen REQUIRED CONFIG)
+find_package(spdlog REQUIRED CONFIG)
+find_package(srell MODULE REQUIRED)
+find_package(CommonLibSSE CONFIG REQUIRED)
+
+add_commonlibsse_plugin(
 	"${PROJECT_NAME}"
-	SHARED
+	SOURCES
 	${SOURCE_FILES}
 	"${VERSION_HEADER}"
 	"${CMAKE_CURRENT_BINARY_DIR}/version.rc"
@@ -112,15 +121,6 @@ target_include_directories(
 		"${SOURCE_DIR}"
 )
 
-set(SKSE_SUPPORT_XBYAK ON)
-add_subdirectory("${ROOT_DIR}/external/CommonLibSSE" CommonLibSSE)
-
-find_package(AutoTOML REQUIRED CONFIG)
-find_package(frozen REQUIRED CONFIG)
-find_package(spdlog REQUIRED CONFIG)
-find_package(srell MODULE REQUIRED)
-find_package(xbyak REQUIRED CONFIG)
-
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PRIVATE
@@ -129,7 +129,6 @@ target_link_libraries(
 		frozen::frozen
 		spdlog::spdlog
 		srell::srell
-		xbyak::xbyak
 )
 
 target_precompile_headers(

@@ -5,7 +5,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": {
           "type": "STRING",
-          "value": "Debug"
+          "value": "Release"
         }
       },
       "errors": {
@@ -60,8 +60,22 @@
         "vcpkg",
         "windows"
       ],
+      "hidden": true,
       "name": "vs2022-windows",
       "toolset": "v143"
+    },
+    {
+      "binaryDir": "${sourceDir}/build/skyrim",
+      "cacheVariables": {
+        "BUILD_SKYRIM": true
+      },
+      "inherits": [
+        "cmake-dev",
+        "vcpkg",
+        "windows",
+        "vs2022-windows"
+      ],
+      "name": "skyrim"
     }
   ],
   "version": 3
