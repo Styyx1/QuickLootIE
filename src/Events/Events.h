@@ -29,6 +29,8 @@ namespace Events
 		}
 
 	protected:
+		friend class LifeStateManager;
+
 		using EventResult = RE::BSEventNotifyControl;
 
 		EventResult ProcessEvent(const SKSE::CrosshairRefEvent* a_event, RE::BSTEventSource<SKSE::CrosshairRefEvent>*) override
@@ -161,9 +163,23 @@ namespace Events
 		void Close();
 	};
 
+	class LifeStateManager
+	{
+	public:
+		static void Register();
+
+	private:
+		static void OnLifeStateChanged(RE::Actor* a_actor)
+		{
+			const auto manager = CrosshairRefManager::GetSingleton();
+			manager->OnLifeStateChanged(*a_actor);
+		}
+	};
+
 	inline void Register()
 	{
 		CrosshairRefManager::Register();
+		LifeStateManager::Register();
 
 		if (*Settings::closeInCombat) {
 			CombatManager::Register();

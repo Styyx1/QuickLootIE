@@ -71,6 +71,7 @@ find_package(frozen REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
 find_package(srell MODULE REQUIRED)
 find_package(CommonLibSSE CONFIG REQUIRED)
+find_package(xbyak CONFIG REQUIRED)
 
 add_commonlibsse_plugin(
 	"${PROJECT_NAME}"
@@ -129,6 +130,7 @@ target_link_libraries(
 		frozen::frozen
 		spdlog::spdlog
 		srell::srell
+		xbyak::xbyak
 )
 
 target_precompile_headers(

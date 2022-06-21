@@ -1,10 +1,10 @@
 
 {
 	"registries": [
-		{
-			"kind": "git",
-			"repository": "https://gitlab.com/colorglass/vcpkg-colorglass",
-			"baseline": "bc4700d551971f31dd32db66916685760c88ba36",
+    {
+      "kind": "git",
+      "repository": "https://gitlab.com/colorglass/vcpkg-colorglass",
+      "baseline": "5dffebb79a2c9cdc48bca6bcee3dfcf78eeeb300",
       "packages": [
         "articuno",
         "skse",
@@ -21,7 +21,7 @@
         "commonlibsse-ng-vr",
         "commonlibsse-ng-flatrim"
       ]
-		}
+    }
 	]
 }
 
