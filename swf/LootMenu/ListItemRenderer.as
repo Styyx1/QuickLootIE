@@ -4,14 +4,22 @@
 
 	private static var RED: Number = 0xEF9A9A;
 	private static var WHITE: Number = 0xFFFFFF;
+	private var _iconLabel: String;
+	private var _iconSource: String;
 
 
 	/* STAGE ELEMENTS */
 
-	public var textContainer: MovieClip;
+	public var textField: TextField;
 	public var dbmNew: MovieClip;
 	public var dbmFound: MovieClip;
 	public var dbmDisp: MovieClip;
+	public var itemIcon: MovieClip;
+	public var stolenIcon: MovieClip;
+	public var enchantIcon: MovieClip;
+	public var readIcon: MovieClip;
+	public var itemWeight: TextField;
+	public var itemValue: TextField;
 
 
 	/* INITIALIZATION */
@@ -20,10 +28,22 @@
 	public function ListItemRenderer(a_obj: Object)
 	{
 		super();
-		textField = textContainer.textField;
 		dbmNew._visible = false;
 		dbmFound._visible = false;
 		dbmDisp._visible = false;
+
+		_iconSource = "skyui/icons_item_psychosteve.swf";
+
+		var iconLoader = new MovieClipLoader();
+		iconLoader.addListener(this);
+		iconLoader.loadClip(_iconSource, itemIcon);
+		
+		itemIcon._visible = false;
+		stolenIcon._visible = false;
+		enchantIcon._visible = false;
+		readIcon._visible = false;
+		itemWeight._visible = false;
+		itemValue._visible = false;
 	}
 
 
@@ -40,23 +60,89 @@
 	public function setData(a_data: Object): Void
 	{
 		super.setData(a_data);
-
-		if (data != null) {
-			var displayName: String = data.displayName != null ? data.displayName : "";
-			var count: Number = data.count != null ? data.count : 1;
-			var stolen: Boolean = data.stolen != null ? data.stolen : false;
-
-			if (count > 1) {
-				displayName += " (" + count.toString() + ")";
-			}
-
-			label = displayName;
-			textField.textColor = stolen ? RED : WHITE;
-
-			dbmNew._visible = data.dbmNew != null ? data.dbmNew : false;
-			dbmFound._visible = data.dbmFound != null ? data.dbmFound : false;
-			dbmDisp._visible = data.dbmDisp != null ? data.dbmDisp : false;
+		
+		if (data == null) {
+			return;
 		}
+
+		var displayName: String = data.displayName != null ? data.displayName : "";
+		var count: Number = data.count != null ? data.count : 1;
+		var stolen: Boolean = data.stolen != null ? data.stolen : false;
+		var weight: Number = data.weight != null ? data.weight : 0;
+		var value: Number = data.value != null ? data.value : 0
+
+		if (count > 1) {
+			displayName += " (" + count.toString() + ")";
+		}
+
+		var maxTextLength: Number = 32;
+		if (displayName.length > maxTextLength) {
+			displayName = displayName.substr(0, maxTextLength - 3) + "...";
+		}
+		
+		var setPrecision:Function = function(number:Number, precision:Number) {
+ 			precision = Math.pow(10, precision);
+ 			return Math.round(number * precision)/precision;
+		}
+		
+		if (data.weight != null) {
+			itemWeight.text = setPrecision(weight, 2).toString();
+			itemWeight._visible = true;
+		}
+		
+		if (data.value != null) {
+			itemValue.text = setPrecision(value, 2).toString();
+			itemValue._visible = true;
+		}
+
+		label = displayName;
+		
+		textField.autoSize = "left";
+		
+		textField.textColor = stolen ? RED : WHITE;
+		
+		var iconPosX = textField._x + textField._width;
+		
+		stolenIcon._visible = (data.stolen != undefined && data.stolen);
+		if (stolenIcon._visible)
+		{
+			stolenIcon._x = iconPosX;
+			iconPosX += stolenIcon._width;
+		}
+		
+		enchantIcon._visible = (data.enchanted != undefined && data.enchanted);
+		if (enchantIcon._visible)
+		{
+			enchantIcon._x = iconPosX;
+			iconPosX += enchantIcon._width;
+		}
+
+		readIcon._visible = (data.isRead != undefined && data.isRead);
+		if (readIcon._visible)
+		{
+			readIcon._x = iconPosX;
+			iconPosX += readIcon._width;
+		}
+
+		if (data.dbmNew == true) {
+			dbmNew._visible = true;
+			dbmNew._x = iconPosX;
+			iconPosX += dbmNew._width;
+		} else if (data.dbmDisp == true) {
+			dbmDisp._visible = true;
+			dbmDisp._x = iconPosX;
+			iconPosX += dbmDisp._width;
+		} else if (data.dbmFound == true) {
+			dbmFound._visible = true;
+			dbmFound._x = iconPosX;
+			iconPosX += dbmFound._width;
+		}
+
+		itemIcon._visible = true;
+
+		_iconLabel = data.iconLabel != undefined ? data.iconLabel : "default_misc";
+		itemIcon.gotoAndStop(_iconLabel);
+		itemIcon._width = itemIcon._height = 15;
 	}
 	
 	public function reset(): Void
@@ -64,5 +150,11 @@
 		dbmNew._visible = false;
 		dbmFound._visible = false;
 		dbmDisp._visible = false;
+		itemIcon._visible = false;
+		stolenIcon._visible = false;
+		enchantIcon._visible = false;
+		readIcon._visible = false;
+		itemWeight._visible = false;
+		itemValue._visible = false;
 	}
 }

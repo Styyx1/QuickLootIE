@@ -1,14 +1,139 @@
 #pragma once
 
+#ifdef _MSC_VER
+#	undef GetObject
+#endif
+
+#include "Papyrus/Papyrus.h"
+
 namespace Items
 {
 	class GFxItem
 	{
 	public:
+		enum Type
+		{
+			kType_None,
+			kType_DefaultWeapon,
+			kType_WeaponSword,
+			kType_WeaponGreatSword,
+			kType_WeaponDaedra,
+			kType_WeaponDagger,
+			kType_WeaponWarAxe,
+			kType_WeaponBattleAxe,
+			kType_WeaponMace,
+			kType_WeaponHammer,
+			kType_WeaponStaff,
+			kType_WeaponBow,
+			kType_WeaponArrow,
+			kType_WeaponPickAxe,
+			kType_WeaponWoodAxe,
+			kType_WeaponCrossbow,
+			kType_WeaponBolt,
+
+			kType_DefaultArmor,
+
+			kType_LightArmorBody,
+			kType_LightArmorHead,
+			kType_LightArmorHands,
+			kType_LightArmorForearms,
+			kType_LightArmorFeet,
+			kType_LightArmorCalves,
+			kType_LightArmorShield,
+			kType_LightArmorMask,
+
+			kType_ArmorBody,
+			kType_ArmorHead,
+			kType_ArmorHands,
+			kType_ArmorForearms,
+			kType_ArmorFeet,
+			kType_ArmorCalves,
+			kType_ArmorShield,
+			kType_ArmorMask,
+			kType_ArmorBracer,
+			kType_ArmorDaedra,
+
+			kType_ClothingBody,
+			kType_ClothingRobe,
+			kType_ClothingHead,
+			kType_ClothingPants,
+			kType_ClothingHands,
+			kType_ClothingForearms,
+			kType_ClothingFeet,
+			kType_ClothingCalves,
+			kType_ClothingShoes,
+			kType_ClothingShield,
+			kType_ClothingMask,
+
+			kType_ArmorAmulet,
+			kType_ArmorRing,
+			kType_Circlet,
+
+			kType_DefaultScroll,
+
+			kType_DefaultBook,
+			kType_BookRead,
+			kType_BookTome,
+			kType_TomeRead,
+			kType_BookJournal,
+			kType_BookNote,
+			kType_BookMap,
+
+			kType_DefaultFood,
+			kType_FoodWine,
+			kType_FoodBeer,
+
+			kType_DefaultIngredient,
+
+			kType_DefaultKey,
+			kType_KeyHouse,
+
+			kType_DefaultPotion,
+			kType_PotionHealth,
+			kType_PotionStam,
+			kType_PotionMagic,
+			kType_PotionPoison,
+			kType_PotionFrost,
+			kType_PotionFire,
+			kType_PotionShock,
+
+			kType_DefaultMisc,
+			kType_MiscArtifact,
+			kType_MiscClutter,
+			kType_MiscLockPick,
+			kType_MiscSoulGem,
+
+			kType_SoulGemEmpty,
+			kType_SoulGemPartial,
+			kType_SoulGemFull,
+			kType_SoulGemGrandEmpty,
+			kType_SoulGemGrandPartial,
+			kType_SoulGemGrandFull,
+			kType_SoulGemAzura,
+
+			kType_MiscGem,
+			kType_MiscOre,
+			kType_MiscIngot,
+			kType_MiscHide,
+			kType_MiscStrips,
+			kType_MiscLeather,
+			kType_MiscWood,
+			kType_MiscRemains,
+			kType_MiscTrollSkull,
+			kType_MiscTorch,
+			kType_MiscGoldSack,
+			kType_MiscGold,
+			kType_MiscDragonClaw
+		};
+
+	public:
 		GFxItem(std::ptrdiff_t a_count, bool a_stealing, stl::observer<RE::InventoryEntryData*> a_item) :
 			_src(a_item),
 			_count(a_count),
-			_stealing(a_stealing)
+			_stealing(a_stealing),
+			_item_is_new(PapyrusQuickLootRE::ItemIsNew(GetFormID())),
+			_item_is_found(PapyrusQuickLootRE::ItemIsFound(GetFormID())),
+			_item_is_displayed(PapyrusQuickLootRE::ItemIsDisplayed(GetFormID()))
 		{
 			assert(a_item != nullptr);
 		}
@@ -16,7 +141,10 @@ namespace Items
 		GFxItem(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items) :
 			_src(a_items),
 			_count(a_count),
-			_stealing(a_stealing)
+			_stealing(a_stealing),
+			_item_is_new(PapyrusQuickLootRE::ItemIsNew(GetFormID())),
+			_item_is_found(PapyrusQuickLootRE::ItemIsFound(GetFormID())),
+			_item_is_displayed(PapyrusQuickLootRE::ItemIsDisplayed(GetFormID()))
 		{}
 
 		[[nodiscard]] constexpr std::ptrdiff_t Count() const noexcept { return _count; }
@@ -110,7 +238,7 @@ namespace Items
 					if (item) {
 						const auto charge = item->GetEnchantmentCharge();
 						if (charge) {
-							result = *charge;
+							result = charge.value_or(-1.0);
 							break;
 						}
 					}
@@ -122,6 +250,64 @@ namespace Items
 			}
 
 			_cache.EnchantmentCharge(result);
+			return result;
+		}
+
+		[[nodiscard]] bool IsEnchanted() const
+		{
+			if (_cache[kIsEnchanted]) {
+				return _cache.IsEnchanted();
+			}
+
+			auto check_if_enchanted = [](RE::InventoryEntryData *item, RE::TESForm* form) -> bool {
+				if (form->IsArmor() || form->IsWeapon()) {
+					if (item->extraLists) {
+						for (auto it = item->extraLists->begin(); it != item->extraLists->end(); ++it) {
+							RE::ExtraDataList* pExtraDataList = *it;
+
+							if (pExtraDataList) {
+								auto* extraEnchant = static_cast<RE::ExtraEnchantment*>(pExtraDataList->GetByType(RE::ExtraDataType::kEnchantment));
+								if (extraEnchant && extraEnchant->enchantment) {
+									return true;
+									break;
+								}
+							}
+						}
+					}
+
+					auto* enchantForm = dynamic_cast<RE::TESEnchantableForm*>(form);
+					if (enchantForm && enchantForm->formEnchanting)
+						return true;
+				}
+				return false;
+			};
+
+			bool result = false;
+			switch (_src.index()) {
+			case kInventory:
+				{
+					auto* item = std::get<kInventory>(_src);
+					result = item->IsEnchanted();
+					//if (auto* form = item->GetObject(); form) {
+						//result = check_if_enchanted(item, form);
+					//}
+					break;
+				}
+			case kGround:
+				for (const auto& handle : std::get<kGround>(_src)) {
+					const auto item = handle.get();
+					if (item) {
+						result = item->IsEnchanted();
+						break;
+					}
+				}
+				break;
+			default:
+				assert(false);
+				break;
+			}
+
+			_cache.IsEnchanted(result);
 			return result;
 		}
 
@@ -154,6 +340,38 @@ namespace Items
 			}
 
 			_cache.FormID(result);
+			return result;
+		}
+
+		Type GetItemType() const
+		{
+			if (_cache[kItemType]) {
+				return _cache.ItemType();
+			}
+
+			auto result = kType_None;
+			switch (_src.index()) {
+			case kInventory:
+				if (const auto obj = std::get<kInventory>(_src)->GetObject(); obj) {
+					result = GetItemType(obj);
+				}
+				break;
+			case kGround:
+				for (const auto& handle : std::get<kGround>(_src)) {
+					const auto item = handle.get();
+					const auto obj = item ? item->GetObjectReference() : nullptr;
+					if (obj) {
+						result = GetItemType(obj);
+						break;
+					}
+				}
+				break;
+			default:
+				assert(false);
+				break;
+			}
+
+			_cache.ItemType(result);
 			return result;
 		}
 
@@ -278,6 +496,42 @@ namespace Items
 			}
 
 			_cache.Book(result);
+			return result;
+		}
+
+		[[nodiscard]] bool IsRead() const
+		{
+			if (!IsBook()) {
+				return false;
+			}
+
+			if (_cache[kIsRead]) {
+				return _cache.IsRead();
+			}
+
+			bool result = false;
+			switch (_src.index()) {
+			case kInventory:
+				if (const auto obj = static_cast<RE::TESObjectBOOK*>(std::get<kInventory>(_src)->GetObject()); obj) {
+					result = obj->IsRead();
+				}
+				break;
+			case kGround:
+				for (const auto& handle : std::get<kGround>(_src)) {
+					const auto item = handle.get();
+					const auto obj = item ? static_cast<RE::TESObjectBOOK*>(item->GetObjectReference()) : nullptr;
+					if (obj) {
+						result = obj->IsRead();
+						break;
+					}
+				}
+				break;
+			default:
+				assert(false);
+				break;
+			}
+
+			_cache.IsRead(result);
 			return result;
 		}
 
@@ -470,6 +724,10 @@ namespace Items
 			return result;
 		}
 
+		[[nodiscard]] bool ItemIsNew() const { return _item_is_new; }
+		[[nodiscard]] bool ItemIsFound() const { return _item_is_found; }
+		[[nodiscard]] bool ItemIsDisplayed() const { return _item_is_displayed; }
+
 		[[nodiscard]] RE::GFxValue GFxValue(RE::GFxMovieView& a_view) const
 		{
 			RE::GFxValue value;
@@ -477,10 +735,21 @@ namespace Items
 			value.SetMember("displayName", { static_cast<std::string_view>(GetDisplayName()) });
 			value.SetMember("count", { _count });
 			value.SetMember("stolen", { IsStolen() });
+			value.SetMember("enchanted", { IsEnchanted() });
+			value.SetMember("weight", { GetWeight() });
+			value.SetMember("value", { GetValue() });
+			value.SetMember("dbmNew", { ItemIsNew() });
+			value.SetMember("dbmFound", { ItemIsFound() });
+			value.SetMember("dbmDisp", { ItemIsDisplayed() });
+			value.SetMember("iconLabel", { GetItemIconLabel(GetItemType()) });
+			value.SetMember("isRead", { IsRead() });
 			return value;
 		}
 
 	private:
+		Type GetItemType(RE::TESForm *form) const;
+		const char* GetItemIconLabel(Type type) const;
+
 		enum : std::size_t
 		{
 			kQuestItem,
@@ -498,6 +767,9 @@ namespace Items
 			kWeight,
 			kValue,
 			kFormID,
+			kIsEnchanted,
+			kItemType,
+			kIsRead,
 			kTotalCachedFlags
 		};
 
@@ -550,6 +822,13 @@ namespace Items
 				_enchantmentCharge = a_value;
 			}
 
+			[[nodiscard]] constexpr double IsEnchanted() const noexcept { return _isEnchanted; }
+			[[nodiscard]] void IsEnchanted(double a_value)
+			{
+				_cached.set(kIsEnchanted);
+				_isEnchanted = a_value;
+			}
+
 			[[nodiscard]] constexpr double Weight() const noexcept { return _weight; }
 			[[nodiscard]] void Weight(double a_value)
 			{
@@ -571,6 +850,20 @@ namespace Items
 				_formID = a_value;
 			}
 
+			[[nodiscard]] constexpr Type ItemType() const noexcept { return _itemType; }
+			[[nodiscard]] void ItemType(Type a_value)
+			{
+				_cached.set(kFormID);
+				_formID = a_value;
+			}
+
+			[[nodiscard]] constexpr double IsRead() const noexcept { return _isRead; }
+			[[nodiscard]] void IsRead(bool a_value)
+			{
+				_cached.set(kIsRead);
+				_isRead = a_value;
+			}
+
 		private:
 			void CacheFlag(std::size_t a_flag, bool a_value)
 			{
@@ -583,8 +876,12 @@ namespace Items
 			double _weight{ 0.0 };
 			std::ptrdiff_t _value{ 0 };
 			RE::FormID _formID{ 0 };
+			Type _itemType{ kType_None };
 			std::bitset<kTotalFlags> _flags;
 			std::bitset<kTotalCachedFlags> _cached;
+
+			bool _isEnchanted{ false };
+			bool _isRead{ false };
 		};
 
 		using inventory_t = RE::InventoryEntryData*;
@@ -594,6 +891,10 @@ namespace Items
 		std::ptrdiff_t _count;
 		mutable Cache _cache;
 		bool _stealing;
+		bool _item_is_new;
+		bool _item_is_found;
+		bool _item_is_displayed;
+		Type _item_type;
 	};
 
 	[[nodiscard]] inline bool operator==(const GFxItem& a_lhs, const GFxItem& a_rhs) { return a_lhs.Compare(a_rhs) == 0; }

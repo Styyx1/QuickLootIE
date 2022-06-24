@@ -13,17 +13,11 @@ namespace Items
 		Item(Item&&) = default;
 
 		Item(std::ptrdiff_t a_count, bool a_stealing, stl::observer<RE::InventoryEntryData*> a_item) :
-			_item(a_count, a_stealing, a_item),
-			_item_is_new(PapyrusQuickLootRE::ItemIsNew(_item.GetFormID())),
-			_item_is_found(PapyrusQuickLootRE::ItemIsFound(_item.GetFormID())),
-			_item_is_displayed(PapyrusQuickLootRE::ItemIsDisplayed(_item.GetFormID()))
+			_item(a_count, a_stealing, a_item)
 		{}
 
 		Item(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items) :
-			_item(a_count, a_stealing, a_items),
-			_item_is_new(PapyrusQuickLootRE::ItemIsNew(_item.GetFormID())),
-			_item_is_found(PapyrusQuickLootRE::ItemIsFound(_item.GetFormID())),
-			_item_is_displayed(PapyrusQuickLootRE::ItemIsDisplayed(_item.GetFormID()))
+			_item(a_count, a_stealing, a_items)
 		{}
 
 		virtual ~Item() = default;
@@ -42,9 +36,6 @@ namespace Items
 		[[nodiscard]] double EnchantmentCharge() const { return _item.GetEnchantmentCharge(); }
 		[[nodiscard]] std::ptrdiff_t Value() const { return _item.GetValue(); }
 		[[nodiscard]] double Weight() const { return _item.GetWeight(); }
-		[[nodiscard]] bool ItemIsNew() const { return _item_is_new; }
-		[[nodiscard]] bool ItemIsFound() const { return _item_is_found; }
-		[[nodiscard]] bool ItemIsDisplayed() const { return _item_is_displayed; }
 
 	protected:
 		virtual void DoTake(RE::Actor& a_dst, std::ptrdiff_t a_count) = 0;
@@ -54,9 +45,6 @@ namespace Items
 
 	private:
 		GFxItem _item;
-		bool _item_is_new;
-		bool _item_is_found;
-		bool _item_is_displayed;
 	};
 
 	[[nodiscard]] inline bool operator==(const Item& a_lhs, const Item& a_rhs) { return a_lhs.Compare(a_rhs) == 0; }

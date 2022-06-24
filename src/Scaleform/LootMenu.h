@@ -106,13 +106,7 @@ namespace Scaleform
 				Sort();
 				_itemListProvider.ClearElements();
 				for (const auto& elem : _itemListImpl) {
-					auto gfx = elem->GFxValue(*_view);
-
-					gfx.SetMember("dbmNew", { elem->ItemIsNew() });
-					gfx.SetMember("dbmFound", { elem->ItemIsFound() });
-					gfx.SetMember("dbmDisp", { elem->ItemIsDisplayed() });
-
-					_itemListProvider.PushBack(gfx);
+					_itemListProvider.PushBack(elem->GFxValue(*_view));
 				}
 				_itemList.InvalidateData();
 
