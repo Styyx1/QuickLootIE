@@ -1,6 +1,6 @@
-# QuickLootRE with TCC icons support
+# QuickLootRE with support
 
-Fork of QuickLootRE made just to show the TCC icons for LOTD. To be used with:
+Fork of QuickLootRE made to use the old QuickLootSE icons and show the TCC icons for LOTD. To be used with:
 
 https://www.nexusmods.com/skyrimspecialedition/mods/11802
 https://www.nexusmods.com/skyrimspecialedition/mods/38529
