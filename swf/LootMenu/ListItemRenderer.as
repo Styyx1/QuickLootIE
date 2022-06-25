@@ -101,48 +101,49 @@
 		
 		textField.textColor = stolen ? RED : WHITE;
 		
-		var iconPosX = textField._x + textField._width;
+		var iconPosX = textField._x + textField._width + 3;
+		var iconSpacing = 3;
 		
 		stolenIcon._visible = (data.stolen != undefined && data.stolen);
 		if (stolenIcon._visible)
 		{
 			stolenIcon._x = iconPosX;
-			iconPosX += stolenIcon._width;
+			iconPosX += stolenIcon._width + iconSpacing;
 		}
 		
 		enchantIcon._visible = (data.enchanted != undefined && data.enchanted);
 		if (enchantIcon._visible)
 		{
 			enchantIcon._x = iconPosX;
-			iconPosX += enchantIcon._width;
+			iconPosX += enchantIcon._width + iconSpacing;
 		}
 
 		readIcon._visible = (data.isRead != undefined && data.isRead);
 		if (readIcon._visible)
 		{
 			readIcon._x = iconPosX;
-			iconPosX += readIcon._width;
+			iconPosX += readIcon._width + iconSpacing;
 		}
 
 		if (data.dbmNew == true) {
 			dbmNew._visible = true;
 			dbmNew._x = iconPosX;
-			iconPosX += dbmNew._width;
+			iconPosX += dbmNew._width + iconSpacing;
 		} else if (data.dbmDisp == true) {
 			dbmDisp._visible = true;
 			dbmDisp._x = iconPosX;
-			iconPosX += dbmDisp._width;
+			iconPosX += dbmDisp._width + iconSpacing;
 		} else if (data.dbmFound == true) {
 			dbmFound._visible = true;
 			dbmFound._x = iconPosX;
-			iconPosX += dbmFound._width;
+			iconPosX += dbmFound._width + iconSpacing;
 		}
 
 		itemIcon._visible = true;
 
 		_iconLabel = data.iconLabel != undefined ? data.iconLabel : "default_misc";
 		itemIcon.gotoAndStop(_iconLabel);
-		itemIcon._width = itemIcon._height = 15;
+		itemIcon._width = itemIcon._height = 18;
 	}
 	
 	public function reset(): Void
