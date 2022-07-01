@@ -234,7 +234,7 @@ namespace Items
 			type = GFxItem::Type::kType_DefaultFood;
 
 			const static UINT32 ITMPosionUse = 0x000B6435;
-			if (potion->data.consumptionSound->formID == ITMPosionUse)
+			if (potion->data.consumptionSound && potion->data.consumptionSound->formID == ITMPosionUse)
 				type = GFxItem::Type::kType_FoodWine;
 		} else if (potion->IsPoison()) {
 			type = GFxItem::Type::kType_PotionPoison;
@@ -245,6 +245,11 @@ namespace Items
 			Effect* pEffect = potion->GetCostliestEffectItem(5, false);
 			if (pEffect && pEffect->baseEffect) {
 				ActorValue primaryValue = pEffect->baseEffect->GetMagickSkill();
+
+				if (primaryValue == ActorValue::kNone) {
+					primaryValue = pEffect->baseEffect->data.primaryAV;
+				}
+
 				switch (primaryValue) {
 				case ActorValue::kHealth:
 					type = GFxItem::Type::kType_PotionHealth;
