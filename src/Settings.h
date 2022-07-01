@@ -8,7 +8,7 @@ struct Settings
 	static void load()
 	{
 		try {
-			const auto table = toml::parse_file("Data/SKSE/Plugins/QuickLootRE.toml"s);
+			const auto table = toml::parse_file("Data/SKSE/Plugins/QuickLootEE.toml"s);
 			for (const auto& setting : ISetting::get_settings()) {
 				setting->load(table);
 			}

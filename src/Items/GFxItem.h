@@ -131,9 +131,9 @@ namespace Items
 			_src(a_item),
 			_count(a_count),
 			_stealing(a_stealing),
-			_item_is_new(PapyrusQuickLootRE::ItemIsNew(GetFormID())),
-			_item_is_found(PapyrusQuickLootRE::ItemIsFound(GetFormID())),
-			_item_is_displayed(PapyrusQuickLootRE::ItemIsDisplayed(GetFormID()))
+			_item_is_new(PapyrusQuickLootEE::ItemIsNew(GetFormID())),
+			_item_is_found(PapyrusQuickLootEE::ItemIsFound(GetFormID())),
+			_item_is_displayed(PapyrusQuickLootEE::ItemIsDisplayed(GetFormID()))
 		{
 			assert(a_item != nullptr);
 		}
@@ -142,9 +142,9 @@ namespace Items
 			_src(a_items),
 			_count(a_count),
 			_stealing(a_stealing),
-			_item_is_new(PapyrusQuickLootRE::ItemIsNew(GetFormID())),
-			_item_is_found(PapyrusQuickLootRE::ItemIsFound(GetFormID())),
-			_item_is_displayed(PapyrusQuickLootRE::ItemIsDisplayed(GetFormID()))
+			_item_is_new(PapyrusQuickLootEE::ItemIsNew(GetFormID())),
+			_item_is_found(PapyrusQuickLootEE::ItemIsFound(GetFormID())),
+			_item_is_displayed(PapyrusQuickLootEE::ItemIsDisplayed(GetFormID()))
 		{}
 
 		[[nodiscard]] constexpr std::ptrdiff_t Count() const noexcept { return _count; }

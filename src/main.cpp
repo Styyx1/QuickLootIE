@@ -162,7 +162,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
 
 	Hooks::Install();
 
-	if (!PapyrusQuickLootRE::Register()) {
+	if (!PapyrusQuickLootEE::Register()) {
 		logger::critical("Could not register papyrus functions"sv);
 		return false;
 	}

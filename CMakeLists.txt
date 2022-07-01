@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(
-	QuickLootRE
+	QuickLootEE
 	VERSION 2.9.5
 	LANGUAGES CXX
 )

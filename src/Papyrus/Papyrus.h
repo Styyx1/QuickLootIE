@@ -2,7 +2,7 @@
 
 #include "pch.h"
 
-class PapyrusQuickLootRE
+class PapyrusQuickLootEE
 {
 public:
 	static bool Register();

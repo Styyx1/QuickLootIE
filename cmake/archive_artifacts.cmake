@@ -24,7 +24,7 @@ add_custom_target(
 		"--bin-dir=${CMAKE_CURRENT_BINARY_DIR}"
 		"--plugin-files"
 			"$<TARGET_FILE:${PROJECT_NAME}>"
-			"${ROOT_DIR}/QuickLootRE.toml"
+			"${ROOT_DIR}/QuickLootEE.toml"
 		"--pdbs=$<TARGET_PDB_FILE:${PROJECT_NAME}>"
 		"--project=${PROJECT_NAME}"
 		"--swf-files=${ROOT_DIR}/swf/artifacts/LootMenu.swf"

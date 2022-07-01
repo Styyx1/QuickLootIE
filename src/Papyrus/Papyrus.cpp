@@ -6,7 +6,7 @@ static RE::BGSListForm* new_items;
 static RE::BGSListForm* found_items;
 static RE::BGSListForm* displayed_items;
 
-bool PapyrusQuickLootRE::Register()
+bool PapyrusQuickLootEE::Register()
 {
 	auto papyrus = SKSE::GetPapyrusInterface();
 	if (!papyrus->Register(RegisterFunctions)) {
@@ -18,31 +18,31 @@ bool PapyrusQuickLootRE::Register()
 	return true;
 }
 
-bool PapyrusQuickLootRE::RegisterFunctions(RE::BSScript::IVirtualMachine* a_vm)
+bool PapyrusQuickLootEE::RegisterFunctions(RE::BSScript::IVirtualMachine* a_vm)
 {
-	a_vm->RegisterFunction("GetVersion", "QuickLootRE", GetVersion, true);
-	a_vm->RegisterFunction("RegisterNewItemsList", "QuickLootRE", RegisterNewItemsList);
-	a_vm->RegisterFunction("RegisterFoundItemsList", "QuickLootRE", RegisterFoundItemsList);
-	a_vm->RegisterFunction("RegisterDisplayedItemsList", "QuickLootRE", RegisterDisplayedItemsList);
+	a_vm->RegisterFunction("GetVersion", "QuickLootEE", GetVersion, true);
+	a_vm->RegisterFunction("RegisterNewItemsList", "QuickLootEE", RegisterNewItemsList);
+	a_vm->RegisterFunction("RegisterFoundItemsList", "QuickLootEE", RegisterFoundItemsList);
+	a_vm->RegisterFunction("RegisterDisplayedItemsList", "QuickLootEE", RegisterDisplayedItemsList);
 	return true;
 }
 
-bool PapyrusQuickLootRE::ItemIsNew(RE::FormID id)
+bool PapyrusQuickLootEE::ItemIsNew(RE::FormID id)
 {
 	return new_items && HasForm(new_items, id);
 }
 
-bool PapyrusQuickLootRE::ItemIsFound(RE::FormID id)
+bool PapyrusQuickLootEE::ItemIsFound(RE::FormID id)
 {
 	return found_items && HasForm(found_items, id);
 }
 
-bool PapyrusQuickLootRE::ItemIsDisplayed(RE::FormID id)
+bool PapyrusQuickLootEE::ItemIsDisplayed(RE::FormID id)
 {
 	return displayed_items && HasForm(displayed_items, id);
 }
 
-bool PapyrusQuickLootRE::HasForm(RE::BGSListForm* form_list, uint32_t form_id)
+bool PapyrusQuickLootEE::HasForm(RE::BGSListForm* form_list, uint32_t form_id)
 {
 	logger::trace("HasForm");
 	std::lock_guard<std::recursive_mutex> lock(mtx);
@@ -58,7 +58,7 @@ bool PapyrusQuickLootRE::HasForm(RE::BGSListForm* form_list, uint32_t form_id)
 	return form_list->HasForm(formFromId);
 }
 
-uint32_t PapyrusQuickLootRE::GetVersion([[maybe_unused]] RE::StaticFunctionTag* base)
+uint32_t PapyrusQuickLootEE::GetVersion([[maybe_unused]] RE::StaticFunctionTag* base)
 {
 	uint32_t version = 0;
 	for (int i = 0; i < sizeof(Plugin::VERSION); i++) {
@@ -69,21 +69,21 @@ uint32_t PapyrusQuickLootRE::GetVersion([[maybe_unused]] RE::StaticFunctionTag* 
 	return version;
 }
 
-void PapyrusQuickLootRE::RegisterNewItemsList([[maybe_unused]] RE::StaticFunctionTag* base, RE::BGSListForm* list)
+void PapyrusQuickLootEE::RegisterNewItemsList([[maybe_unused]] RE::StaticFunctionTag* base, RE::BGSListForm* list)
 {
 	logger::trace("RegisterIconFormList");
 	std::lock_guard<std::recursive_mutex> lock(mtx);
 	new_items = list;
 }
 
-void PapyrusQuickLootRE::RegisterFoundItemsList([[maybe_unused]] RE::StaticFunctionTag* base, RE::BGSListForm* list)
+void PapyrusQuickLootEE::RegisterFoundItemsList([[maybe_unused]] RE::StaticFunctionTag* base, RE::BGSListForm* list)
 {
 	logger::trace("RegisterIconFormList");
 	std::lock_guard<std::recursive_mutex> lock(mtx);
 	found_items = list;
 }
 
-void PapyrusQuickLootRE::RegisterDisplayedItemsList([[maybe_unused]] RE::StaticFunctionTag* base, RE::BGSListForm* list)
+void PapyrusQuickLootEE::RegisterDisplayedItemsList([[maybe_unused]] RE::StaticFunctionTag* base, RE::BGSListForm* list)
 {
 	logger::trace("RegisterIconFormList");
 	std::lock_guard<std::recursive_mutex> lock(mtx);

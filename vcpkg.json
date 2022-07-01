@@ -1,8 +1,8 @@
 {
-  "name": "quicklootre",
+  "name": "quicklootee",
   "version-string": "1",
   "description": "A quick looting mod for Skyrim: Special Edition akin to Fallout 4.",
-  "homepage": "https://github.com/Ryan-rsm-McKenzie/QuickLootRE",
+  "homepage": "https://github.com/Eloquence4/QuickLootEE",
   "license": "MIT",
   "dependencies": [
     "autotoml",
