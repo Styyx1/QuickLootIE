@@ -30,6 +30,7 @@ namespace Events
 
 	protected:
 		friend class LifeStateManager;
+		friend class LockedContainerManager;
 
 		using EventResult = RE::BSEventNotifyControl;
 
@@ -65,6 +66,13 @@ namespace Events
 		{
 			if (a_actor.GetHandle() == _cachedRef) {
 				Evaluate(RE::TESObjectREFRPtr{ std::addressof(a_actor) });
+			}
+		}
+
+		void OnLockChangedEvent(RE::TESObjectREFR& container)
+		{
+			if (container.GetHandle() == _cachedRef) {
+				Evaluate(RE::TESObjectREFRPtr{ std::addressof(container) });
 			}
 		}
 
@@ -163,6 +171,55 @@ namespace Events
 		void Close();
 	};
 
+	//TESLockChangedEvent
+	class LockedContainerManager :
+		public RE::BSTEventSink<RE::TESLockChangedEvent>
+	{
+	public:
+		static LockedContainerManager* GetSingleton()
+		{
+			static LockedContainerManager singleton;
+			return std::addressof(singleton);
+		}
+
+		static void Register()
+		{
+			auto scripts = RE::ScriptEventSourceHolder::GetSingleton();
+			if (scripts) {
+				scripts->AddEventSink(GetSingleton());
+				logger::info("Registered {}"sv, typeid(LockedContainerManager).name());
+			}
+		}
+
+	protected:
+		using EventResult = RE::BSEventNotifyControl;
+
+		EventResult ProcessEvent(const RE::TESLockChangedEvent* a_event, RE::BSTEventSource<RE::TESLockChangedEvent>*) override
+		{
+			using CombatState = RE::ACTOR_COMBAT_STATE;
+
+			CrosshairRefManager* ref_manager = CrosshairRefManager::GetSingleton();
+
+			if (a_event && a_event->lockedObject) {
+				ref_manager->OnLockChangedEvent(*a_event->lockedObject);
+			}
+
+			return EventResult::kContinue;
+		}
+
+	private:
+		LockedContainerManager() = default;
+		LockedContainerManager(const LockedContainerManager&) = delete;
+		LockedContainerManager(LockedContainerManager&&) = delete;
+
+		~LockedContainerManager() = default;
+
+		LockedContainerManager& operator=(const LockedContainerManager&) = delete;
+		LockedContainerManager& operator=(LockedContainerManager&&) = delete;
+
+		void Close();
+	};
+
 	class LifeStateManager
 	{
 	public:
@@ -180,6 +237,10 @@ namespace Events
 	{
 		CrosshairRefManager::Register();
 		LifeStateManager::Register();
+
+		if (*Settings::openWhenContainerUnlocked) {
+			LockedContainerManager::Register();
+		}
 
 		if (*Settings::closeInCombat) {
 			CombatManager::Register();

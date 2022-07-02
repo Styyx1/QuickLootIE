@@ -47,9 +47,10 @@ protected:
 	EventResult ProcessEvent(const RE::MenuOpenCloseEvent* a_event, RE::BSTEventSource<RE::MenuOpenCloseEvent>*) override
 	{
 		auto intfcStr = RE::InterfaceStrings::GetSingleton();
-		if (intfcStr &&
-			a_event &&
-			a_event->menuName == intfcStr->lockpickingMenu) {
+		if (intfcStr 
+			&& a_event 
+			&& a_event->menuName == intfcStr->lockpickingMenu 
+			&& (!*Settings::openWhenContainerUnlocked || a_event->opening)) {
 			Close();
 		}
 
