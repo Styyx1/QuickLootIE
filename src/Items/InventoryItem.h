@@ -47,6 +47,8 @@ namespace Items
 			const auto remove =
 				[&](std::int32_t a_num, RE::ExtraDataList* a_extraList, RE::ITEM_REMOVE_REASON a_reason) {
 					container->RemoveItem(object, a_num, a_reason, a_extraList, std::addressof(a_dst));
+					auto& player = static_cast<RE::PlayerCharacter&>(a_dst);
+					player.PlayPickupEvent(object, container->GetOwner(), container.get(), RE::PlayerCharacter::EventType::kContainer);
 				};
 
 			std::function action =
