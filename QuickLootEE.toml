@@ -4,6 +4,6 @@ closeOnEmpty = true	# Automatically closes the loot menu if the container is emp
 dispelInvis = true	# Dispels invisibility when looting a container
 
 # Automatically opens the loot menu when the container is unlocked.
-# This is primary for compatibility with "No Lockpick Activate (SKSE) - Updated"
+# This is primarily for compatibility with "No Lockpick Activate (SKSE) - Updated"
 # https://www.nexusmods.com/skyrimspecialedition/mods/26790?tab=files
 openWhenContainerUnlocked = false
