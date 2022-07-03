@@ -259,38 +259,12 @@ namespace Items
 				return _cache.IsEnchanted();
 			}
 
-			auto check_if_enchanted = [](RE::InventoryEntryData *item, RE::TESForm* form) -> bool {
-				if (form->IsArmor() || form->IsWeapon()) {
-					if (item->extraLists) {
-						for (auto it = item->extraLists->begin(); it != item->extraLists->end(); ++it) {
-							RE::ExtraDataList* pExtraDataList = *it;
-
-							if (pExtraDataList) {
-								auto* extraEnchant = static_cast<RE::ExtraEnchantment*>(pExtraDataList->GetByType(RE::ExtraDataType::kEnchantment));
-								if (extraEnchant && extraEnchant->enchantment) {
-									return true;
-									break;
-								}
-							}
-						}
-					}
-
-					auto* enchantForm = dynamic_cast<RE::TESEnchantableForm*>(form);
-					if (enchantForm && enchantForm->formEnchanting)
-						return true;
-				}
-				return false;
-			};
-
 			bool result = false;
 			switch (_src.index()) {
 			case kInventory:
 				{
 					auto* item = std::get<kInventory>(_src);
 					result = item->IsEnchanted();
-					//if (auto* form = item->GetObject(); form) {
-						//result = check_if_enchanted(item, form);
-					//}
 					break;
 				}
 			case kGround:
@@ -735,14 +709,25 @@ namespace Items
 			value.SetMember("displayName", { static_cast<std::string_view>(GetDisplayName()) });
 			value.SetMember("count", { _count });
 			value.SetMember("stolen", { IsStolen() });
-			value.SetMember("enchanted", { IsEnchanted() });
 			value.SetMember("weight", { GetWeight() });
 			value.SetMember("value", { GetValue() });
-			value.SetMember("dbmNew", { ItemIsNew() });
-			value.SetMember("dbmFound", { ItemIsFound() });
-			value.SetMember("dbmDisp", { ItemIsDisplayed() });
 			value.SetMember("iconLabel", { GetItemIconLabel(GetItemType()) });
-			value.SetMember("isRead", { IsRead() });
+
+			if (Settings::ShowEnchanted())
+				value.SetMember("enchanted", { IsEnchanted() });
+			
+			if (Settings::ShowDBMNew())
+				value.SetMember("dbmNew", { ItemIsNew() });
+			
+			if (Settings::ShowDBMFound())
+				value.SetMember("dbmFound", { ItemIsFound() });
+			
+			if (Settings::ShowDBMDisplayed())
+				value.SetMember("dbmDisp", { ItemIsDisplayed() });
+
+			if(Settings::ShowBookRead())
+				value.SetMember("isRead", { IsRead() });
+
 			return value;
 		}
 

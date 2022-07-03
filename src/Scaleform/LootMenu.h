@@ -100,7 +100,7 @@ namespace Scaleform
 				}
 			}
 
-			if (*Settings::closeOnEmpty && _itemListImpl.empty()) {
+			if (Settings::CloseWhenEmpty() && _itemListImpl.empty()) {
 				Close();
 			} else {
 				Sort();
@@ -133,7 +133,7 @@ namespace Scaleform
 				_itemListImpl[static_cast<std::size_t>(pos)]->TakeAll(*dst);
 				_openCloseHandler.Open();
 
-				if (*Settings::dispelInvis) {
+				if (Settings::DispelInvisibility()) {
 					dst->DispelEffectsWithArchetype(RE::EffectArchetypes::ArchetypeID::kInvisibility, false);
 				}
 			}

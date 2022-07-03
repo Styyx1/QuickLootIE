@@ -8,7 +8,6 @@ https://www.nexusmods.com/skyrimspecialedition/mods/38529
 ![Demo screenshot](https://github.com/Eloquence4/QuickLootEE/raw/master/screenshot.png)
 
 ## Build Dependencies
-* [AutoTOML](https://github.com/Ryan-rsm-McKenzie/AutoTOML)
 * [Boost](https://www.boost.org/)
 	* Regex
 * [CommonLibSSE](https://github.com/Ryan-rsm-McKenzie/CommonLibSSE)

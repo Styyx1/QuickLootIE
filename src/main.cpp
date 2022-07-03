@@ -150,8 +150,6 @@ SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
 	InitializeLog();
 	logger::info("{} v{}"sv, Plugin::NAME, Plugin::VERSION.string());
 
-	Settings::load();
-
 	SKSE::Init(a_skse);
 	SKSE::AllocTrampoline(1 << 6);
 

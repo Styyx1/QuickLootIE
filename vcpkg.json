@@ -5,14 +5,12 @@
   "homepage": "https://github.com/Eloquence4/QuickLootEE",
   "license": "MIT",
   "dependencies": [
-    "autotoml",
     "boost-stl-interfaces",
     "frozen",
     "rsm-binary-io",
     "fmt",
     "spdlog",
     "srell",
-    "tomlplusplus",
     "articuno",
     "commonlibsse-ng-flatrim",
     "xbyak"

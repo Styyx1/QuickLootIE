@@ -41,8 +41,6 @@
 #endif
 #pragma warning(pop)
 
-#include "AutoTOML.hpp"
-
 namespace logger = SKSE::log;
 namespace WinAPI = SKSE::WinAPI;
 

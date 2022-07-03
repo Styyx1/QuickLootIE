@@ -31,6 +31,7 @@ public:
 		auto task = SKSE::GetTaskInterface();
 		task->AddTask([this]() {
 			_refreshUI = true;
+
 		});
 	}
 
@@ -84,7 +85,7 @@ private:
 		if (!player ||
 			player->IsGrabbing() ||
 			player->HasActorDoingCommand() ||
-			(*Settings::closeInCombat && player->IsInCombat())) {
+			(Settings::CloseInCombat() && player->IsInCombat())) {
 			return false;
 		}
 

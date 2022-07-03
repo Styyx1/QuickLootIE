@@ -50,7 +50,7 @@ protected:
 		if (intfcStr 
 			&& a_event 
 			&& a_event->menuName == intfcStr->lockpickingMenu 
-			&& (!*Settings::openWhenContainerUnlocked || a_event->opening)) {
+			&& (!Settings::OpenWhenContainerUnlocked() || a_event->opening)) {
 			Close();
 		}
 

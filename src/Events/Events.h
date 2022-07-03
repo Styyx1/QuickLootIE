@@ -138,6 +138,9 @@ namespace Events
 
 		EventResult ProcessEvent(const RE::TESCombatEvent* a_event, RE::BSTEventSource<RE::TESCombatEvent>*) override
 		{
+			if (!Settings::CloseInCombat())
+				return EventResult::kContinue;
+
 			using CombatState = RE::ACTOR_COMBAT_STATE;
 
 			const auto isPlayerRef = [](auto&& a_ref) {
@@ -196,6 +199,9 @@ namespace Events
 
 		EventResult ProcessEvent(const RE::TESLockChangedEvent* a_event, RE::BSTEventSource<RE::TESLockChangedEvent>*) override
 		{
+			if (!Settings::OpenWhenContainerUnlocked())
+				return EventResult::kContinue;
+
 			using CombatState = RE::ACTOR_COMBAT_STATE;
 
 			CrosshairRefManager* ref_manager = CrosshairRefManager::GetSingleton();
@@ -237,14 +243,8 @@ namespace Events
 	{
 		CrosshairRefManager::Register();
 		LifeStateManager::Register();
-
-		if (*Settings::openWhenContainerUnlocked) {
-			LockedContainerManager::Register();
-		}
-
-		if (*Settings::closeInCombat) {
-			CombatManager::Register();
-		}
+		LockedContainerManager::Register();
+		CombatManager::Register();
 
 		logger::info("Registered all event handlers"sv);
 	}

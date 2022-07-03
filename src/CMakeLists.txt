@@ -45,6 +45,7 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/main.cpp"
 	"${SOURCE_DIR}/OpenCloseHandler.h"
 	"${SOURCE_DIR}/PCH.h"
+	"${SOURCE_DIR}/Settings.cpp"
 	"${SOURCE_DIR}/Settings.h"
 	"${SOURCE_DIR}/ViewHandler.cpp"
 	"${SOURCE_DIR}/ViewHandler.h"
@@ -67,7 +68,6 @@ configure_file(
 	@ONLY
 )
 
-find_package(AutoTOML REQUIRED CONFIG)
 find_package(frozen REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
 find_package(srell MODULE REQUIRED)
@@ -126,7 +126,6 @@ target_include_directories(
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PRIVATE
-		AutoTOML::AutoTOML
 		CommonLibSSE::CommonLibSSE
 		frozen::frozen
 		spdlog::spdlog

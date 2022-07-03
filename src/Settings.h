@@ -1,30 +1,42 @@
 #pragma once
 
-struct Settings
+#include "RE/F/FormTypes.h"
+
+class Settings
 {
-	using ISetting = AutoTOML::ISetting;
-	using bSetting = AutoTOML::bSetting;
+public:
+	static bool CloseInCombat();
+	static bool CloseWhenEmpty();
+	static bool DispelInvisibility();
+	static bool OpenWhenContainerUnlocked();
 
-	static void load()
-	{
-		try {
-			const auto table = toml::parse_file("Data/SKSE/Plugins/QuickLootEE.toml"s);
-			for (const auto& setting : ISetting::get_settings()) {
-				setting->load(table);
-			}
-		} catch (const toml::parse_error& e) {
-			std::ostringstream ss;
-			ss
-				<< "Error parsing file \'" << *e.source().path << "\':\n"
-				<< '\t' << e.description() << '\n'
-				<< "\t\t(" << e.source().begin << ')';
-			logger::error("{}", ss.str());
-			throw std::runtime_error("failed to load settings"s);
-		}
-	}
+	static bool ShowBookRead();
+	static bool ShowEnchanted();
+	static bool ShowDBMDisplayed();
+	static bool ShowDBMFound();
+	static bool ShowDBMNew();
 
-	static inline bSetting closeInCombat{ "General"s, "closeInCombat"s, true };
-	static inline bSetting closeOnEmpty{ "General"s, "closeOnEmpty"s, true };
-	static inline bSetting dispelInvis{ "General"s, "dispelInvis"s, true };
-	static inline bSetting openWhenContainerUnlocked{ "General"s, "openWhenContainerUnlocked"s, true };
+private:
+	static bool GetBooleanGlobal(const RE::TESGlobal*& global, const char* editor_id);
+
+	Settings() = default;
+	Settings(Settings&) = delete;
+	Settings operator=(Settings&) = delete;
+	~Settings() = default;
+
+	static Settings& GetSingleton(){
+		static Settings ret;
+		return ret;
+	};
+
+	const RE::TESGlobal* m_close_in_combat;
+	const RE::TESGlobal* m_close_when_empty;
+	const RE::TESGlobal* m_dispel_invis;
+	const RE::TESGlobal* m_open_when_container_unlocked;
+
+	const RE::TESGlobal* m_show_book_read;
+	const RE::TESGlobal* m_show_enchanted;
+	const RE::TESGlobal* m_show_dbm_displayed;
+	const RE::TESGlobal* m_show_dbm_found;
+	const RE::TESGlobal* m_show_dbm_new;
 };
