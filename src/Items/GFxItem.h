@@ -4,7 +4,7 @@
 #	undef GetObject
 #endif
 
-#include "Papyrus/Papyrus.h"
+#include "LOTD/LOTD.h"
 
 namespace Items
 {
@@ -131,9 +131,9 @@ namespace Items
 			_src(a_item),
 			_count(a_count),
 			_stealing(a_stealing),
-			_item_is_new(PapyrusQuickLootEE::ItemIsNew(GetFormID())),
-			_item_is_found(PapyrusQuickLootEE::ItemIsFound(GetFormID())),
-			_item_is_displayed(PapyrusQuickLootEE::ItemIsDisplayed(GetFormID()))
+			_item_is_new(LOTD::IsItemNew(GetFormID())),
+			_item_is_found(LOTD::IsItemFound(GetFormID())),
+			_item_is_displayed(LOTD::IsItemDisplayed(GetFormID()))
 		{
 			assert(a_item != nullptr);
 		}
@@ -142,9 +142,9 @@ namespace Items
 			_src(a_items),
 			_count(a_count),
 			_stealing(a_stealing),
-			_item_is_new(PapyrusQuickLootEE::ItemIsNew(GetFormID())),
-			_item_is_found(PapyrusQuickLootEE::ItemIsFound(GetFormID())),
-			_item_is_displayed(PapyrusQuickLootEE::ItemIsDisplayed(GetFormID()))
+			_item_is_new(LOTD::IsItemNew(GetFormID())),
+			_item_is_found(LOTD::IsItemFound(GetFormID())),
+			_item_is_displayed(LOTD::IsItemDisplayed(GetFormID()))
 		{}
 
 		[[nodiscard]] constexpr std::ptrdiff_t Count() const noexcept { return _count; }

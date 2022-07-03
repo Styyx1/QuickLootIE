@@ -29,8 +29,6 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/Items/GroundItem.h"
 	"${SOURCE_DIR}/Items/InventoryItem.h"
 	"${SOURCE_DIR}/Items/Item.h"
-	"${SOURCE_DIR}/Papyrus/Papyrus.h"
-	"${SOURCE_DIR}/Papyrus/Papyrus.cpp"
 	"${SOURCE_DIR}/Scaleform/LootMenu.cpp"
 	"${SOURCE_DIR}/Scaleform/LootMenu.h"
 	"${SOURCE_DIR}/Scaleform/Scaleform.cpp"
@@ -49,6 +47,8 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/Settings.h"
 	"${SOURCE_DIR}/ViewHandler.cpp"
 	"${SOURCE_DIR}/ViewHandler.h"
+	"${SOURCE_DIR}/LOTD/LOTD.cpp"
+	"${SOURCE_DIR}/LOTD/LOTD.h"
 )
 
 source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})

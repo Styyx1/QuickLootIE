@@ -4,7 +4,7 @@
 #include "Input/Input.h"
 #include "Loot.h"
 #include "Scaleform/Scaleform.h"
-#include "Papyrus/Papyrus.h"
+#include "LOTD/LOTD.h"
 
 namespace
 {
@@ -92,6 +92,9 @@ namespace
 
 			Events::Register();
 			Scaleform::Register();
+
+			Settings::LoadSettings();
+			LOTD::LoadLists();
 			break;
 		}
 	}
@@ -159,11 +162,6 @@ SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
 	}
 
 	Hooks::Install();
-
-	if (!PapyrusQuickLootEE::Register()) {
-		logger::critical("Could not register papyrus functions"sv);
-		return false;
-	}
 
 	return true;
 }

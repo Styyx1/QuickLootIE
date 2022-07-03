@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Items/GFxItem.h"
-#include "Papyrus/Papyrus.h"
 
 namespace Items
 {
