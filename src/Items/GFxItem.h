@@ -127,24 +127,18 @@ namespace Items
 		};
 
 	public:
-		GFxItem(std::ptrdiff_t a_count, bool a_stealing, stl::observer<RE::InventoryEntryData*> a_item) :
-			_src(a_item),
-			_count(a_count),
-			_stealing(a_stealing),
-			_item_is_new(LOTD::IsItemNew(GetFormID())),
-			_item_is_found(LOTD::IsItemFound(GetFormID())),
-			_item_is_displayed(LOTD::IsItemDisplayed(GetFormID()))
+		GFxItem(std::ptrdiff_t a_count, bool a_stealing, stl::observer<RE::InventoryEntryData*> a_item)
+			: _src(a_item)
+			, _count(a_count)
+			, _stealing(a_stealing)
 		{
 			assert(a_item != nullptr);
 		}
 
-		GFxItem(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items) :
-			_src(a_items),
-			_count(a_count),
-			_stealing(a_stealing),
-			_item_is_new(LOTD::IsItemNew(GetFormID())),
-			_item_is_found(LOTD::IsItemFound(GetFormID())),
-			_item_is_displayed(LOTD::IsItemDisplayed(GetFormID()))
+		GFxItem(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items)
+			: _src(a_items)
+			, _count(a_count)
+			, _stealing(a_stealing)
 		{}
 
 		[[nodiscard]] constexpr std::ptrdiff_t Count() const noexcept { return _count; }
@@ -698,9 +692,35 @@ namespace Items
 			return result;
 		}
 
-		[[nodiscard]] bool ItemIsNew() const { return _item_is_new; }
-		[[nodiscard]] bool ItemIsFound() const { return _item_is_found; }
-		[[nodiscard]] bool ItemIsDisplayed() const { return _item_is_displayed; }
+		[[nodiscard]] bool ItemIsNew() const { 
+			if (_cache[kIsDBMNew]) {
+				return _cache.IsDBMNew();
+			}
+
+			bool result = LOTD::IsItemNew(GetFormID());
+			_cache.IsDBMNew(result);
+			return result;
+		}
+
+		[[nodiscard]] bool ItemIsFound() const { 
+			if (_cache[kIsDBMFound]) {
+				return _cache.IsDBMFound();
+			}
+
+			bool result = LOTD::IsItemFound(GetFormID());
+			_cache.IsDBMFound(result);
+			return result;
+		}
+
+		[[nodiscard]] bool ItemIsDisplayed() const { 
+			if (_cache[kIsDBMDisplayed]) {
+				return _cache.IsDBMDisplayed();
+			}
+
+			bool result = LOTD::IsItemDisplayed(GetFormID());
+			_cache.IsDBMDisplayed(result);
+			return result;
+		}
 
 		[[nodiscard]] RE::GFxValue GFxValue(RE::GFxMovieView& a_view) const
 		{
@@ -745,6 +765,11 @@ namespace Items
 			kAmmo,
 			kLockpick,
 			kStolen,
+			kIsEnchanted,
+			kIsRead,
+			kIsDBMNew,
+			kIsDBMFound,
+			kIsDBMDisplayed,
 			kTotalFlags,
 
 			kDisplayName = kTotalFlags,
@@ -752,9 +777,7 @@ namespace Items
 			kWeight,
 			kValue,
 			kFormID,
-			kIsEnchanted,
 			kItemType,
-			kIsRead,
 			kTotalCachedFlags
 		};
 
@@ -793,6 +816,21 @@ namespace Items
 			[[nodiscard]] bool Stolen() const { return _flags.test(kStolen); }
 			[[nodiscard]] void Stolen(bool a_value) { CacheFlag(kStolen, a_value); }
 
+			[[nodiscard]] double IsEnchanted() const noexcept { return _flags.test(kIsEnchanted); }
+			[[nodiscard]] void IsEnchanted(double a_value) { CacheFlag(kIsEnchanted, a_value); }
+
+			[[nodiscard]] double IsRead() const noexcept { return _flags.test(kIsRead); }
+			[[nodiscard]] void IsRead(bool a_value) { CacheFlag(kIsRead, a_value); }
+
+			[[nodiscard]] double IsDBMNew() const noexcept { return _flags.test(kIsDBMNew); }
+			[[nodiscard]] void IsDBMNew(bool a_value) { CacheFlag(kIsDBMNew, a_value); }
+
+			[[nodiscard]] double IsDBMFound() const noexcept { return _flags.test(kIsDBMFound); }
+			[[nodiscard]] void IsDBMFound(bool a_value) { CacheFlag(kIsDBMFound, a_value); }
+
+			[[nodiscard]] double IsDBMDisplayed() const noexcept { return _flags.test(kIsDBMDisplayed); }
+			[[nodiscard]] void IsDBMDisplayed(bool a_value) { CacheFlag(kIsDBMDisplayed, a_value); }
+
 			[[nodiscard]] constexpr const std::string& DisplayName() const noexcept { return _displayName; }
 			[[nodiscard]] void DisplayName(std::string a_value)
 			{
@@ -805,13 +843,6 @@ namespace Items
 			{
 				_cached.set(kEnchantmentCharge);
 				_enchantmentCharge = a_value;
-			}
-
-			[[nodiscard]] constexpr double IsEnchanted() const noexcept { return _isEnchanted; }
-			[[nodiscard]] void IsEnchanted(double a_value)
-			{
-				_cached.set(kIsEnchanted);
-				_isEnchanted = a_value;
 			}
 
 			[[nodiscard]] constexpr double Weight() const noexcept { return _weight; }
@@ -838,15 +869,8 @@ namespace Items
 			[[nodiscard]] constexpr Type ItemType() const noexcept { return _itemType; }
 			[[nodiscard]] void ItemType(Type a_value)
 			{
-				_cached.set(kFormID);
-				_formID = a_value;
-			}
-
-			[[nodiscard]] constexpr double IsRead() const noexcept { return _isRead; }
-			[[nodiscard]] void IsRead(bool a_value)
-			{
-				_cached.set(kIsRead);
-				_isRead = a_value;
+				_cached.set(kItemType);
+				_itemType = a_value;
 			}
 
 		private:
@@ -867,6 +891,9 @@ namespace Items
 
 			bool _isEnchanted{ false };
 			bool _isRead{ false };
+			bool _isDBMNew{ false };
+			bool _isDBMFound{ false };
+			bool _isDBMDisplayed{ false };
 		};
 
 		using inventory_t = RE::InventoryEntryData*;
@@ -876,9 +903,6 @@ namespace Items
 		std::ptrdiff_t _count;
 		mutable Cache _cache;
 		bool _stealing;
-		bool _item_is_new;
-		bool _item_is_found;
-		bool _item_is_displayed;
 		Type _item_type;
 	};
 
