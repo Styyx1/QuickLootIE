@@ -84,7 +84,10 @@ private:
 		auto player = RE::PlayerCharacter::GetSingleton();
 		if (!player ||
 			player->IsGrabbing() ||
-			player->HasActorDoingCommand() ||
+			// NOTE: the following two conditions *should* be equivalent, but they aren't due to an apparent bug in Clib-NG.
+			// It seems HasActorDoingCommand() currently always returns true. Keep track of https://github.com/CharmedBaryon/CommonLibSSE-NG/issues/57
+			//player->HasActorDoingCommand() ||
+			static_cast<bool>(player->GetActorDoingPlayerCommand()) ||
 			(Settings::CloseInCombat() && player->IsInCombat())) {
 			return false;
 		}
