@@ -26,6 +26,7 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/Input/InputListeners.h"
 	"${SOURCE_DIR}/Items/GFxItem.cpp"
 	"${SOURCE_DIR}/Items/GFxItem.h"
+	"${SOURCE_DIR}/Items/GFxItemCache.hpp"
 	"${SOURCE_DIR}/Items/GroundItem.h"
 	"${SOURCE_DIR}/Items/InventoryItem.h"
 	"${SOURCE_DIR}/Items/Item.h"
