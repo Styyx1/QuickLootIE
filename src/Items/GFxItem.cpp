@@ -691,9 +691,12 @@ namespace Items
 		value.SetMember("displayName", { static_cast<std::string_view>(GetDisplayName()) });
 		value.SetMember("count", { _count });
 		value.SetMember("stolen", { IsStolen() });
-		value.SetMember("weight", { GetWeight() });
 		value.SetMember("value", { GetValue() });
 		value.SetMember("iconLabel", { GetItemIconLabel(GetItemType()) });
+
+		const auto weight = GetWeight();
+		if (weight >= 0)
+			value.SetMember("weight", { GetWeight() });
 
 		if (Settings::ShowEnchanted()) {
 			value.SetMember("enchanted", { IsEnchanted() });
