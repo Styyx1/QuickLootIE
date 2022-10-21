@@ -216,34 +216,26 @@ namespace Items
 
 	bool GFxItem::IsEnchanted() const
 	{
-		if (_cache[kIsEnchanted]) {
-			return _cache.IsEnchanted();
+		if (!_cache[kIsEnchanted]) {
+			SetupEnchantmentFlags();
 		}
+		return _cache.IsEnchanted();
+	}
 
-		bool result = false;
-		switch (_src.index()) {
-		case kInventory:
-			{
-				auto* item = std::get<kInventory>(_src);
-				result = item->IsEnchanted();
-				break;
-			}
-		case kGround:
-			for (const auto& handle : std::get<kGround>(_src)) {
-				const auto item = handle.get();
-				if (item) {
-					result = item->IsEnchanted();
-					break;
-				}
-			}
-			break;
-		default:
-			assert(false);
-			break;
+	bool GFxItem::IsKnownEnchanted() const
+	{
+		if (!_cache[kIsKnownEnchanted]) {
+			SetupEnchantmentFlags();
 		}
+		return _cache.IsKnownEnchanted();
+	}
 
-		_cache.IsEnchanted(result);
-		return result;
+	bool GFxItem::IsSpecialEnchanted() const
+	{
+		if (!_cache[kIsSpecialEnchanted]) {
+			SetupEnchantmentFlags();
+		}
+		return _cache.IsSpecialEnchanted();
 	}
 
 	RE::FormID GFxItem::GetFormID() const
@@ -703,8 +695,11 @@ namespace Items
 		value.SetMember("value", { GetValue() });
 		value.SetMember("iconLabel", { GetItemIconLabel(GetItemType()) });
 
-		if (Settings::ShowEnchanted())
+		if (Settings::ShowEnchanted()) {
 			value.SetMember("enchanted", { IsEnchanted() });
+			value.SetMember("knownEnchanted", { IsKnownEnchanted() });
+			value.SetMember("specialEnchanted", { IsSpecialEnchanted() });
+		}
 
 		if (Settings::ShowDBMNew())
 			value.SetMember("dbmNew", { ItemIsNew() });
@@ -1037,6 +1032,134 @@ namespace Items
 		}
 
 		return type;
+	}
+
+	// Straight up copied from MoreHudSE. https://github.com/ahzaab/moreHUDSE
+	static bool MagicDisallowEnchanting(const RE::BGSKeywordForm* pKeywords)
+	{
+		if (pKeywords) {
+			for (uint32_t k = 0; k < pKeywords->numKeywords; k++) {
+				if (pKeywords->keywords[k]) {
+					auto keyword = pKeywords->GetKeywordAt(k).value_or(nullptr);
+					if (keyword) {
+						// Had to add this check because https://www.nexusmods.com/skyrimspecialedition/mods/34175?
+						// sets the editor ID for 'MagicDisallowEnchanting' to null (╯°□°）╯︵ ┻━┻
+						auto asCstr = keyword->GetFormEditorID();
+						std::string keyWordName = asCstr ? asCstr : "";
+						if (keyWordName == "MagicDisallowEnchanting") {
+							return true;  // Is enchanted, but cannot be enchanted by player
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	EnchantmentType GFxItem::GetEnchantmentType() const
+	{
+		EnchantmentType result = EnchantmentType::None;
+		const RE::InventoryEntryData* item_inventory_entry = nullptr;
+		const RE::TESForm* item_form = nullptr;
+		RE::TESObjectREFR* item_refr = nullptr;
+
+		switch (_src.index()) {
+		case kInventory:
+		{
+			item_inventory_entry = std::get<kInventory>(_src);
+			item_form = item_inventory_entry ? item_inventory_entry->GetObject() : nullptr;
+			break;
+		}
+		case kGround:
+		{
+			for (const auto& handle : std::get<kGround>(_src)) {
+				if (!handle.get())
+					continue;
+				item_refr = handle.get().get();
+				item_form = item_refr;
+			}
+			break;
+		}
+		default:
+			assert(false);
+		};
+
+		if (!item_form) 
+		{
+			return result;
+		}
+
+		const auto item_form_type = item_form->GetFormType();
+
+		if (item_form_type != RE::FormType::Weapon 
+			&& item_form_type != RE::FormType::Armor 
+			&& item_form_type != RE::FormType::Ammo 
+			&& item_form_type != RE::FormType::Projectile)
+		{
+			return result;
+		}
+
+		RE::EnchantmentItem* enchantment = nullptr;
+		auto keyWordForm = item_form->As<RE::BGSKeywordForm>();
+		auto enchantable = item_form->As<RE::TESEnchantableForm>();
+
+		bool wasExtra = false;
+		if (enchantable) {  // Check the item for a base enchantment
+			enchantment = enchantable->formEnchanting;
+		}
+
+		if (item_refr) {
+			if (auto extraEnchant = static_cast<RE::ExtraEnchantment*>(item_refr->extraList.GetByType(RE::ExtraDataType::kEnchantment))) {
+				wasExtra = true;
+				enchantment = extraEnchant->enchantment;
+			}
+		}
+
+		if (enchantment) {
+			// It has an enchantment be it may not be known.
+			result = EnchantmentType::Unknown;
+
+			if ((enchantment->formFlags & RE::TESForm::RecordFlags::kKnown) == RE::TESForm::RecordFlags::kKnown) {
+				return MagicDisallowEnchanting(enchantment) ? EnchantmentType::CannotDisenchant : EnchantmentType::Known;
+			} 
+			
+			if (MagicDisallowEnchanting(enchantment)) {
+				return EnchantmentType::CannotDisenchant;
+			} 
+			
+			auto baseEnchantment = static_cast<RE::EnchantmentItem*>(enchantment->data.baseEnchantment);
+			if (baseEnchantment) {
+				if ((baseEnchantment->formFlags & RE::TESForm::RecordFlags::kKnown) == RE::TESForm::RecordFlags::kKnown) {
+					return MagicDisallowEnchanting(baseEnchantment) ? EnchantmentType::CannotDisenchant : EnchantmentType::Known;
+				} 
+				
+				if (MagicDisallowEnchanting(baseEnchantment)) {
+					return EnchantmentType::CannotDisenchant;
+				}
+			}
+		}
+
+		// Its safe to assume that if it not a base enchanted item, that it was enchanted by the player and therefore, they
+		// know the enchantment
+		if (wasExtra) {
+			return EnchantmentType::Known;
+		} 
+		
+		if (enchantable) {
+			return MagicDisallowEnchanting(keyWordForm) ? EnchantmentType::CannotDisenchant : result;
+		}
+
+		return result;
+	}
+
+	// Almost straight up copied from MoreHudSE. Had to change some things to work with this. https://github.com/ahzaab/moreHUDSE
+	void GFxItem::SetupEnchantmentFlags() const
+	{
+		EnchantmentType ench_type = GetEnchantmentType();
+
+		_cache.IsEnchanted(ench_type != EnchantmentType::None);
+		_cache.IsKnownEnchanted(ench_type == EnchantmentType::Known);
+		_cache.IsSpecialEnchanted(ench_type == EnchantmentType::CannotDisenchant);
 	}
 
 	const char* GFxItem::GetItemIconLabel(kType form) const

@@ -17,6 +17,8 @@
 	public var itemIcon: MovieClip;
 	public var stolenIcon: MovieClip;
 	public var enchantIcon: MovieClip;
+	public var knownEnchantIcon: MovieClip;
+	public var specialEnchantIcon: MovieClip;
 	public var readIcon: MovieClip;
 	public var itemWeight: TextField;
 	public var itemValue: TextField;
@@ -41,6 +43,8 @@
 		itemIcon._visible = false;
 		stolenIcon._visible = false;
 		enchantIcon._visible = false;
+		knownEnchantIcon._visible = false;
+		specialEnchantIcon._visible = false;
 		readIcon._visible = false;
 		itemWeight._visible = false;
 		itemValue._visible = false;
@@ -111,11 +115,30 @@
 			iconPosX += stolenIcon._width + iconSpacing;
 		}
 		
-		enchantIcon._visible = (data.enchanted != undefined && data.enchanted);
-		if (enchantIcon._visible)
+		var enchanted: Boolean = (data.enchanted != undefined && data.enchanted);
+		if (enchanted)
 		{
-			enchantIcon._x = iconPosX;
-			iconPosX += enchantIcon._width + iconSpacing;
+			var known_enchanted: Boolean = (data.knownEnchanted != undefined && data.knownEnchanted);
+			var special_enchanted: Boolean = (data.specialEnchanted != undefined && data.specialEnchanted);
+			
+			if (known_enchanted)
+			{
+				knownEnchantIcon._visible = true;
+				knownEnchantIcon._x = iconPosX;
+				iconPosX += knownEnchantIcon._width + iconSpacing;
+			} 
+			else if(special_enchanted)
+			{
+				specialEnchantIcon._visible = true;
+				specialEnchantIcon._x = iconPosX;
+				iconPosX += specialEnchantIcon._width + iconSpacing;
+			}
+			else
+			{
+				enchantIcon._visible = true;
+				enchantIcon._x = iconPosX;
+				iconPosX += enchantIcon._width + iconSpacing;
+			}
 		}
 
 		readIcon._visible = (data.isRead != undefined && data.isRead);
@@ -154,6 +177,8 @@
 		itemIcon._visible = false;
 		stolenIcon._visible = false;
 		enchantIcon._visible = false;
+		knownEnchantIcon._visible = false;
+		specialEnchantIcon._visible = false;
 		readIcon._visible = false;
 		itemWeight._visible = false;
 		itemValue._visible = false;

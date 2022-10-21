@@ -123,6 +123,14 @@ namespace Items
 		MiscDragonClaw
 	};
 
+	enum class EnchantmentType
+	{
+		None,
+		Known,
+		CannotDisenchant,
+		Unknown
+	};
+
 	class GFxItem
 	{
 	public:
@@ -134,6 +142,8 @@ namespace Items
 		[[nodiscard]] const std::string&       GetDisplayName() const;
 		[[nodiscard]] double                   GetEnchantmentCharge() const;
 		[[nodiscard]] bool                     IsEnchanted() const;
+		[[nodiscard]] bool                     IsKnownEnchanted() const;
+		[[nodiscard]] bool                     IsSpecialEnchanted() const;
 		[[nodiscard]] RE::FormID               GetFormID() const;
 		[[nodiscard]] kType                    GetItemType() const;
 		[[nodiscard]] std::ptrdiff_t           GetValue() const;
@@ -153,6 +163,9 @@ namespace Items
 		[[nodiscard]] RE::GFxValue             GFxValue(RE::GFxMovieView& a_view) const;
 
 	private:
+		EnchantmentType GetEnchantmentType() const;
+		void SetupEnchantmentFlags() const;
+
 		kType GetItemType(RE::TESForm *form) const;
 		const char* GetItemIconLabel(kType type) const;
 
