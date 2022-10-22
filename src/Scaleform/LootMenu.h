@@ -100,7 +100,7 @@ namespace Scaleform
 				}
 			}
 
-			if (Settings::CloseWhenEmpty() && _itemListImpl.empty()) {
+			if (_itemListImpl.size() >= 32 || (Settings::CloseWhenEmpty() && _itemListImpl.empty())) {
 				Close();
 			} else {
 				Sort();
