@@ -12,6 +12,7 @@ void Settings::LoadSettings()
 	LoadGlobal(settings.m_show_dbm_displayed          , "QLEEIconShowDBMDisplayed");
 	LoadGlobal(settings.m_show_dbm_found              , "QLEEIconShowDBMFound");
 	LoadGlobal(settings.m_show_dbm_new                , "QLEEIconShowDBMNew");
+	LoadGlobal(settings.m_disable_for_animals         , "QLEEDisableForAnimals");
 }
 
 bool Settings::CloseInCombat()
@@ -36,6 +37,12 @@ bool Settings::OpenWhenContainerUnlocked()
 {
 	auto& settings = GetSingleton();
 	return settings.m_open_when_container_unlocked && settings.m_open_when_container_unlocked->value > 0;
+}
+
+bool Settings::DisableForAnimals()
+{
+	auto& settings = GetSingleton();
+	return settings.m_disable_for_animals && settings.m_disable_for_animals->value > 0;
 }
 
 bool Settings::ShowBookRead()

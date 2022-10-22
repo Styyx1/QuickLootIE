@@ -11,6 +11,7 @@ public:
 	static bool CloseWhenEmpty();
 	static bool DispelInvisibility();
 	static bool OpenWhenContainerUnlocked();
+	static bool DisableForAnimals();
 
 	static bool ShowBookRead();
 	static bool ShowEnchanted();
@@ -35,6 +36,7 @@ private:
 	const RE::TESGlobal* m_close_when_empty = nullptr;
 	const RE::TESGlobal* m_dispel_invis = nullptr;
 	const RE::TESGlobal* m_open_when_container_unlocked = nullptr;
+	const RE::TESGlobal* m_disable_for_animals = nullptr;
 
 	const RE::TESGlobal* m_show_book_read = nullptr;
 	const RE::TESGlobal* m_show_enchanted = nullptr;

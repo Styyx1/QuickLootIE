@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef GetObject
+#undef GetObject
+#endif
+
 namespace Events
 {
 	class CrosshairRefManager :
@@ -100,9 +104,16 @@ namespace Events
 				return CanOpen(_cachedAshPile.get());
 			}
 
+			const bool disable_for_animals = Settings::DisableForAnimals();
+
 			if (auto actor = a_ref->As<RE::Actor>(); actor) {
-				if (!actor->IsDead() ||
-					actor->IsSummoned()) {
+				auto dobj = RE::BGSDefaultObjectManager::GetSingleton();
+				auto animal_keyword = dobj->GetObject<RE::BGSKeyword>(RE::DEFAULT_OBJECT::kKeywordAnimal);
+
+				if (!actor->IsDead() 
+					|| actor->IsSummoned()
+					|| (disable_for_animals && actor->GetRace()->HasKeyword(animal_keyword)))
+				{
 					return false;
 				}
 			}
