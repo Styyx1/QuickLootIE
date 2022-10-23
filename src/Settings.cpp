@@ -13,6 +13,10 @@ void Settings::LoadSettings()
 	LoadGlobal(settings.m_show_dbm_found              , "QLEEIconShowDBMFound");
 	LoadGlobal(settings.m_show_dbm_new                , "QLEEIconShowDBMNew");
 	LoadGlobal(settings.m_disable_for_animals         , "QLEEDisableForAnimals");
+	LoadGlobal(settings.m_window_X                    , "QLEEWindowX");
+	LoadGlobal(settings.m_window_Y                    , "QLEEWindowY");
+	LoadGlobal(settings.m_window_W                    , "QLEEWindowW");
+	LoadGlobal(settings.m_window_H                    , "QLEEWindowH");
 }
 
 bool Settings::CloseInCombat()
@@ -73,6 +77,30 @@ bool Settings::ShowDBMNew()
 {
 	auto& settings = GetSingleton();
 	return settings.m_show_dbm_new && settings.m_show_dbm_new->value > 0;
+}
+
+float Settings::WindowX()
+{
+	auto& settings = GetSingleton();
+	return settings.m_window_X ? settings.m_window_X->value : 0.f;
+}
+
+float Settings::WindowY()
+{
+	auto& settings = GetSingleton();
+	return settings.m_window_Y ? settings.m_window_Y->value : 0.f;
+}
+
+float Settings::WindowW()
+{
+	auto& settings = GetSingleton();
+	return settings.m_window_W ? settings.m_window_W->value : 0.f;
+}
+
+float Settings::WindowH()
+{
+	auto& settings = GetSingleton();
+	return settings.m_window_H ? settings.m_window_H->value : 0.f;
 }
 
 void Settings::LoadGlobal(const RE::TESGlobal*& global, const char* editor_id)

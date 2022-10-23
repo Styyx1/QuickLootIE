@@ -18,6 +18,12 @@ GlobalVariable property QLEEIconShowDBMDisplayed auto
 GlobalVariable property QLEEIconShowDBMFound auto
 GlobalVariable property QLEEIconShowDBMNew auto
 
+; Window Settings
+GlobalVariable property QLEEWindowX auto
+GlobalVariable property QLEEWindowY auto
+GlobalVariable property QLEEWindowW auto
+GlobalVariable property QLEEWindowH auto
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;; Script Start ;;;
 ;;;;;;;;;;;;;;;;;;;;
@@ -37,6 +43,12 @@ event OnPageReset(string page)
     AddToggleOptionST("dispel_invis", "Break invisibility when used", QLEEDispelInvisibility.GetValue(), 0)
     AddToggleOptionST("open_when_container_unlocked", "Open when container is unlocked", QLEEOpenWhenContainerUnlocked.GetValue(), 0)
     AddToggleOptionST("disable_for_animals", "Disable QuickLoot for animals", QLEEDisableForAnimals.GetValue(), 0)
+
+    AddHeaderOption("Window Settings (leave at 0 for default)", 0)
+    AddSliderOptionST("window_X", "Window X", QLEEWindowX.GetValue(), "{0}", 0)
+    AddSliderOptionST("window_Y", "Window Y", QLEEWindowY.GetValue(), "{0}", 0)
+    AddSliderOptionST("window_W", "Window W", QLEEWindowW.GetValue(), "{0}", 0)
+    AddSliderOptionST("window_H", "Window H", QLEEWindowH.GetValue(), "{0}", 0)
 
     SetCursorPosition(1)
     AddHeaderOption("Icon Settings", 0)
@@ -99,6 +111,86 @@ state disable_for_animals
         QLEEDisableForAnimals.SetValue(1 - QLEEDisableForAnimals.GetValue())
         self.SetToggleOptionValueST(QLEEDisableForAnimals.GetValue(), false, "")
     EndEvent
+endState
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Window Settings States ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+state window_X
+    event OnSliderAcceptST(Float value)
+        QLEEWindowX.SetValue(value)
+        self.SetSliderOptionValueST(value, "{0}", false, "")
+    endEvent
+
+    event OnSliderOpenST()
+        self.SetSliderDialogStartValue(QLEEWindowX.GetValue())
+        self.SetSliderDialogDefaultValue(0 as Float)
+        self.SetSliderDialogRange(0 as Float, 5000 as Float)
+        self.SetSliderDialogInterval(1 as Float)
+    endEvent
+
+    event OnDefaultST()
+        QLEEWindowX.SetValue(0 as Float)
+        self.SetSliderOptionValueST(0 as Float, "{0}", false, "")
+    endEvent
+endState
+
+state window_Y
+    event OnSliderAcceptST(Float value)
+        QLEEWindowY.SetValue(value)
+        self.SetSliderOptionValueST(value, "{0}", false, "")
+    endEvent
+
+    event OnSliderOpenST()
+        self.SetSliderDialogStartValue(QLEEWindowY.GetValue())
+        self.SetSliderDialogDefaultValue(0 as Float)
+        self.SetSliderDialogRange(0 as Float, 5000 as Float)
+        self.SetSliderDialogInterval(1 as Float)
+    endEvent
+
+    event OnDefaultST()
+        QLEEWindowY.SetValue(0 as Float)
+        self.SetSliderOptionValueST(0 as Float, "{0}", false, "")
+    endEvent
+endState
+
+state window_W
+    event OnSliderAcceptST(Float value)
+        QLEEWindowW.SetValue(value)
+        self.SetSliderOptionValueST(value, "{0}", false, "")
+    endEvent
+
+    event OnSliderOpenST()
+        self.SetSliderDialogStartValue(QLEEWindowW.GetValue())
+        self.SetSliderDialogDefaultValue(0 as Float)
+        self.SetSliderDialogRange(0 as Float, 5000 as Float)
+        self.SetSliderDialogInterval(1 as Float)
+    endEvent
+
+    event OnDefaultST()
+        QLEEWindowW.SetValue(0 as Float)
+        self.SetSliderOptionValueST(0 as Float, "{0}", false, "")
+    endEvent
+endState
+
+state window_H
+    event OnSliderAcceptST(Float value)
+        QLEEWindowH.SetValue(value)
+        self.SetSliderOptionValueST(value, "{0}", false, "")
+    endEvent
+
+    event OnSliderOpenST()
+        self.SetSliderDialogStartValue(QLEEWindowH.GetValue())
+        self.SetSliderDialogDefaultValue(0 as Float)
+        self.SetSliderDialogRange(0 as Float, 5000 as Float)
+        self.SetSliderDialogInterval(1 as Float)
+    endEvent
+
+    event OnDefaultST()
+        QLEEWindowH.SetValue(0 as Float)
+        self.SetSliderOptionValueST(0 as Float, "{0}", false, "")
+    endEvent
 endState
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

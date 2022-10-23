@@ -269,10 +269,27 @@ namespace Scaleform
 		void AdjustPosition()
 		{
 			auto def = _view->GetMovieDef();
-			if (def) {
-				_rootObj.X(
-					_rootObj.X() + def->GetWidth() / 5);
+
+			if (!def) {
+				return;
 			}
+
+			const float WindowX = Settings::WindowX();
+			const float WindowY = Settings::WindowY();
+			const float WindowW = Settings::WindowW();
+			const float WindowH = Settings::WindowH();
+
+			_rootObj.X( WindowX > 1.f ? WindowX : _rootObj.X() + def->GetWidth() / 5);
+
+			if (WindowY > 1.f)
+				_rootObj.Y( WindowY);
+
+			if (WindowW > 1.f)
+				_rootObj.Width( WindowW);
+
+			if (WindowH > 1.f)
+				_rootObj.Height( WindowH);
+
 		}
 
 		void Close();

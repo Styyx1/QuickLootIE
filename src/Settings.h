@@ -19,6 +19,11 @@ public:
 	static bool ShowDBMFound();
 	static bool ShowDBMNew();
 
+	static float WindowX();
+	static float WindowY();
+	static float WindowW();
+	static float WindowH();
+
 private:
 	static void LoadGlobal(const RE::TESGlobal*& global, const char* editor_id);
 
@@ -43,4 +48,10 @@ private:
 	const RE::TESGlobal* m_show_dbm_displayed = nullptr;
 	const RE::TESGlobal* m_show_dbm_found = nullptr;
 	const RE::TESGlobal* m_show_dbm_new = nullptr;
+
+	const RE::TESGlobal* m_window_X = nullptr;
+	const RE::TESGlobal* m_window_Y = nullptr;
+	const RE::TESGlobal* m_window_W = nullptr;
+	const RE::TESGlobal* m_window_H = nullptr;
 };
+
