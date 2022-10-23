@@ -104,15 +104,15 @@ namespace Events
 				return CanOpen(_cachedAshPile.get());
 			}
 
-			const bool disable_for_animals = Settings::DisableForAnimals();
+			//const bool disable_for_animals = Settings::DisableForAnimals();
 
 			if (auto actor = a_ref->As<RE::Actor>(); actor) {
-				auto dobj = RE::BGSDefaultObjectManager::GetSingleton();
-				auto animal_keyword = dobj->GetObject<RE::BGSKeyword>(RE::DEFAULT_OBJECT::kKeywordAnimal);
+				//auto dobj = RE::BGSDefaultObjectManager::GetSingleton();
+				//auto animal_keyword = dobj->GetObject<RE::BGSKeyword>(RE::DEFAULT_OBJECT::kKeywordAnimal);
 
 				if (!actor->IsDead() 
-					|| actor->IsSummoned()
-					|| (disable_for_animals && actor->GetRace()->HasKeyword(animal_keyword)))
+					|| actor->IsSummoned())
+					//|| (disable_for_animals && actor->GetRace()->HasKeyword(animal_keyword)))
 				{
 					return false;
 				}
