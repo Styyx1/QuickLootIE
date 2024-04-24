@@ -69,6 +69,14 @@
 			return;
 		}
 
+		skse.plugins.InventoryInjector.ProcessEntry(data);
+		if (data.iconSource != undefined && data.iconSource != _iconSource) {
+			_iconSource = data.iconSource;
+			var iconLoader = new MovieClipLoader();
+			iconLoader.addListener(this);
+			iconLoader.loadClip(_iconSource, itemIcon);
+		}
+
 		var displayName: String = data.displayName != null ? data.displayName : "";
 		var CompletionistTag: Array = displayName.split("CompTag");
 		displayName = CompletionistTag[0].length > 0 ? CompletionistTag[0] : displayName;
@@ -190,5 +198,12 @@
 		readIcon._visible = false;
 		itemWeight._visible = false;
 		itemValue._visible = false;
+	}
+
+	// @implements MovieClipLoader
+	private function onLoadInit(a_icon: MovieClip): Void
+	{
+		a_icon.gotoAndStop(_iconLabel);
+		itemIcon._width = itemIcon._height = 18;
 	}
 }

@@ -272,6 +272,28 @@ namespace Items
 		return _cache.IsSpecialEnchanted();
 	}
 
+	RE::TESForm* GFxItem::GetObject() const
+	{
+		switch (_src.index()) {
+		case kInventory:
+			return std::get<kInventory>(_src)->GetObject();
+		case kGround:
+			for (const auto& handle : std::get<kGround>(_src)) {
+				const auto item = handle.get();
+				const auto obj = item ? item->GetObjectReference() : nullptr;
+				if (obj) {
+					return obj;
+				}
+			}
+			break;
+		default:
+			assert(false);
+			break;
+		}
+
+		return nullptr;
+	}
+
 	RE::FormID GFxItem::GetFormID() const
 	{
 		if (_cache[kFormID]) {
@@ -722,6 +744,87 @@ namespace Items
 	{
 		RE::GFxValue value;
 		a_view.CreateObject(std::addressof(value));
+		auto obj = GetObject();
+		auto formType = obj ? obj->GetFormType() : RE::FormType::None;
+		value.SetMember("formType", formType);
+		value.SetMember("formId", obj ? obj->GetFormID() : 0);
+
+		switch (formType) {
+		case RE::FormType::Armor:
+		{
+			RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
+			if (armor) {
+				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
+				value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
+			}
+			break;
+		}
+		case RE::FormType::Ammo:
+		{
+			RE::TESAmmo* ammo = skyrim_cast<RE::TESAmmo*>(obj);
+			if (ammo) {
+				value.SetMember("flags", ammo->data.flags.underlying());
+			}
+			break;
+		}
+		case RE::FormType::Weapon:
+		{
+			RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
+			if (weapon) {
+				value.SetMember("subType", weapon->weaponData.animationType.underlying());
+				value.SetMember("weaponType", weapon->weaponData.animationType.underlying());
+				value.SetMember("speed", weapon->weaponData.speed);
+				value.SetMember("reach", weapon->weaponData.reach);
+				value.SetMember("stagger", weapon->weaponData.staggerValue);
+				value.SetMember("critDamage", weapon->criticalData.damage);
+				value.SetMember("minRange", weapon->weaponData.minRange);
+				value.SetMember("maxRange", weapon->weaponData.maxRange);
+				value.SetMember("baseDamage", weapon->attackDamage);
+				RE::BGSEquipSlot* equipSlot = weapon->equipSlot;
+				if (equipSlot) {
+					value.SetMember("equipSlot", equipSlot->formID);
+				}
+			}
+			break;
+		}
+		case RE::FormType::SoulGem:
+		{
+			RE::TESSoulGem* soulGem = skyrim_cast<RE::TESSoulGem*>(obj);
+			if (soulGem) {
+				value.SetMember("gemSize", soulGem->soulCapacity.underlying());
+				value.SetMember("soulSize", soulGem->currentSoul.underlying());
+			}
+			break;
+		}
+		case RE::FormType::AlchemyItem:
+		{
+			RE::AlchemyItem* alchemy = skyrim_cast<RE::AlchemyItem*>(obj);
+			if (alchemy) {
+				value.SetMember("flags", alchemy->data.flags.underlying());
+			}
+			break;
+		}
+		case RE::FormType::Book:
+		{
+			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
+			if (book) {
+				value.SetMember("flags", book->data.flags.underlying());
+				value.SetMember("bookType", book->data.type.underlying());
+				if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
+					value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
+				} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
+					double formID = -1;
+					if (auto spell = book->data.teaches.spell; spell) {
+						formID = spell->GetFormID();
+					}
+
+					value.SetMember("teachesSpell", formID);
+				}
+			}
+			break;
+		}
+		}
+
 		value.SetMember("displayName", { static_cast<std::string_view>(GetDisplayName()) });
 		value.SetMember("count", { _count });
 		value.SetMember("stolen", { IsStolen() });
