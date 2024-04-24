@@ -150,6 +150,7 @@ namespace Items
 		[[nodiscard]] bool                     IsEnchanted() const;
 		[[nodiscard]] bool                     IsKnownEnchanted() const;
 		[[nodiscard]] bool                     IsSpecialEnchanted() const;
+		[[nodiscard]] RE::TESForm*             GetObject() const;
 		[[nodiscard]] RE::FormID               GetFormID() const;
 		[[nodiscard]] kType                    GetItemType() const;
 		[[nodiscard]] std::ptrdiff_t           GetValue() const;
