@@ -155,6 +155,7 @@ namespace Items
 		[[nodiscard]] kType                    GetItemType() const;
 		[[nodiscard]] std::ptrdiff_t           GetValue() const;
 		[[nodiscard]] double                   GetWeight() const;
+		[[nodiscard]] RE::SOUL_LEVEL           GetSoulSize() const;
 		[[nodiscard]] bool                     IsAmmo() const;
 		[[nodiscard]] bool                     IsBook() const;
 		[[nodiscard]] bool                     IsRead() const;
