@@ -418,6 +418,51 @@ namespace Items
 		return result;
 	}
 
+	RE::SOUL_LEVEL GFxItem::GetSoulSize() const
+	{
+		RE::SOUL_LEVEL result = RE::SOUL_LEVEL::kNone;
+		const RE::InventoryEntryData* item_inventory_entry = nullptr;
+		const RE::TESForm* item_form = nullptr;
+		RE::TESObjectREFRPtr item_refr;
+
+		switch (_src.index()) {
+		case kInventory:
+		{
+			item_inventory_entry = std::get<kInventory>(_src);
+			item_form = item_inventory_entry ? item_inventory_entry->GetObject() : nullptr;
+			break;
+		}
+		case kGround:
+		{
+			for (const auto& handle : std::get<kGround>(_src)) {
+				if (!handle.get())
+					continue;
+				item_refr = handle.get();
+				item_form = item_refr.get();
+			}
+			break;
+		}
+		default:
+			assert(false);
+		}
+
+		if (item_inventory_entry) {
+			result = item_inventory_entry->GetSoulLevel();
+		} else {
+			auto extraSoul = item_refr ? item_refr->extraList.GetByType<RE::ExtraSoul>() : nullptr;
+			if (extraSoul) {
+				result = extraSoul->GetContainedSoul();
+			} else {
+				auto soulGem = item_form ? item_form->As<RE::TESSoulGem>() : nullptr;
+				if (soulGem) {
+					result = soulGem->GetContainedSoul();
+				}
+			}
+		}
+
+		return result;
+	}
+
 	bool GFxItem::IsAmmo() const
 	{
 		if (_cache[kAmmo]) {
@@ -791,8 +836,16 @@ namespace Items
 		{
 			RE::TESSoulGem* soulGem = skyrim_cast<RE::TESSoulGem*>(obj);
 			if (soulGem) {
+				RE::SOUL_LEVEL currentSoul = GetSoulSize();
 				value.SetMember("gemSize", soulGem->soulCapacity.underlying());
-				value.SetMember("soulSize", soulGem->currentSoul.underlying());
+				value.SetMember("soulSize", currentSoul);
+				if (currentSoul == RE::SOUL_LEVEL::kNone) {
+					value.SetMember("status", 0);
+				} else if (currentSoul >= soulGem->soulCapacity) {
+					value.SetMember("status", 2);
+				} else {
+					value.SetMember("status", 1);
+				}
 			}
 			break;
 		}
