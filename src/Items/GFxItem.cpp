@@ -990,9 +990,9 @@ namespace Items
 		} else if (armor->IsHeavyArmor()) {
 			index = 8;
 		} else {
-			if (armor->HasKeywordID(0x08F95A)) {  // VendorItemJewelry{
+			if (armor->HasKeywordID(0x08F95B)) {  // VendorItemClothing
 				index = 16;
-			} else if (armor->HasKeywordID(0x08F95B)) {  // VendorItemClothing
+			} else if (armor->HasKeywordID(0x08F95A)) {  // VendorItemJewelry
 				if (armor->HasPartOf(BGSBipedObjectForm::BipedObjectSlot::kAmulet))
 					index = 24;
 				else if (armor->HasPartOf(BGSBipedObjectForm::BipedObjectSlot::kRing))
