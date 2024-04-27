@@ -70,8 +70,10 @@
 		}
 
 		skse.plugins.InventoryInjector.ProcessEntry(data);
-		if (data.iconSource != undefined && data.iconSource != _iconSource) {
-			_iconSource = data.iconSource;
+		var iconSource =
+			data.iconSource != undefined ? data.iconSource : "skyui/icons_item_psychosteve.swf";
+		if (iconSource != _iconSource) {
+			_iconSource = iconSource;
 			var iconLoader = new MovieClipLoader();
 			iconLoader.addListener(this);
 			iconLoader.loadClip(_iconSource, itemIcon);
