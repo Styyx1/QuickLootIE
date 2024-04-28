@@ -891,7 +891,7 @@ namespace Items
 			type = kType::DefaultPotion;
 
 			//MagicItem::EffectItem* pEffect = CALL_MEMBER_FN(potion, GetCostliestEffectItem)(5, false);
-			Effect* pEffect = potion->GetCostliestEffectItem(5, false);
+			Effect* pEffect = potion->GetCostliestEffectItem(RE::MagicSystem::Delivery::kTotal, false);
 			if (pEffect && pEffect->baseEffect) {
 				ActorValue primaryValue = pEffect->baseEffect->GetMagickSkill();
 
@@ -1213,7 +1213,7 @@ namespace Completionist_Integration
 {
 	void RegisterListener()
 	{
-		if (WinAPI::GetModuleHandle(L"Completionist"))
+		if (WinAPI::GetModuleHandleA("Completionist"))
 		{
 			comp_installed = true;
 			logger::info("Completionist is installed, registering listener"sv);
