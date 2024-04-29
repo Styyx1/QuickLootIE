@@ -296,7 +296,6 @@ namespace Input
 					}
 				}
 			};
-			// TODO: These crash the game on 1.5, investigating
 			for_each([=](RE::ControlMap::UserEventMapping& a_mapping, std::size_t) {
 				if (a_mapping.userEventGroupFlag.none(RE::UserEvents::USER_EVENT_FLAG::kInvalid)) {
 					a_mapping.userEventGroupFlag.reset(QUICKLOOT_FLAG);
