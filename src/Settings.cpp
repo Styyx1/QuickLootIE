@@ -3,20 +3,21 @@
 void Settings::LoadSettings()
 {
 	auto& settings = GetSingleton();
-	LoadGlobal(settings.m_close_in_combat             , "QLEECloseInCombat");
-	LoadGlobal(settings.m_close_when_empty            , "QLEECloseWhenEmpty");
-	LoadGlobal(settings.m_dispel_invis                , "QLEEDispelInvisibility");
+	LoadGlobal(settings.m_close_in_combat, "QLEECloseInCombat");
+	LoadGlobal(settings.m_close_when_empty, "QLEECloseWhenEmpty");
+	LoadGlobal(settings.m_dispel_invis, "QLEEDispelInvisibility");
 	LoadGlobal(settings.m_open_when_container_unlocked, "QLEEOpenWhenContainerUnlocked");
-	LoadGlobal(settings.m_show_book_read              , "QLEEIconShowBookRead");
-	LoadGlobal(settings.m_show_enchanted              , "QLEEIconShowEnchanted");
-	LoadGlobal(settings.m_show_dbm_displayed          , "QLEEIconShowDBMDisplayed");
-	LoadGlobal(settings.m_show_dbm_found              , "QLEEIconShowDBMFound");
-	LoadGlobal(settings.m_show_dbm_new                , "QLEEIconShowDBMNew");
-	LoadGlobal(settings.m_disable_for_animals         , "QLEEDisableForAnimals");
-	LoadGlobal(settings.m_window_X                    , "QLEEWindowX");
-	LoadGlobal(settings.m_window_Y                    , "QLEEWindowY");
-	LoadGlobal(settings.m_window_W                    , "QLEEWindowW");
-	LoadGlobal(settings.m_window_H                    , "QLEEWindowH");
+	LoadGlobal(settings.m_show_book_read, "QLEEIconShowBookRead");
+	LoadGlobal(settings.m_show_enchanted, "QLEEIconShowEnchanted");
+	LoadGlobal(settings.m_show_dbm_displayed, "QLEEIconShowDBMDisplayed");
+	LoadGlobal(settings.m_show_dbm_found, "QLEEIconShowDBMFound");
+	LoadGlobal(settings.m_show_dbm_new, "QLEEIconShowDBMNew");
+	LoadGlobal(settings.m_disable_for_animals, "QLEEDisableForAnimals");
+	LoadGlobal(settings.m_disable_for_monsters, "QLEEDisableForMonsters");
+	LoadGlobal(settings.m_window_X, "QLEEWindowX");
+	LoadGlobal(settings.m_window_Y, "QLEEWindowY");
+	LoadGlobal(settings.m_window_W, "QLEEWindowW");
+	LoadGlobal(settings.m_window_H, "QLEEWindowH");
 }
 
 bool Settings::CloseInCombat()
@@ -47,6 +48,12 @@ bool Settings::DisableForAnimals()
 {
 	auto& settings = GetSingleton();
 	return settings.m_disable_for_animals && settings.m_disable_for_animals->value > 0;
+}
+
+bool Settings::DisableForMonsters()
+{
+	auto& settings = GetSingleton();
+	return settings.m_disable_for_monsters && settings.m_disable_for_monsters->value > 0;
 }
 
 bool Settings::ShowBookRead()

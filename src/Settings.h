@@ -12,6 +12,7 @@ public:
 	static bool DispelInvisibility();
 	static bool OpenWhenContainerUnlocked();
 	static bool DisableForAnimals();
+	static bool DisableForMonsters();
 
 	static bool ShowBookRead();
 	static bool ShowEnchanted();
@@ -32,7 +33,8 @@ private:
 	Settings operator=(Settings&) = delete;
 	~Settings() = default;
 
-	static Settings& GetSingleton(){
+	static Settings& GetSingleton()
+	{
 		static Settings ret;
 		return ret;
 	};
@@ -42,6 +44,7 @@ private:
 	const RE::TESGlobal* m_dispel_invis = nullptr;
 	const RE::TESGlobal* m_open_when_container_unlocked = nullptr;
 	const RE::TESGlobal* m_disable_for_animals = nullptr;
+	const RE::TESGlobal* m_disable_for_monsters = nullptr;
 
 	const RE::TESGlobal* m_show_book_read = nullptr;
 	const RE::TESGlobal* m_show_enchanted = nullptr;
@@ -54,4 +57,3 @@ private:
 	const RE::TESGlobal* m_window_W = nullptr;
 	const RE::TESGlobal* m_window_H = nullptr;
 };
-
