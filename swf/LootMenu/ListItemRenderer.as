@@ -22,6 +22,7 @@
 	public var readIcon: MovieClip;
 	public var itemWeight: TextField;
 	public var itemValue: TextField;
+	public var itemValuePerWeight: TextField;
 
 
 	/* INITIALIZATION */
@@ -39,7 +40,6 @@
 		var iconLoader = new MovieClipLoader();
 		iconLoader.addListener(this);
 		iconLoader.loadClip(_iconSource, itemIcon);
-		
 		itemIcon._visible = false;
 		stolenIcon._visible = false;
 		enchantIcon._visible = false;
@@ -48,6 +48,7 @@
 		readIcon._visible = false;
 		itemWeight._visible = false;
 		itemValue._visible = false;
+		this.itemValuePerWeight._visible = false;
 	}
 
 
@@ -111,6 +112,9 @@
 			itemValue.text = setPrecision(value, 2).toString();
 			itemValue._visible = true;
 		}
+		
+		this.itemValuePerWeight.text = setPrecision(weight / value, 0).toString()
+		this.itemValuePerWeight._visible = true;
 
 		label = displayName;
 		
