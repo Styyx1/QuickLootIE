@@ -2,5 +2,6 @@ build/
 dist/
 .vs*/
 swf/artifacts/
-CMakeUserPresets.json
 /swf/RECOVER_LootMenu.fla
+CMakeUserPresets.json
+

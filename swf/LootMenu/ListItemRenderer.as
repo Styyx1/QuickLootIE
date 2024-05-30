@@ -204,6 +204,7 @@
 		readIcon._visible = false;
 		itemWeight._visible = false;
 		itemValue._visible = false;
+		itemValuePerWeight._visible = false;
 	}
 
 	// @implements MovieClipLoader
