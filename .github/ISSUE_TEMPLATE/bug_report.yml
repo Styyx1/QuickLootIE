@@ -30,8 +30,8 @@ body:
   - type: dropdown
     id: Skyrim-Version
     attributes:
-      label: What Skyrim version did the bug occur on?
-      multiple: true
+      label: What Skyrim version are you using?
+      multiple: false
       options:
         - 1.5.97
         - 1.6.640
