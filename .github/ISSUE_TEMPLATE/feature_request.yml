@@ -24,16 +24,6 @@ body:
       label: "Feature Description"
       description: "A detailed description of the feature."
       placeholder: "Describe the feature you'd like to see."
-  - type: checkboxes
-    id: acceptance-criteria
-    attributes:
-      label: "Acceptance Criteria"
-      description: "Check all that apply for the feature to be considered complete."
-      options:
-        - label: "Documentation updated"
-        - label: "Tests written"
-        - label: "Designs created"
-        - label: "User feedback collected"
   - type: textarea
     id: additional-context
     attributes:
