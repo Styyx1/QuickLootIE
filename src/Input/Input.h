@@ -271,11 +271,12 @@ namespace Input
 				return;
 			}
 
+			// TODO: Investigage crashes with VR off
 			const auto for_each = [&](std::function<void(RE::ControlMap::UserEventMapping&, std::size_t)> a_functor) {
 				std::size_t k_total = RE::UserEvents::INPUT_CONTEXT_ID::kTotal;
 
 				if (REL::Module::get().version().compare(SKSE::RUNTIME_SSE_1_6_1130) != std::strong_ordering::less) {
-					k_total = RE::UserEvents::INPUT_CONTEXT_ID::kAETotal;
+					k_total = RE::UserEvents::INPUT_CONTEXT_ID::kTotal;
 				}
 
 				std::size_t i_total = RE::INPUT_DEVICES::kFlatTotal;
@@ -296,6 +297,7 @@ namespace Input
 					}
 				}
 			};
+
 			for_each([=](RE::ControlMap::UserEventMapping& a_mapping, std::size_t) {
 				if (a_mapping.userEventGroupFlag.none(RE::UserEvents::USER_EVENT_FLAG::kInvalid)) {
 					a_mapping.userEventGroupFlag.reset(QUICKLOOT_FLAG);

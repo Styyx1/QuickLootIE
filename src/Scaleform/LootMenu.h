@@ -133,12 +133,27 @@ namespace Scaleform
 				_itemListImpl[static_cast<std::size_t>(pos)]->TakeAll(*dst);
 				_openCloseHandler.Open();
 
+				// Taken from WaterFox' fork of QuickLootEE
+				// See: https://github.com/Eloquence4/QuickLootEE/blob/c93e56dcb7f0372a5ad7df4b22e118e37deeb286/src/Scaleform/LootMenu.h#L136-L162
 				if (Settings::DispelInvisibility() && dst->AsMagicTarget()) {
-					dst->AsMagicTarget()->DispelEffectsWithArchetype(RE::EffectArchetypes::ArchetypeID::kInvisibility, false);
+					DispelEffectsWithArchetype(dst->AsMagicTarget(), RE::EffectArchetypes::ArchetypeID::kInvisibility, false);
 				}
 			}
 
 			QueueInventoryRefresh();
+		}
+
+		void DispelEffectsWithArchetype(RE::MagicTarget* a_target, RE::MagicTarget::Archetype a_type, bool a_force)
+		{
+			if (!a_target || !a_target->GetActiveEffectList()) {
+				return;
+			}
+
+			for (auto* effect : *a_target->GetActiveEffectList()) {
+				if (effect && effect->GetBaseObject() && effect->GetBaseObject()->HasArchetype(a_type)) {
+					effect->Dispel(a_force);
+				}
+			}
 		}
 
 	protected:
