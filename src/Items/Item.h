@@ -33,6 +33,8 @@ namespace Items
 		void TakeAll(RE::Actor& a_dst) { DoTake(a_dst, Count()); }
 
 		[[nodiscard]] double EnchantmentCharge() const { return _item.GetEnchantmentCharge(); }
+
+		[[nodiscard]] const std::string& Name() const { return _item.GetDisplayName(); }
 		[[nodiscard]] std::ptrdiff_t Value() const { return _item.GetValue(); }
 		[[nodiscard]] double Weight() const { return _item.GetWeight(); }
 

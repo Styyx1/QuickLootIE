@@ -32,6 +32,116 @@
 		}
 
 		super.populateData(data);
+		var lootmenu = this.getParentMovieClip(this);
+		this.setWindowSize(data.length);
+		this.recordAlphaIfMissing(lootmenu);
+		lootmenu._alpha = data.length == 0 ? 33 : lootmenu._originalAlpha;
 	}
-
+	function setWindowSize(numberOfRecords)
+	{
+		var lootmenu = this.getParentMovieClip(this);
+		lootmenu.background.alpha = numberOfRecords == 0 ? 0 : 1;
+		if (numberOfRecords < 7)
+		{
+			var extraRecords = 7 - numberOfRecords;
+			var emptySlots = -40 * extraRecords;
+			var squishBy = 40 * extraRecords;
+			this.squish(lootmenu.background.middle, squishBy, extraRecords);
+			this.moveToPos(lootmenu.buttonBar, emptySlots);
+			this.moveToPos(lootmenu.bottomBar, emptySlots);
+			this.moveToPos(lootmenu.infoBar, emptySlots);
+			this.moveToPos(lootmenu.weightContainer, emptySlots);
+			this.moveToPos(lootmenu.background.bottom, emptySlots);
+		}
+		else
+		{
+			this.resetHeight(lootmenu.background.middle);
+			this.resetY(lootmenu.backgroundImage);
+			this.resetY(lootmenu.buttonBar);
+			this.resetY(lootmenu.bottomBar);
+			this.resetY(lootmenu.infoBar);
+			this.resetY(lootmenu.weightContainer);
+			this.resetY(lootmenu.background.bottom);
+		}
+	}
+	function squish(obj, squishBy, emptySlots)
+	{
+      if(!obj)
+      {
+         return undefined;
+      }
+      this.recordOriginIfMissing(obj);
+      obj._height = obj._originalH - squishBy;
+   }
+   function moveToPos(obj, newPos)
+   {
+      if(!obj)
+      {
+         return undefined;
+      }
+      this.recordOriginIfMissing(obj);
+      obj._y = obj._originalY + newPos;
+   }
+   function resetY(obj)
+   {
+      if(!obj || !obj._originalY)
+      {
+         return undefined;
+      }
+      obj._y = obj._originalY;
+   }
+   function resetHeight(obj)
+   {
+      if(!obj || !obj._originalH)
+      {
+         return undefined;
+      }
+      obj._height = obj._originalH;
+   }
+   function recordOriginIfMissing(obj)
+   {
+      if(!obj)
+      {
+         return undefined;
+      }
+      if(obj._originalX == undefined)
+      {
+         obj._originalX = obj._x;
+      }
+      if(obj._originalY == undefined)
+      {
+         obj._originalY = obj._y;
+      }
+      if(obj._originalH == undefined)
+      {
+         obj._originalH = obj._height;
+      }
+      if(obj._originalW == undefined)
+      {
+         obj._originalW = obj._width;
+      }
+   }
+   function recordAlphaIfMissing(obj)
+   {
+      if(!obj)
+      {
+         return undefined;
+      }
+      if(obj._originalAlpha == undefined)
+      {
+         obj._originalAlpha = obj._alpha;
+      }
+   }
+   function getParentMovieClip(obj)
+   {
+      while(obj._parent != null)
+      {
+         obj = obj._parent;
+         if(obj instanceof MovieClip)
+         {
+            return obj;
+         }
+      }
+      return undefined;
+   }
 }

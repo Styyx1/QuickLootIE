@@ -385,12 +385,27 @@ namespace Scaleform
 
 		void Sort()
 		{
-			std::stable_sort(
-				_itemListImpl.begin(),
-				_itemListImpl.end(),
-				[&](auto&& a_lhs, auto&& a_rhs) {
-					return *a_lhs < *a_rhs;
-				});
+			auto compareNames = [](const std::unique_ptr<Items::Item>& a_lhs, const std::unique_ptr<Items::Item>& a_rhs) {
+				if (!a_lhs || !a_rhs) {
+					return a_lhs != nullptr;
+				}
+
+				const std::string& name1 = a_lhs->Name();
+				const std::string& name2 = a_rhs->Name();
+
+				// Find position of first non-'*' character
+				size_t pos1 = name1.find_first_not_of('*');
+				size_t pos2 = name2.find_first_not_of('*');
+
+				// Get the characters starting from the first non-'*' character
+				const char* chars1 = name1.c_str() + pos1;
+				const char* chars2 = name2.c_str() + pos2;
+
+				// Compare the remaining parts of the strings
+				return strcmp(chars1, chars2) < 0;
+			};
+
+			std::sort(_itemListImpl.begin(), _itemListImpl.end(), compareNames);
 		}
 
 		void UpdateButtonBar()
