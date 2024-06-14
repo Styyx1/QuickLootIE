@@ -9,6 +9,7 @@
 namespace Completionist_Integration
 {
 	void RegisterListener();
+	void CompletionistResponse(SKSE::MessagingInterface::Message* a_msg);
 }
 
 namespace Items

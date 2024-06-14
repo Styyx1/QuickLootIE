@@ -271,25 +271,10 @@ namespace Input
 				return;
 			}
 
-			// TODO: Investigage crashes with VR off
 			const auto for_each = [&](std::function<void(RE::ControlMap::UserEventMapping&, std::size_t)> a_functor) {
-				std::size_t k_total = RE::UserEvents::INPUT_CONTEXT_ID::kTotal;
-
-				if (REL::Module::get().version().compare(SKSE::RUNTIME_SSE_1_6_1130) != std::strong_ordering::less) {
-					k_total = RE::UserEvents::INPUT_CONTEXT_ID::kTotal;
-				}
-
-				std::size_t i_total = RE::INPUT_DEVICES::kFlatTotal;
-#ifdef ENABLE_SKYRIM_VR
-				if (REL::Module::IsVR()) {
-					i_total = RE::INPUT_DEVICES::kTotal;
-				}
-#endif
-
-				for (std::size_t k = 0; k < k_total; ++k) {
-					auto& map = a_controlMap->controlMap[k];
+				for (auto& map : a_controlMap->controlMap) {
 					if (map) {
-						for (std::size_t i = 0; i < i_total; ++i) {
+						for (std::size_t i = 0; i < RE::ControlMap::InputContext::GetNumDeviceMappings(); ++i) {
 							for (auto& userMapping : map->deviceMappings[i]) {
 								a_functor(userMapping, i);
 							}

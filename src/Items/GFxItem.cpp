@@ -164,21 +164,18 @@ namespace Items
 
 	const std::string& GFxItem::GetDisplayName() const
 	{
-		if (comp_installed)
-		{
+		if (comp_installed) {
 			comp_response = std::nullopt;
 
-			if (auto* messageInterface = SKSE::GetMessagingInterface())
-			{
+			if (auto* messageInterface = SKSE::GetMessagingInterface()) {
 				CompletionistRequestEE request{ GetFormID() };
 				messageInterface->Dispatch(1, &request, sizeof(request), "Completionist");
-				//logger::info("Completionist is installed, Message Sent For - {}"sv, GetFormID());
-			}
+				logger::info("Completionist is installed, Message Sent For - {}"sv, GetFormID());
 
-			if (comp_response && comp_response->m_formId == GetFormID() && comp_response->m_displayname != "")
-			{
-				//logger::info("Completionist Message Receieved With Matching FormID and Valid Name");
-				return comp_response->m_displayname;
+				if (comp_response && comp_response->m_formId == GetFormID() && comp_response->m_displayname != "") {
+					logger::info("Completionist Message Receieved With Matching FormID and Valid Name");
+					return comp_response->m_displayname;
+				}
 			}
 		}
 
@@ -1369,23 +1366,43 @@ namespace Completionist_Integration
 {
 	void RegisterListener()
 	{
-		if (WinAPI::GetModuleHandleA("Completionist"))
-		{
-			comp_installed = true;
-			logger::info("Completionist is installed, registering listener"sv);
+		if (WinAPI::GetModuleHandleA("Completionist")) {
+			logger::info("Completionist is installed, attempting to register listener"sv);
 			auto* messageInterface = SKSE::GetMessagingInterface();
-			messageInterface->RegisterListener("Completionist", [](SKSE::MessagingInterface::Message* a_msg)
-			{
-				if (!a_msg || a_msg->type != 2 || !a_msg->data)
-				{
-					return;
-				}
-				comp_response = *static_cast<CompletionistResponseEE*>(a_msg->data);
-			});
+			comp_installed = messageInterface->RegisterListener("Completionist", CompletionistResponse);
 		}
-		else
-		{
-			comp_installed = false;
+
+		if (comp_installed) {
+			logger::info("Completionist listener registered successfully"sv);
+			return;
+		}
+
+		logger::info("Unable to register Completionist listener"sv);
+	}
+
+	void CompletionistResponse(SKSE::MessagingInterface::Message* a_msg)
+	{
+		logger::info("Recieved message from Completionist.");
+
+		if (!a_msg) {
+			logger::info("message is Null");
+			return;
+		}
+
+		if (a_msg->type != 2) {
+			logger::info("message type is not 2");
+			return;
+		}
+
+		if (!a_msg->data) {
+			logger::info("message has no data");
+			return;
+		}
+
+		comp_response = *static_cast<CompletionistResponseEE*>(a_msg->data);
+
+		if (comp_response.has_value()) {
+			logger::info("completionist messagge received with data: {}, {}", std::to_string(comp_response.value().m_formId), comp_response.value().m_displayname);
 		}
 	}
 }
