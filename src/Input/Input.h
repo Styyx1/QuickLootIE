@@ -264,7 +264,7 @@ namespace Input
 		InputManager& operator=(const InputManager&) = delete;
 		InputManager& operator=(InputManager&&) = delete;
 
-		static void RefreshLinkedMappings(RE::ControlMap* a_controlMap)
+		    static void RefreshLinkedMappings(RE::ControlMap* a_controlMap)
 		{
 			_RefreshLinkedMappings(a_controlMap);
 			if (!a_controlMap) {
@@ -272,9 +272,18 @@ namespace Input
 			}
 
 			const auto for_each = [&](std::function<void(RE::ControlMap::UserEventMapping&, std::size_t)> a_functor) {
-				for (auto& map : a_controlMap->controlMap) {
+				std::size_t k_total = RE::UserEvents::INPUT_CONTEXT_ID::kTotal;
+
+				if (REL::Module::get().version().compare(SKSE::RUNTIME_SSE_1_6_1130) == std::strong_ordering::less) {
+					k_total = 17; // Hardcoded for Skyrim 1.6.640 or lower
+				}
+
+				std::size_t i_total = RE::INPUT_DEVICES::kFlatTotal;
+
+				for (std::size_t k = 0; k < k_total; ++k) {
+					auto& map = a_controlMap->controlMap[k];
 					if (map) {
-						for (std::size_t i = 0; i < RE::ControlMap::InputContext::GetNumDeviceMappings(); ++i) {
+						for (std::size_t i = 0; i < i_total; ++i) {
 							for (auto& userMapping : map->deviceMappings[i]) {
 								a_functor(userMapping, i);
 							}
