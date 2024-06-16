@@ -15,7 +15,7 @@ jobs:
         run: |
           # Custom script to update the issue template
           # with the new version from the release tag
-          ../scripts/update-template-script.sh
+          .github/scripts/update-template-script.sh
 
       - name: Commit and Push Changes
         run: |
