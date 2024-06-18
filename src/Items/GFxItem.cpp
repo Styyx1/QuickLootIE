@@ -136,74 +136,88 @@ namespace Items
 
 	int GFxItem::Compare(const GFxItem& a_rhs) const
 	{
-		if (IsQuestItem() != a_rhs.IsQuestItem()) {
-			return IsQuestItem() ? -1 : 1;
-		} else if (IsKey() != a_rhs.IsKey()) {
-			return IsKey() ? -1 : 1;
-		} else if (IsNote() != a_rhs.IsNote()) {
-			return IsNote() ? -1 : 1;
-		} else if (IsBook() != a_rhs.IsBook()) {
-			return IsBook() ? -1 : 1;
-		} else if (IsGold() != a_rhs.IsGold()) {
-			return IsGold() ? -1 : 1;
-		} else if (IsAmmo() != a_rhs.IsAmmo()) {
-			return IsAmmo() ? -1 : 1;
-		} else if (IsLockpick() != a_rhs.IsLockpick()) {
-			return IsLockpick() ? -1 : 1;
-		} else if (GetValue() != a_rhs.GetValue()) {
-			return GetValue() > a_rhs.GetValue() ? -1 : 1;
-		} else if (const auto alphabetical = _stricmp(GetDisplayName().c_str(), a_rhs.GetDisplayName().c_str());
-				   alphabetical != 0) {
-			return alphabetical < 0 ? -1 : 1;
-		} else if (GetFormID() != a_rhs.GetFormID()) {
-			return GetFormID() < a_rhs.GetFormID() ? -1 : 1;
-		} else {
-			return 0;
-		}
-	}
+		const GFxItem& a_lhs = *this;
+
+		if (a_lhs.IsQuestItem() != a_rhs.IsQuestItem()) return a_lhs.IsQuestItem() ? -1 : 1;
+		if (a_lhs.IsKey() != a_rhs.IsKey()) return a_lhs.IsKey() ? -1 : 1;
+        if (a_lhs.IsNote() != a_rhs.IsNote()) return a_lhs.IsNote() ? -1 : 1;
+        if (a_lhs.IsBook() != a_rhs.IsBook()) return a_lhs.IsBook() ? -1 : 1;
+        if (a_lhs.IsGold() != a_rhs.IsGold()) return a_lhs.IsGold() ? -1 : 1;
+        if (a_lhs.IsAmmo() != a_rhs.IsAmmo()) return a_lhs.IsAmmo() ? -1 : 1;
+		if (a_lhs.IsLockpick() != a_rhs.IsLockpick()) return a_lhs.IsLockpick() ? -1 : 1;
+
+		const auto name1 = a_lhs.GetDisplayName().c_str();
+		const auto name2 = a_rhs.GetDisplayName().c_str();
+		const auto order = _stricmp(name1, name2);
+
+		//logger::info("lexicographic comparison: A {} B", (order < 0 ? "<" : order > 0 ? ">" : "="));
+		//logger::info("- A: {} - \"{}\"", std::to_string(reinterpret_cast<uintptr_t>(&a_lhs)), name1);
+		//logger::info("- B: {} - \"{}\"", std::to_string(reinterpret_cast<uintptr_t>(&a_rhs)), name2);
+
+		if (order != 0) {
+            return order;
+        }
+
+        if (a_lhs.GetValue() != a_rhs.GetValue()) {
+			return a_lhs.GetValue() > a_rhs.GetValue() ? -1 : 1;
+        }
+
+        if (a_lhs.GetFormID() != a_rhs.GetFormID()) {
+			return a_lhs.GetFormID() < a_rhs.GetFormID() ? -1 : 1;
+        }
+
+        return 0;
+    }
 
 	const std::string& GFxItem::GetDisplayName() const
 	{
+		if (_cache[kDisplayName]) {
+			return _cache.DisplayName();
+		}
+
+		//logger::info("Querying display name for FormID {}"sv, GetFormID());
+
+		std::string result;
+
 		if (comp_installed) {
 			comp_response = std::nullopt;
 
 			if (auto* messageInterface = SKSE::GetMessagingInterface()) {
 				CompletionistRequestEE request{ GetFormID() };
 				messageInterface->Dispatch(1, &request, sizeof(request), "Completionist");
-				logger::info("Completionist is installed, Message Sent For - {}"sv, GetFormID());
+				//logger::info("Completionist is installed, message sent for FormID {}"sv, GetFormID());
 
 				if (comp_response && comp_response->m_formId == GetFormID() && comp_response->m_displayname != "") {
-					logger::info("Completionist Message Receieved With Matching FormID and Valid Name");
-					return comp_response->m_displayname;
+					//logger::info("Completionist responded with display name for FormID {}: \"{}\"", GetFormID(), comp_response->m_displayname);
+
+					// DO NOT RETURN A DIRECT REFERENCE TO m_displayname
+					result = comp_response->m_displayname;
 				}
 			}
 		}
 
-		if (_cache[kDisplayName]) {
-			return _cache.DisplayName();
-		}
-
-		std::string result;
-		switch (_src.index()) {
-		case kInventory: 
-		{
-			const char* display_name = std::get<kInventory>(_src)->GetDisplayName();
-			result = display_name ? display_name : ""sv;
-			break;
-		}
-		case kGround:
-			result = ""sv;
-			for (const auto& handle : std::get<kGround>(_src)) {
-				const auto item = handle.get();
-				if (item && item->GetDisplayFullName()) {
-					result = item->GetDisplayFullName();
+		if (result.empty()) {
+			switch (_src.index()) {
+			case kInventory:
+				{
+					const char* display_name = std::get<kInventory>(_src)->GetDisplayName();
+					result = display_name ? display_name : ""sv;
 					break;
 				}
+			case kGround:
+				result = ""sv;
+				for (const auto& handle : std::get<kGround>(_src)) {
+					const auto item = handle.get();
+					if (item && item->GetDisplayFullName()) {
+						result = item->GetDisplayFullName();
+						break;
+					}
+				}
+				break;
+			default:
+				assert(false);
+				break;
 			}
-			break;
-		default:
-			assert(false);
-			break;
 		}
 
 		_cache.DisplayName(std::move(result));
@@ -1382,7 +1396,7 @@ namespace Completionist_Integration
 
 	void CompletionistResponse(SKSE::MessagingInterface::Message* a_msg)
 	{
-		logger::info("Recieved message from Completionist.");
+		//logger::info("Received message from Completionist");
 
 		if (!a_msg) {
 			logger::info("message is Null");
@@ -1402,7 +1416,7 @@ namespace Completionist_Integration
 		comp_response = *static_cast<CompletionistResponseEE*>(a_msg->data);
 
 		if (comp_response.has_value()) {
-			logger::info("completionist messagge received with data: {}, {}", std::to_string(comp_response.value().m_formId), comp_response.value().m_displayname);
+			//logger::info("Completionist responded with data: {} - {}", std::to_string(comp_response.value().m_formId), comp_response.value().m_displayname);
 		}
 	}
 }
