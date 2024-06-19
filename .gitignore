@@ -1,7 +1,10 @@
+## Building
+CMakeUserPresets.json
+vcpkg_installed/
 build/
 dist/
 .vs*/
+
+## Flash
 swf/artifacts/
 /swf/RECOVER_LootMenu.fla
-CMakeUserPresets.json
-vcpkg_installed/
