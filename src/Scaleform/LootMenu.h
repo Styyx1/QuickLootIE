@@ -84,9 +84,7 @@ namespace Scaleform
 			for (auto& [obj, data] : inv) {
 				auto& [count, entry] = data;
 				if (count > 0 && entry) {
-					auto inventoryItem = std::make_unique<Items::InventoryItem>(count, stealing, std::move(entry), _src);
-					//logger::info("Adding inventory item: {} - {}", std::to_string(reinterpret_cast<std::uintptr_t>(inventoryItem.get())), inventoryItem->Name());
-					_itemListImpl.push_back(std::move(inventoryItem));
+					_itemListImpl.push_back(std::make_unique<Items::InventoryItem>(count, stealing, std::move(entry), _src));
 				}
 			}
 
@@ -94,9 +92,7 @@ namespace Scaleform
 			for (auto& [obj, data] : dropped) {
 				auto& [count, items] = data;
 				if (count > 0 && !items.empty()) {
-					auto groundItem = std::make_unique<Items::GroundItems>(count, stealing, std::move(items));
-					//logger::info("Adding ground item: {} - {}", std::to_string(reinterpret_cast<std::uintptr_t>(groundItem.get())), groundItem->Name());
-					_itemListImpl.push_back(std::move(groundItem));
+					_itemListImpl.push_back(std::make_unique<Items::GroundItems>(count, stealing, std::move(items)));
 				}
 			}
 
@@ -385,22 +381,10 @@ namespace Scaleform
 
 		void Sort()
 		{
-			logger::info("Sort() called. Starting sort operation..."sv);
-			logger::info("Initial _itemListImpl: {} items"sv, std::to_string(_itemListImpl.size()));
-
-            for (auto const& item : _itemListImpl) {
-				logger::info("- {}: {}", reinterpret_cast<std::uintptr_t>(item.get()), item->Name());
-            }
-
 			std::ranges::stable_sort(_itemListImpl,
 				[&](auto&& a_lhs, auto&& a_rhs) {
-					logger::info("Comparing items...");
-
 					uintptr_t lhs_addr = reinterpret_cast<std::uintptr_t>(a_lhs.get());
 					uintptr_t rhs_addr = reinterpret_cast<std::uintptr_t>(a_rhs.get());
-
-					logger::info("a_lhs: {}", std::to_string(lhs_addr));
-					logger::info("a_rhs: {}", std::to_string(rhs_addr));
 
 					if (lhs_addr == 0 || lhs_addr > 0xFFFFFFFFFFFF ||
 						rhs_addr == 0 || rhs_addr > 0xFFFFFFFFFFFF) {
@@ -408,17 +392,8 @@ namespace Scaleform
 						return false;
 					}
 
-					bool result = *a_lhs < *a_rhs;
-					logger::info("Comparison result is {}"sv, std::to_string(result));
-					return result;
+					return *a_lhs < *a_rhs;
 				});
-
-			logger::info("Sort operation completed.");
-			logger::info("Sorted _itemListImpl: {} items"sv, std::to_string(_itemListImpl.size()));
-
-			for (auto const& item : _itemListImpl) {
-				logger::info("- {}: {}", reinterpret_cast<std::uintptr_t>(item.get()), item->Name());
-			}
 		}
 
 		void UpdateButtonBar()

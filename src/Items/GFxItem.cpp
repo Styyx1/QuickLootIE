@@ -150,10 +150,6 @@ namespace Items
 		const auto name2 = a_rhs.GetDisplayName().c_str();
 		const auto order = _stricmp(name1, name2);
 
-		//logger::info("lexicographic comparison: A {} B", (order < 0 ? "<" : order > 0 ? ">" : "="));
-		//logger::info("- A: {} - \"{}\"", std::to_string(reinterpret_cast<uintptr_t>(&a_lhs)), name1);
-		//logger::info("- B: {} - \"{}\"", std::to_string(reinterpret_cast<uintptr_t>(&a_rhs)), name2);
-
 		if (order != 0) {
             return order;
         }
@@ -175,8 +171,6 @@ namespace Items
 			return _cache.DisplayName();
 		}
 
-		//logger::info("Querying display name for FormID {}"sv, GetFormID());
-
 		std::string result;
 
 		if (comp_installed) {
@@ -185,10 +179,8 @@ namespace Items
 			if (auto* messageInterface = SKSE::GetMessagingInterface()) {
 				CompletionistRequestEE request{ GetFormID() };
 				messageInterface->Dispatch(1, &request, sizeof(request), "Completionist");
-				//logger::info("Completionist is installed, message sent for FormID {}"sv, GetFormID());
-
+				
 				if (comp_response && comp_response->m_formId == GetFormID() && comp_response->m_displayname != "") {
-					//logger::info("Completionist responded with display name for FormID {}: \"{}\"", GetFormID(), comp_response->m_displayname);
 
 					// DO NOT RETURN A DIRECT REFERENCE TO m_displayname
 					result = comp_response->m_displayname;
@@ -1396,8 +1388,6 @@ namespace Completionist_Integration
 
 	void CompletionistResponse(SKSE::MessagingInterface::Message* a_msg)
 	{
-		//logger::info("Received message from Completionist");
-
 		if (!a_msg) {
 			logger::info("message is Null");
 			return;
@@ -1414,9 +1404,5 @@ namespace Completionist_Integration
 		}
 
 		comp_response = *static_cast<CompletionistResponseEE*>(a_msg->data);
-
-		if (comp_response.has_value()) {
-			//logger::info("Completionist responded with data: {} - {}", std::to_string(comp_response.value().m_formId), comp_response.value().m_displayname);
-		}
 	}
 }
