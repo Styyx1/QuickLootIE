@@ -84,9 +84,7 @@ namespace Scaleform
 			for (auto& [obj, data] : inv) {
 				auto& [count, entry] = data;
 				if (count > 0 && entry) {
-					_itemListImpl.push_back(
-						std::make_unique<Items::InventoryItem>(
-							count, stealing, std::move(entry), _src));
+					_itemListImpl.push_back(std::make_unique<Items::InventoryItem>(count, stealing, std::move(entry), _src));
 				}
 			}
 
@@ -94,9 +92,7 @@ namespace Scaleform
 			for (auto& [obj, data] : dropped) {
 				auto& [count, items] = data;
 				if (count > 0 && !items.empty()) {
-					_itemListImpl.push_back(
-						std::make_unique<Items::GroundItems>(
-							count, stealing, std::move(items)));
+					_itemListImpl.push_back(std::make_unique<Items::GroundItems>(count, stealing, std::move(items)));
 				}
 			}
 
@@ -385,27 +381,19 @@ namespace Scaleform
 
 		void Sort()
 		{
-			auto compareNames = [](const std::unique_ptr<Items::Item>& a_lhs, const std::unique_ptr<Items::Item>& a_rhs) {
-				if (!a_lhs || !a_rhs) {
-					return a_lhs != nullptr;
-				}
+			std::ranges::stable_sort(_itemListImpl,
+				[&](auto&& a_lhs, auto&& a_rhs) {
+					uintptr_t lhs_addr = reinterpret_cast<std::uintptr_t>(a_lhs.get());
+					uintptr_t rhs_addr = reinterpret_cast<std::uintptr_t>(a_rhs.get());
 
-				const std::string& name1 = a_lhs->Name();
-				const std::string& name2 = a_rhs->Name();
+					if (lhs_addr == 0 || lhs_addr > 0xFFFFFFFFFFFF ||
+						rhs_addr == 0 || rhs_addr > 0xFFFFFFFFFFFF) {
+						logger::info("Error: Invalid pointer address detected."sv);
+						return false;
+					}
 
-				// Find position of first non-'*' character
-				size_t pos1 = name1.find_first_not_of('*');
-				size_t pos2 = name2.find_first_not_of('*');
-
-				// Get the characters starting from the first non-'*' character
-				const char* chars1 = name1.c_str() + pos1;
-				const char* chars2 = name2.c_str() + pos2;
-
-				// Compare the remaining parts of the strings
-				return strcmp(chars1, chars2) < 0;
-			};
-
-			std::sort(_itemListImpl.begin(), _itemListImpl.end(), compareNames);
+					return *a_lhs < *a_rhs;
+				});
 		}
 
 		void UpdateButtonBar()

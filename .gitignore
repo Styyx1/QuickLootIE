@@ -4,4 +4,4 @@ dist/
 swf/artifacts/
 /swf/RECOVER_LootMenu.fla
 CMakeUserPresets.json
-
+vcpkg_installed/
