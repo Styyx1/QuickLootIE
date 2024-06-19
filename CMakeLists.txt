@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(
 	QuickLootEE-NG
-	VERSION 1.0.0
+	VERSION 1.2.1
 	LANGUAGES CXX
 )
 
