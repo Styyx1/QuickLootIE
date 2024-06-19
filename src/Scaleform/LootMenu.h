@@ -19,6 +19,10 @@ namespace Scaleform
 	private:
 		using super = RE::IMenu;
 
+		static inline RE::ObjectRefHandle _lastContainer;
+		static inline ptrdiff_t _lastSelectedIndex;
+		static inline bool _restoreLastSelectedIndex;
+
 	public:
 		static constexpr std::string_view MenuName() noexcept { return MENU_NAME; }
 		static constexpr std::int8_t SortPriority() noexcept { return SORT_PRIORITY; }
@@ -39,6 +43,7 @@ namespace Scaleform
 				auto idx = _itemList.SelectedIndex();
 				idx += a_mod;
 				idx = std::clamp(idx, 0.0, maxIdx);
+				_lastSelectedIndex = static_cast<ptrdiff_t>(idx);
 				_itemList.SelectedIndex(idx);
 				UpdateInfoBar();
 			}
@@ -63,6 +68,10 @@ namespace Scaleform
 			_containerChangedHandler.SetContainer(a_ref);
 			_openCloseHandler.SetSource(a_ref);
 			_itemList.SelectedIndex(0);
+
+			_restoreLastSelectedIndex = a_ref == _lastContainer;
+			_lastContainer = a_ref;
+
 			QueueUIRefresh();
 		}
 
@@ -106,7 +115,14 @@ namespace Scaleform
 				}
 				_itemList.InvalidateData();
 
-				RestoreIndex(idx);
+				if (_restoreLastSelectedIndex) {
+					//logger::info("Looking at the same container as before. Restoring last selection index ({}).", std::to_string(_lastSelectedIndex));
+					_restoreLastSelectedIndex = false;
+					RestoreIndex(_lastSelectedIndex);
+				} else {
+					RestoreIndex(idx);
+				}
+
 				UpdateWeight();
 				UpdateInfoBar();
 
