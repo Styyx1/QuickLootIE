@@ -178,19 +178,45 @@ jobs:
           path: Scripts
 
   compile-skse:
-    name: 'Compile QuickLootEE-NG Plugin'
+    name: Build SKSE plugin
     needs: check-changes
     if: ${{ needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch' }}
-    permissions: write-all
     runs-on: windows-latest
     strategy:
-      fail-fast: false
-
+      matrix:
+        os: [windows-latest]
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
+
+      - name: Cache vcpkg packages
+        id: cache-vcpkg
+        uses: actions/cache@v4
+        with:
+          path: ~/.vcpkg/
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      - name: Cache CMake build
+        id: cache-cmake
+        uses: actions/cache@v4
+        with:
+          path: build/
+          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-
+
+      - name: Cache CMake binaries
+        id: cache-cmake-bin
+        uses: actions/cache@v4
+        with:
+          path: build/Debug/
+          key: ${{ runner.os }}-cmake-bin-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-bin-
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
@@ -204,20 +230,21 @@ jobs:
           cmakeVersion: "~3.24.0"
           ninjaVersion: "~1.11.1"
 
-      - name: Run CMake
+      - name: Run CMake configure and build
         shell: bash
         run: |
           cmake --preset ALL --compile-no-warning-as-error
           cmake --build build --config Debug
 
-      - name: Copy to Pack Folder
+      - name: Copy artifacts to pack folder
         shell: bash
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE"
           mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE"
           mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE"
-      
-      - uses: actions/upload-artifact@v4
+
+      - name: Upload SKSE plugin artifact
+        uses: actions/upload-artifact@v4
         with:
           name: skse-plugin
           path: |
@@ -256,7 +283,7 @@ jobs:
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
           cp -a "SKSE" "${{ github.workspace }}/to-pack/SKSE"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/Scripts"
-          cp -a "Source" "${{ github.workspace }}/to-pack/Source/"
+          cp -Ra "Source/Scripts/*" "${{ github.workspace }}/to-pack/Source/Scripts/"
       
       - name: Zip release files
         uses: vimtor/action-zip@v1.2
@@ -291,7 +318,7 @@ jobs:
       - name: Download release artifact
         uses: actions/download-artifact@v4
         with:
-          name: UnforgivingParasites-${{inputs.version || 'nightly'}}
+          name: QuickLootIE-${{inputs.version || 'nightly'}}
 
       - name: Delete existing release
         uses: dev-drprasad/delete-tag-and-release@v1.0
@@ -316,9 +343,9 @@ jobs:
           removeArtifacts: true
           replacesArtifacts: true
           artifactErrorsFailBuild: true
-          artifacts: UnforgivingParasites-${{inputs.version || 'nightly'}}.zip
+          artifacts: QuickLootIE-${{inputs.version || 'nightly'}}.zip
 
       - name: Remove temporary artifacts
         uses: geekyeggo/delete-artifact@v2
         with:
-          name: UnforgivingParasites-${{inputs.version || 'nightly'}}
+          name: QuickLootIE-${{inputs.version || 'nightly'}}
