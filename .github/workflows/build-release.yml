@@ -333,7 +333,7 @@ jobs:
           allowUpdates: true
           name: ${{inputs.version || 'nightly'}}
           draft: false
-          body: 'Latest release of Unforgiving Parasites'
+          body: 'Latest release of QuickLootIE'
           tag: ${{inputs.version || 'nightly'}}
           prerelease: true
           makeLatest: false
