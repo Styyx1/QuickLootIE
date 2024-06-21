@@ -279,11 +279,12 @@ jobs:
         shell: bash
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
+          mkdir -p "${{ github.workspace }}/to-pack/Interface"
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
-          cp -Ra "SKSE/." "${{ github.workspace }}/to-pack/SKSE/Plugins"
+          cp -a "swf/bin/." "${{ github.workspace }}/to-pack/Interface"
+          cp -a "SKSE/." "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/"
-          cp -Ra "Source" "${{ github.workspace }}/to-pack/"
-          cp "swf/bin/." "${{ github.workspace }}/to-pack/Interface"
+          cp -a "Source" "${{ github.workspace }}/to-pack/"
       
       - name: Zip release files
         uses: vimtor/action-zip@v1.2
