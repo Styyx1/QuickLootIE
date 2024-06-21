@@ -179,6 +179,9 @@ jobs:
 
   compile-skse:
     name: 'Compile QuickLootEE-NG Plugin'
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch' }}
+    permissions: write-all
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -206,11 +209,20 @@ jobs:
         run: |
           cmake --preset ALL --compile-no-warning-as-error
           cmake --build build --config Debug
+
+      - name: Copy to Pack Folder
+        shell: bash
+        run: |
+          mkdir -p "${{ github.workspace }}/to-pack/SKSE"
+          mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE"
+          mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE"
       
       - uses: actions/upload-artifact@v4
         with:
           name: skse-plugin
-          path: SKSE
+          path: |
+            ${{ github.workspace }}/to-pack/SKSE/QuickLootEE-NG.dll
+            ${{ github.workspace }}/to-pack/SKSE/QuickLootEE-NG.pdb
 
   package-mod:
     name: Package all necessary files
