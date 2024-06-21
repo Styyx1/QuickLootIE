@@ -99,7 +99,9 @@ jobs:
         id: cache-ss
         uses: actions/cache@v4
         with:
-          path: .github/PapyrusSkyUI
+          path: |
+            .github/PapyrusSRC
+            .github/PapyrusSkyUI
           key: script-sources-clean
 
       - name: Cache Compiler
@@ -195,7 +197,7 @@ jobs:
         shell: bash
         run: |
           cmake --preset ALL
-          cmake --build build --config Debug
+          cmake --build build --config Debug --compile-no-warning-as-error
 
   package-mod:
     name: Package all necessary files
