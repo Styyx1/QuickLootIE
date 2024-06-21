@@ -239,7 +239,7 @@ jobs:
       - name: Copy artifacts to pack folder
         shell: bash
         run: |
-          mkdir -p "${{ github.workspace }}/to-pack/SKSE"
+          mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
           mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE/Plugins"
           mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins"
 
