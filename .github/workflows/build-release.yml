@@ -188,10 +188,6 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-     
-      - name: Print Working Directory
-        shell: bash
-        run: pwd
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
@@ -209,7 +205,12 @@ jobs:
         shell: bash
         run: |
           cmake --preset ALL --compile-no-warning-as-error
-          cmake --build build --config Debug 
+          cmake --build build --config Debug
+      
+      - uses: actions/upload-artifact@v4
+      with:
+        name: skse-plugin
+        path: SKSE
 
   package-mod:
     name: Package all necessary files
@@ -228,10 +229,83 @@ jobs:
         with: 
           name: compiled-scripts
           path: Scripts
+  
+      - uses: actions/download-artifact@v4
+        with: 
+          name: skse-plugin
+          path: SKSE
 
       - name: Create packing structure
         shell: bash
         run: |
-          mkdir -p "${{ github.workspace }}/to-pack/"
+          mkdir -p "${{ github.workspace }}/to-pack/SKSE"
+          mkdir -p "${{ github.workspace }}/to-pack/Scripts"
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
           cp -a "SKSE" "${{ github.workspace }}/to-pack/SKSE"
+          cp -a "Scripts" "${{ github.workspace }}/to-pack/Scripts"
+          cp -a "Source" "${{ github.workspace }}/to-pack/Source/Scripts"
+      
+      - name: Zip release files
+        uses: vimtor/action-zip@v1.2
+        with:
+          files: to-pack/
+          dest: QuickLootIE-${{inputs.version || 'nightly'}}.zip
+      
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: QuickLootIE-${{inputs.version || 'nightly'}}
+          path: QuickLootIE-${{inputs.version || 'nightly'}}.zip
+
+      - name: Remove temporary artifacts
+        uses: geekyeggo/delete-artifact@v4
+        with:
+          name: |
+              plugin
+              skse-plugin
+              compiled-scripts
+
+  share-release:
+    name: Share release
+    permissions: write-all
+    needs: [package-mod]
+    if: ${{ inputs.publish-release == true && (needs.check-changes.outputs.should_run >= 1 || (github.event_name == 'workflow_dispatch' && always())) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+  
+      - name: Download release artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: UnforgivingParasites-${{inputs.version || 'nightly'}}
+
+      - name: Delete existing release
+        uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          tag_name: ${{inputs.version || 'nightly'}}
+          github_token: ${{ github.token }}
+          delete_release: true
+      
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1.13.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          allowUpdates: true
+          name: ${{inputs.version || 'nightly'}}
+          draft: false
+          body: 'Latest release of Unforgiving Parasites'
+          tag: ${{inputs.version || 'nightly'}}
+          prerelease: true
+          makeLatest: false
+          removeArtifacts: true
+          replacesArtifacts: true
+          artifactErrorsFailBuild: true
+          artifacts: UnforgivingParasites-${{inputs.version || 'nightly'}}.zip
+
+      - name: Remove temporary artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: UnforgivingParasites-${{inputs.version || 'nightly'}}
