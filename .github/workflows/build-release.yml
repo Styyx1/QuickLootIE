@@ -248,8 +248,8 @@ jobs:
         with:
           name: skse-plugin
           path: |
-            ${{ github.workspace }}/to-pack/SKSE/QuickLootEE-NG.dll
-            ${{ github.workspace }}/to-pack/SKSE/QuickLootEE-NG.pdb
+            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.dll
+            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.pdb
 
   package-mod:
     name: Package all necessary files
