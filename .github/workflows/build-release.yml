@@ -277,6 +277,7 @@ jobs:
       - name: Create packing structure
         shell: bash
         run: |
+          mkdir -p "${{ github.workspace }}/to-pack"
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
           cp -a "SKSE" "${{ github.workspace }}/to-pack/"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/"
