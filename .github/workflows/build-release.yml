@@ -208,9 +208,9 @@ jobs:
           cmake --build build --config Debug
       
       - uses: actions/upload-artifact@v4
-      with:
-        name: skse-plugin
-        path: SKSE
+        with:
+          name: skse-plugin
+          path: SKSE
 
   package-mod:
     name: Package all necessary files
