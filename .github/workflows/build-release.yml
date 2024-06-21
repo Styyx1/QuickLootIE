@@ -137,7 +137,8 @@ jobs:
           cd PapyrusSkyUI
           git init
           git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
-          git sparse-checkout set --no-cone 'SRC SRC_SKYUI'
+          git sparse-checkout set --no-cone 'SRC'
+          git sparse-checkout set --no-cone 'SRC_SKYUI'
           git fetch --depth=1 origin main
           git checkout main
           rm -rf .git
@@ -201,10 +202,9 @@ jobs:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ALL'
           buildPreset: 'RelWithDebInfo'
-          cmakeArgs: '-G "Visual Studio 17 2022" -A x64'
     
       - name: Build Project
-        run: cmake --build . --config RelWithDebInfo
+        run: cmake --build build --config RelWithDebInfo
 
   package-mod:
     name: Package all necessary files
