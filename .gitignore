@@ -5,6 +5,13 @@ build/
 dist/
 .vs*/
 
+## Papyrus and friends
+.vscode
+.vscode.bak
+*.code-workspace
+*.ppj
+*.esp
+/Scripts
+
 ## Flash
 swf/artifacts/
-/swf/RECOVER_LootMenu.fla

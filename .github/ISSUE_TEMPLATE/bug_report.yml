@@ -27,24 +27,13 @@ body:
       default: 0
     validations:
       required: true
-  - type: dropdown
+  - type: input
     id: Skyrim-Version
     attributes:
       label: What Skyrim version are you using?
-      multiple: false
-      options:
-        - 1.5.97
-        - 1.6.640
-        - 1.6.1130
-        - 1.6.1170
-        - Other
-  - type: input
-    id: other-version
-    attributes:
-      label: "If 'Other', please specify below:"
       description: Specify the version number here.
     validations:
-      required: false
+      required: true
   - type: textarea
     id: logs
     attributes:
