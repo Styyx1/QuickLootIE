@@ -240,8 +240,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
-          mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE/Plugins"
-          mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins"
+          mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.dll"
+          mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.pdb"
+      
 
       - name: Upload SKSE plugin artifact
         uses: actions/upload-artifact@v4
@@ -277,16 +278,16 @@ jobs:
       - name: Create packing structure
         shell: bash
         run: |
-          mkdir -p "${{ github.workspace }}/to-pack"
+          mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
-          cp -a "SKSE" "${{ github.workspace }}/to-pack/"
+          cp -a "SKSE/*" "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/"
           cp -Ra "Source" "${{ github.workspace }}/to-pack/"
       
       - name: Zip release files
         uses: vimtor/action-zip@v1.2
         with:
-          files: to-pack/
+          files: to-pack/*
           dest: QuickLootIE-${{inputs.version || 'nightly'}}.zip
       
       - name: Upload Output
