@@ -240,8 +240,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE"
-          mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE"
-          mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE"
+          mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE/Plugins"
+          mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins"
 
       - name: Upload SKSE plugin artifact
         uses: actions/upload-artifact@v4
@@ -277,11 +277,9 @@ jobs:
       - name: Create packing structure
         shell: bash
         run: |
-          mkdir -p "${{ github.workspace }}/to-pack/SKSE"
-          mkdir -p "${{ github.workspace }}/to-pack/Scripts"
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
-          cp -a "SKSE" "${{ github.workspace }}/to-pack/SKSE"
-          cp -a "Scripts" "${{ github.workspace }}/to-pack/Scripts"
+          cp -a "SKSE" "${{ github.workspace }}/to-pack/"
+          cp -a "Scripts" "${{ github.workspace }}/to-pack/"
           cp -Ra "Source" "${{ github.workspace }}/to-pack/"
       
       - name: Zip release files
