@@ -50,6 +50,13 @@ jobs:
 
       - uses: actions/checkout@v4
 
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+          sudo apt-add-repository https://cli.github.com/packages
+          sudo apt update
+          sudo apt install gh -y
+
       - name: Copy to Pack Folder
         shell: bash
         run: mkdir -p "${{ github.workspace }}/to-pack"
@@ -63,10 +70,9 @@ jobs:
       
       - name: Fetch spriggit
         if: steps.cache-spriggit.outputs.cache-hit != 'true'
-        shell: bash
-        run: gh release download -O .github/spriggit.zip -p 'SpriggitLinuxCLI.zip' -R Mutagen-Modding/Spriggit ${{ inputs.spriggit_tool_version || 'latest' }}
+        run: gh release download -O .github/spriggit.zip -p 'SpriggitLinuxCLI.zip' -R Mutagen-Modding/Spriggit --latest
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Extract Spriggit Zip
         if: steps.cache-spriggit.outputs.cache-hit != 'true'
@@ -115,7 +121,7 @@ jobs:
         shell: bash
         run: gh release download -O .github/Caprica.7z -p '*.7z' -R Orvid/Caprica v0.3.0
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Caprica EXE file
         if: steps.cache-com.outputs.cache-hit != 'true'
@@ -141,6 +147,7 @@ jobs:
         shell: bash
         run: |
           cd .github
+          mkdir -p PapyrusSkyUI/SRC
           mkdir temp
           cd temp
           git init
@@ -148,7 +155,6 @@ jobs:
           git sparse-checkout set --no-cone 'TESV_Papyrus_Flags.flg'
           git fetch --depth=1 origin master
           git checkout master
-          rm -rf .git
           mv TESV_Papyrus_Flags.flg ../PapyrusSkyUI/SRC/TESV_Papyrus_Flags.flg
           cd ..
           rm -r temp
@@ -222,62 +228,3 @@ jobs:
           mkdir -p "${{ github.workspace }}/to-pack/"
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
           cp -a "SKSE" "${{ github.workspace }}/to-pack/SKSE"
-          cp -a "Scripts" "${{ github.workspace }}/to-pack/Scripts"
-          ls -R "${{ github.workspace }}/to-pack"
-
-      - uses: vimtor/action-zip@v1.2
-        with:
-          files: to-pack/
-          dest: QuickLootIE-${{ inputs.version || 'nightly' }}.zip
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: QuickLootIE-${{ inputs.version || 'nightly' }}
-          path: QuickLootIE-${{ inputs.version || 'nightly' }}.zip
-
-      - uses: geekyeggo/delete-artifact@v4
-        with:
-          name: |
-            plugin
-            compiled-scripts
-  
-  share-release:
-    name: Share release
-    permissions: write-all
-    needs: [package-mod]
-    if: ${{ inputs.publish-release == true && (needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-  
-      - uses: actions/download-artifact@v4
-        with:
-          name: QuickLootIE-${{ inputs.version || 'nightly' }}
-
-      - uses: dev-drprasad/delete-tag-and-release@v1.0
-        with:
-          tag_name: ${{ inputs.version || 'nightly' }}
-          GH_TOKEN: ${{ github.token }}
-          delete_release: true
-      
-      - name: Create Release
-        id: create_release
-        uses: ncipollo/release-action@v1.13.0
-        env:
-          GH_TOKEN: ${{ github.token }}
-        with:
-          allowUpdates: true
-          name: ${{ inputs.version || 'nightly' }}
-          draft: false
-          body: 'Latest release of Unforgiving Parasites'
-          tag: ${{ inputs.version || 'nightly' }}
-          prerelease: true
-          makeLatest: false
-          removeArtifacts: true
-          replacesArtifacts: true
-          artifactErrorsFailBuild: true
-          artifacts: QuickLootIE-${{ inputs.version || 'nightly' }}.zip
-
-      - uses: geekyeggo/delete-artifact@v4
-        with:
-          name: QuickLootIE-${{ inputs.version || 'nightly' }}
