@@ -190,7 +190,7 @@ jobs:
       - name: Setup CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: "~3.22.0"
+          cmakeVersion: "~3.24.0"
           ninjaVersion: "~1.11.1"
 
       - name: Run CMake
