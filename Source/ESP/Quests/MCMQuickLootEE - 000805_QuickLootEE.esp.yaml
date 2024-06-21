@@ -1,0 +1,75 @@
+FormKey: 000805:QuickLootEE.esp
+EditorID: MCMQuickLootEE
+VirtualMachineAdapter:
+  Scripts:
+  - Name: QuickLootEEMCM
+    Properties:
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEIconShowDBMFound
+      Object: 000802:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEIconShowDBMDisplayed
+      Object: 000803:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEIconShowBookRead
+      Object: 000804:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEECloseWhenEmpty
+      Object: 000807:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEOpenWhenContainerUnlocked
+      Object: 000809:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEIconShowDBMNew
+      Object: 000801:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEWindowY
+      Object: 00080C:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEWindowH
+      Object: 00080D:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEWindowW
+      Object: 00080E:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEDispelInvisibility
+      Object: 000808:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEWindowX
+      Object: 00080B:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEIconShowEnchanted
+      Object: 000800:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEECloseInCombat
+      Object: 000806:QuickLootEE.esp
+    - MutagenObjectType: ScriptStringProperty
+      Name: ModName
+      Data: QuickLoot EE
+    - MutagenObjectType: ScriptStringListProperty
+      Name: Pages
+      Data:
+      - Main Settings
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEDisableForAnimals
+      Object: 00080A:QuickLootEE.esp
+    - MutagenObjectType: ScriptObjectProperty
+      Name: QLEEDisableForMonsters
+      Object: 00080F:QuickLootEE.esp
+  FileName: ''
+  Aliases:
+  - Property:
+      Name: ''
+      Object: 000805:QuickLootEE.esp
+      Alias: 0
+    Scripts:
+    - Name: SKI_PlayerLoadGameAlias
+Flags:
+- StartGameEnabled
+- 0x10
+NextAliasID: 1
+Aliases:
+- Name: PlayerAlias
+  Flags: []
+  ForcedReference: 000014:Skyrim.esm
+  VoiceTypes: Null
