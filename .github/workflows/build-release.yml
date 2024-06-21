@@ -63,7 +63,7 @@ jobs:
       
       - name: Fetch spriggit
         if: steps.cache-spriggit.outputs.cache-hit != 'true'
-        run: gh release download -O .github/spriggit.zip -p 'SpriggitLinuxCLI.zip' -R Mutagen-Modding/Spriggit --latest
+        run: gh release download -O .github/spriggit.zip -p 'SpriggitLinuxCLI.zip' -R Mutagen-Modding/Spriggit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
@@ -156,9 +156,7 @@ jobs:
       - name: Run Caprica
         shell: bash
         run: |
-          ls
-          ls .github/PapyrusSkyUI 
-          .github/Caprica/Caprica.exe --game skyrim --import ".github/PapyrusSkyUI/SRC_SKYUI" --output "Scripts" --flags="TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
+          .github/Caprica/Caprica.exe --game skyrim --import ".github/PapyrusSkyUI/SRC_SKYUI" --output "Scripts" --flags="PapyrusSkyUI/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
         
       - uses: actions/upload-artifact@v4
         with:
@@ -194,9 +192,8 @@ jobs:
         id: runcmake
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-        
-      - name: Build Project
-        run: cmake --build build --config RelWithDebInfo
+          buildPreset: 'All'
+          buildPresetAdditionalArgs: "['--config Debug']"
 
   package-mod:
     name: Package all necessary files
