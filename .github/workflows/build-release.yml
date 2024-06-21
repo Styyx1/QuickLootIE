@@ -156,8 +156,7 @@ jobs:
       - name: Run Caprica
         shell: bash
         run: |
-          .github/Caprica/Caprica.exe --game skyrim --import ".github/PapyrusSkyUI/SRC;.github/PapyrusSkyUI/SRC_SKYUI;" 
-          --output "Scripts" --flags=".github/PapyrusSkyUI/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
+          .github/Caprica/Caprica.exe --game skyrim --import ".github/PapyrusSkyUI/SRC;.github/PapyrusSkyUI/SRC_SKYUI;" --output "Scripts" --flags=".github/PapyrusSkyUI/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
         
       - uses: actions/upload-artifact@v4
         with:
@@ -176,6 +175,10 @@ jobs:
           submodules: true
           fetch-depth: 0
      
+      - name: Print Working Directory
+        shell: bash
+        run: pwd
+
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
