@@ -191,13 +191,11 @@ jobs:
           cmakeVersion: "~3.22.0"
           ninjaVersion: "~1.11.1"
 
-      - name: Run CMake+vcpkg
-        uses: lukka/run-cmake@v10
-        id: runcmake
-        with:
-          cmakeListsTxtPath: 'CMakeLists.txt'
-          buildPreset: 'ALL'
-          buildPresetAdditionalArgs: "['--config Debug']"
+      - name: Run CMake
+        shell: bash
+        run: |
+          cmake --preset ALL
+          cmake --build build --config Debug
 
   package-mod:
     name: Package all necessary files
