@@ -196,8 +196,8 @@ jobs:
       - name: Run CMake
         shell: bash
         run: |
-          cmake --preset ALL
-          cmake --build build --config Debug --compile-no-warning-as-error
+          cmake --preset ALL --compile-no-warning-as-error
+          cmake --build build --config Debug 
 
   package-mod:
     name: Package all necessary files
