@@ -283,7 +283,7 @@ jobs:
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
           cp -a "SKSE" "${{ github.workspace }}/to-pack/SKSE"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/Scripts"
-          cp -Ra "Source/Scripts/*" "${{ github.workspace }}/to-pack/Source/Scripts/"
+          cp -Ra "Source/*.psc" "${{ github.workspace }}/to-pack/Source/"
       
       - name: Zip release files
         uses: vimtor/action-zip@v1.2
