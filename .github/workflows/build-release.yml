@@ -54,8 +54,8 @@ jobs:
         run: |
           sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
           sudo apt-add-repository https://cli.github.com/packages
-          sudo apt update
-          sudo apt install gh -y
+          sudo apt-get update
+          sudo apt-get install gh -y
 
       - name: Copy to Pack Folder
         shell: bash
@@ -161,7 +161,9 @@ jobs:
 
       - name: Run Caprica
         shell: bash
-        run: .github/Caprica/Caprica.exe --game skyrim --import ".github/PapyrusSkyUI/SRC_SKYUI" --output "Scripts" --flags="TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
+        run: |
+          ls .github/PapyrusSkyUI 
+          .github/Caprica/Caprica.exe --game skyrim --import ".github/PapyrusSkyUI/SRC_SKYUI" --output "Scripts" --flags="TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
         
       - uses: actions/upload-artifact@v4
         with:
@@ -184,7 +186,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
-          vcpkgJsonGlob: '${{ github.workspace }}/vcpkg.json'
+          vcpkgJsonGlob: 'vcpkg.json'
 
       - name: Setup CMake
         uses: lukka/get-cmake@latest

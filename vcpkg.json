@@ -1,6 +1,6 @@
 {
   "name": "quicklootee-ng",
-  "version-semver": "1.0.0",
+  "version-semver": "1.2.1",
   "description": "A port of QuickLootEE to NG for one DLL for all versions.",
   "homepage": "https://github.com/MissCorruption/QuickLootEE-NG",
   "license": "MIT",
