@@ -280,7 +280,7 @@ jobs:
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
-          cp -a "SKSE/*" "${{ github.workspace }}/to-pack/SKSE/Plugins"
+          cp -Ra "SKSE" "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/"
           cp -Ra "Source" "${{ github.workspace }}/to-pack/"
       
