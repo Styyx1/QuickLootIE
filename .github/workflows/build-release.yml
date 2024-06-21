@@ -100,8 +100,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            .github/PapyrusSRC
-            .github/PapyrusSkyUI
+            .github/Papyrus/SRC
+            .github/Papyrus/SRC_SKYUI
           key: script-sources-clean
 
       - name: Cache Compiler
@@ -123,16 +123,29 @@ jobs:
         shell: bash
         run: 7z x .github/Caprica.7z -o.github/Caprica
 
-      - name: Checkout SkyUI Sources
+      - name: Checkout Papyrus Sources
         if: steps.cache-ss.outputs.cache-hit != 'true'
         shell: bash
         run: |
           cd .github
-          mkdir PapyrusSkyUI
-          cd PapyrusSkyUI
+          mkdir -p Papyrus/SRC
+          cd Papyrus/SRC
           git init
           git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
           git sparse-checkout set --no-cone 'SRC'
+          git fetch --depth=1 origin main
+          git checkout main
+          rm -rf .git
+      
+      - name: Checkout SkyUI Sources
+        if: steps.cache-ss.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          cd .github/Papyrus
+          mkdir SRC_SKYUI
+          cd SRC_SKYUI
+          git init
+          git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
           git sparse-checkout set --no-cone 'SRC_SKYUI'
           git fetch --depth=1 origin main
           git checkout main
@@ -142,8 +155,7 @@ jobs:
         if: steps.cache-ss.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          cd .github
-          mkdir -p PapyrusSkyUI/SRC
+          cd .github/Papyrus/SRC
           mkdir temp
           cd temp
           git init
@@ -151,14 +163,14 @@ jobs:
           git sparse-checkout set --no-cone 'TESV_Papyrus_Flags.flg'
           git fetch --depth=1 origin master
           git checkout master
-          mv TESV_Papyrus_Flags.flg ../PapyrusSkyUI/SRC/TESV_Papyrus_Flags.flg
+          mv TESV_Papyrus_Flags.flg ../Papyrus/SRC/TESV_Papyrus_Flags.flg
           cd ..
           rm -r temp
 
       - name: Run Caprica
         shell: bash
         run: |
-          .github/Caprica/Caprica.exe --game skyrim --import ".github/PapyrusSkyUI/SRC;.github/PapyrusSkyUI/SRC_SKYUI;" --output "Scripts" --flags=".github/PapyrusSkyUI/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
+          .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
         
       - uses: actions/upload-artifact@v4
         with:
