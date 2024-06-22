@@ -34,15 +34,12 @@ namespace QuickLoot::Integrations
 			kGetFoundItemTextColor = 0x12,
 			kUseNeededItemTextColor = 0x13,
 			kUseFoundItemTextColor = 0x14,
-			kShowNeededIcon = 0x15,
-			kShowFoundIcon = 0x16,
+			kShowIcons = 0x15,
 
 			// Item specific requests
 			kIsItemTracked = 0x21,
 			kIsItemCollected = 0x22,
 			kGetItemDisplayName = 0x23,
-
-			kGiveMeNumbers = 0x100,
 		};
 
 	public:
@@ -88,7 +85,7 @@ namespace QuickLoot::Integrations
 		{
 			bool response = false;
 
-			if (const auto error = _client.Query(kGetFoundItemTextColor, nullptr, &response)) {
+			if (const auto error = _client.Query(kShowIcons, "QuickLootEE - NG", &response)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
 			}
 
@@ -119,8 +116,8 @@ namespace QuickLoot::Integrations
 
 		enum DisplayNameMode : uint32_t
 		{
-			kLegacyDisplayName,
-			kNewDisplayName,
+			kLegacyDisplayName = 'LEG',
+			kNewDisplayName = 'NEW',
 		};
 
 		struct GetItemDisplayName_Request
@@ -141,22 +138,6 @@ namespace QuickLoot::Integrations
 				};
 
 			if (const auto error = _client.QueryArray(kGetItemDisplayName, &request, callback)) {
-				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
-			}
-
-			return response;
-		}
-
-		static std::vector<int> GiveMeNumbers()
-		{
-			std::vector<int> response{};
-
-			const PluginRequests::ResponseCallback<int> callback =
-				[&response](size_t count, const int* data) {
-					response.assign(data, data + count);
-				};
-
-			if (const auto error = _client.QueryArray(kGiveMeNumbers, nullptr, callback)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
 			}
 
