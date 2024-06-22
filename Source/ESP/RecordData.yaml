@@ -8,6 +8,8 @@ ModHeader:
   - Light
   Stats:
     Version: 1.7
+    NumRecords: 20
+    NextFormID: 2067
   Author: Miss Corruption
   MasterReferences:
   - Master: Skyrim.esm
