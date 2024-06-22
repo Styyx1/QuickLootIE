@@ -18,6 +18,10 @@ GlobalVariable property QLEEIconShowDBMDisplayed auto
 GlobalVariable property QLEEIconShowDBMFound auto
 GlobalVariable property QLEEIconShowDBMNew auto
 
+; Completionist Settings
+GlobalVariable property QLEEShowCompNeeded auto
+GlobalVariable property QLEEShowCompCollected auto
+
 ; Window Settings
 GlobalVariable property QLEEWindowX auto
 GlobalVariable property QLEEWindowY auto
@@ -57,6 +61,8 @@ event OnPageReset(string page)
     AddToggleOptionST("show_lotd_disp_icon", "Show LOTD displayed item icon", QLEEIconShowDBMDisplayed.GetValue(), 0)
     AddToggleOptionST("show_lotd_found_icon", "Show LOTD found item icon", QLEEIconShowDBMFound.GetValue(), 0)
     AddToggleOptionST("show_lotd_new_icon", "Show LOTD new item icon", QLEEIconShowDBMNew.GetValue(), 0)
+    AddToggleOptionST("show_comp_needed_icon", "Show Completionist needed icon", QLEEShowCompNeeded.GetValue(), 0)
+    AddToggleOptionST("show_comp_collected_icon", "Show Completionist collected icon", QLEEShowCompCollected.GetValue(), 0)
 endEvent
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -244,5 +250,25 @@ state show_lotd_new_icon
     Event OnSelectST()
         QLEEIconShowDBMNew.SetValue(1 - QLEEIconShowDBMNew.GetValue())
         self.SetToggleOptionValueST(QLEEIconShowDBMNew.GetValue(), false, "")
+    EndEvent
+endState
+
+state show_comp_needed_icon
+    event OnHighlightST()
+    endEvent
+
+    Event OnSelectST()
+        QLEEShowCompNeeded.SetValue(1 - QLEEShowCompNeeded.GetValue())
+        self.SetToggleOptionValueST(QLEEShowCompNeeded.GetValue(), false, "")
+    EndEvent
+endState
+
+state show_comp_collected_icon
+    event OnHighlightST()
+    endEvent
+
+    Event OnSelectST()
+        QLEEShowCompCollected.SetValue(1 - QLEEShowCompCollected.GetValue())
+        self.SetToggleOptionValueST(QLEEShowCompCollected.GetValue(), false, "")
     EndEvent
 endState

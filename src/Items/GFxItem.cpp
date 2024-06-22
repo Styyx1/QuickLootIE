@@ -922,6 +922,12 @@ namespace Items
 		if (Settings::ShowBookRead())
 			value.SetMember("isRead", { IsRead() });
 
+		if (Settings::ShowCompNeeded())
+			value.SetMember("compNew", { ItemIsNeeded() });
+		
+		if (Settings::ShowCompCollected())
+			value.SetMember("compFnd", { ItemIsCollected() });
+
 		return value;
 	}
 

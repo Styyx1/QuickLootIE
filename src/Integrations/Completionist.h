@@ -32,14 +32,16 @@ namespace QuickLoot::Integrations
 			// General configuration requests
 			kGetNeededItemTextColor = 0x11,
 			kGetFoundItemTextColor = 0x12,
-			kUseNeededItemTextColor = 0x13,
-			kUseFoundItemTextColor = 0x14,
-			kShowIcons = 0x15,
+			kGetDynamicItemTextColor = 0x13,
+			kUseNeededItemTextColor = 0x14,
+			kUseFoundItemTextColor = 0x15,
+			kShowIcons = 0x16,
 
 			// Item specific requests
-			kIsItemTracked = 0x21,
-			kIsItemCollected = 0x22,
-			kGetItemDisplayName = 0x23,
+			kIsItemNeeded = 0x21,
+			kIsItemTracked = 0x22,
+			kIsItemCollected = 0x23,
+			kGetItemDisplayName = 0x24,
 		};
 
 	public:
@@ -81,11 +83,33 @@ namespace QuickLoot::Integrations
 			return response;
 		}
 
+		static uint32_t GetItemDynamicTextColor()
+		{
+			std::uint32_t response = 0;
+
+			if (const auto error = _client.Query(kGetDynamicItemTextColor, nullptr, &response)) {
+				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
+			}
+
+			return response;
+		}
+
 		static bool ShowIcons()
 		{
 			bool response = false;
 
 			if (const auto error = _client.Query(kShowIcons, "QuickLootEE - NG", &response)) {
+				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
+			}
+
+			return response;
+		}
+
+		static bool IsItemNeeded(RE::FormID formID)
+		{
+			bool response = false;
+
+			if (const auto error = _client.Query(kIsItemNeeded, &formID, &response)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
 			}
 
