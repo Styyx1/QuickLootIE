@@ -45,7 +45,7 @@ VirtualMachineAdapter:
       Object: 000806:QuickLootIE.esp
     - MutagenObjectType: ScriptStringProperty
       Name: ModName
-      Data: QuickLoot EE
+      Data: QuickLoot IE
     - MutagenObjectType: ScriptStringListProperty
       Name: Pages
       Data:
