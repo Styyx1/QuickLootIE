@@ -1,48 +1,48 @@
-FormKey: 000805:QuickLootEE.esp
-EditorID: MCMQuickLootEE
+FormKey: 000805:QuickLootIE.esp
+EditorID: MCMQuickLootIE
 VirtualMachineAdapter:
   Scripts:
-  - Name: QuickLootEEMCM
+  - Name: QuickLootIEMCM
     Properties:
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEIconShowDBMFound
-      Object: 000802:QuickLootEE.esp
+      Name: QLIEIconShowDBMFound
+      Object: 000802:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEIconShowDBMDisplayed
-      Object: 000803:QuickLootEE.esp
+      Name: QLIEIconShowDBMDisplayed
+      Object: 000803:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEIconShowBookRead
-      Object: 000804:QuickLootEE.esp
+      Name: QLIEIconShowBookRead
+      Object: 000804:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEECloseWhenEmpty
-      Object: 000807:QuickLootEE.esp
+      Name: QLIECloseWhenEmpty
+      Object: 000807:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEOpenWhenContainerUnlocked
-      Object: 000809:QuickLootEE.esp
+      Name: QLIEOpenWhenContainerUnlocked
+      Object: 000809:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEIconShowDBMNew
-      Object: 000801:QuickLootEE.esp
+      Name: QLIEIconShowDBMNew
+      Object: 000801:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEWindowY
-      Object: 00080C:QuickLootEE.esp
+      Name: QLIEWindowY
+      Object: 00080C:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEWindowH
-      Object: 00080D:QuickLootEE.esp
+      Name: QLIEWindowH
+      Object: 00080D:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEWindowW
-      Object: 00080E:QuickLootEE.esp
+      Name: QLIEWindowW
+      Object: 00080E:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEDispelInvisibility
-      Object: 000808:QuickLootEE.esp
+      Name: QLIEDispelInvisibility
+      Object: 000808:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEWindowX
-      Object: 00080B:QuickLootEE.esp
+      Name: QLIEWindowX
+      Object: 00080B:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEIconShowEnchanted
-      Object: 000800:QuickLootEE.esp
+      Name: QLIEIconShowEnchanted
+      Object: 000800:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEECloseInCombat
-      Object: 000806:QuickLootEE.esp
+      Name: QLIECloseInCombat
+      Object: 000806:QuickLootIE.esp
     - MutagenObjectType: ScriptStringProperty
       Name: ModName
       Data: QuickLoot EE
@@ -51,22 +51,22 @@ VirtualMachineAdapter:
       Data:
       - Main Settings
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEDisableForAnimals
-      Object: 00080A:QuickLootEE.esp
+      Name: QLIEDisableForAnimals
+      Object: 00080A:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEDisableForMonsters
-      Object: 00080F:QuickLootEE.esp
+      Name: QLIEDisableForMonsters
+      Object: 00080F:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEShowCompCollected
-      Object: 000811:QuickLootEE.esp
+      Name: QLIEShowCompCollected
+      Object: 000811:QuickLootIE.esp
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLEEShowCompNeeded
-      Object: 000810:QuickLootEE.esp
+      Name: QLIEShowCompNeeded
+      Object: 000810:QuickLootIE.esp
   FileName: ''
   Aliases:
   - Property:
       Name: ''
-      Object: 000805:QuickLootEE.esp
+      Object: 000805:QuickLootIE.esp
       Alias: 0
     Scripts:
     - Name: SKI_PlayerLoadGameAlias

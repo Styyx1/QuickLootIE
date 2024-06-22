@@ -1,14 +1,14 @@
 SpriggitSource:
   PackageName: Spriggit.Yaml.Skyrim
   Version: 0.24.0
-ModKey: QuickLootEE.esp
+ModKey: QuickLootIE.esp
 GameRelease: SkyrimSE
 ModHeader:
   Flags:
   - Light
   Stats:
     Version: 1.7
-  Author: Eloquence
+  Author: Miss Corruption
   MasterReferences:
   - Master: Skyrim.esm
     FileSize: 0

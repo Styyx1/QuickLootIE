@@ -3,23 +3,23 @@
 void Settings::LoadSettings()
 {
 	auto& settings = GetSingleton();
-	LoadGlobal(settings.m_close_in_combat, "QLEECloseInCombat");
-	LoadGlobal(settings.m_close_when_empty, "QLEECloseWhenEmpty");
-	LoadGlobal(settings.m_dispel_invis, "QLEEDispelInvisibility");
-	LoadGlobal(settings.m_open_when_container_unlocked, "QLEEOpenWhenContainerUnlocked");
-	LoadGlobal(settings.m_show_book_read, "QLEEIconShowBookRead");
-	LoadGlobal(settings.m_show_enchanted, "QLEEIconShowEnchanted");
-	LoadGlobal(settings.m_show_dbm_displayed, "QLEEIconShowDBMDisplayed");
-	LoadGlobal(settings.m_show_dbm_found, "QLEEIconShowDBMFound");
-	LoadGlobal(settings.m_show_dbm_new, "QLEEIconShowDBMNew");
-	LoadGlobal(settings.m_disable_for_animals, "QLEEDisableForAnimals");
-	LoadGlobal(settings.m_disable_for_monsters, "QLEEDisableForMonsters");
-	LoadGlobal(settings.m_show_comp_needed, "QLEEShowCompNeeded");
-	LoadGlobal(settings.m_show_comp_collected, "QLEEShowCompCollected");
-	LoadGlobal(settings.m_window_X, "QLEEWindowX");
-	LoadGlobal(settings.m_window_Y, "QLEEWindowY");
-	LoadGlobal(settings.m_window_W, "QLEEWindowW");
-	LoadGlobal(settings.m_window_H, "QLEEWindowH");
+	LoadGlobal(settings.m_close_in_combat, "QLIECloseInCombat");
+	LoadGlobal(settings.m_close_when_empty, "QLIECloseWhenEmpty");
+	LoadGlobal(settings.m_dispel_invis, "QLIEDispelInvisibility");
+	LoadGlobal(settings.m_open_when_container_unlocked, "QLIEOpenWhenContainerUnlocked");
+	LoadGlobal(settings.m_show_book_read, "QLIEIconShowBookRead");
+	LoadGlobal(settings.m_show_enchanted, "QLIEIconShowEnchanted");
+	LoadGlobal(settings.m_show_dbm_displayed, "QLIEIconShowDBMDisplayed");
+	LoadGlobal(settings.m_show_dbm_found, "QLIEIconShowDBMFound");
+	LoadGlobal(settings.m_show_dbm_new, "QLIEIconShowDBMNew");
+	LoadGlobal(settings.m_disable_for_animals, "QLIEDisableForAnimals");
+	LoadGlobal(settings.m_disable_for_monsters, "QLIEDisableForMonsters");
+	LoadGlobal(settings.m_show_comp_needed, "QLIEShowCompNeeded");
+	LoadGlobal(settings.m_show_comp_collected, "QLIEShowCompCollected");
+	LoadGlobal(settings.m_window_X, "QLIEWindowX");
+	LoadGlobal(settings.m_window_Y, "QLIEWindowY");
+	LoadGlobal(settings.m_window_W, "QLIEWindowW");
+	LoadGlobal(settings.m_window_H, "QLIEWindowH");
 }
 
 bool Settings::CloseInCombat()

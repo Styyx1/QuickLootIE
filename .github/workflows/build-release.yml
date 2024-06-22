@@ -81,12 +81,12 @@ jobs:
 
       - name: Run spriggit
         shell: bash
-        run: .github/spriggit/Spriggit.CLI deserialize --InputPath "Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootEE.esp"
+        run: .github/spriggit/Spriggit.CLI deserialize --InputPath "Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootIE.esp"
 
       - uses: actions/upload-artifact@v4
         with:
           name: plugin
-          path: ${{ github.workspace }}/to-pack/QuickLootEE.esp
+          path: ${{ github.workspace }}/to-pack/QuickLootIE.esp
 
   compile-scripts:
     name: Compile Papyrus scripts
@@ -244,8 +244,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
-          mv build/Debug/QuickLootEE-NG.dll "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.dll"
-          mv build/Debug/QuickLootEE-NG.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.pdb"
+          mv build/Debug/QuickLootIE.dll "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.dll"
+          mv build/Debug/QuickLootIE.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.pdb"
       
 
       - name: Upload SKSE plugin artifact
@@ -253,8 +253,8 @@ jobs:
         with:
           name: skse-plugin
           path: |
-            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.dll
-            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootEE-NG.pdb
+            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.dll
+            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.pdb
 
   package-mod:
     name: Package all necessary files
@@ -288,7 +288,7 @@ jobs:
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
           mkdir -p "${{ github.workspace }}/to-pack/Interface"
-          cp "QuickLootEE.esp" "${{ github.workspace }}/to-pack/QuickLootEE.esp"
+          cp "QuickLootIE.esp" "${{ github.workspace }}/to-pack/QuickLootIE.esp"
           cp -a "swf/bin/." "${{ github.workspace }}/to-pack/Interface"
           cp -a "SKSE/." "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/"

@@ -7,7 +7,7 @@ This fork of QuickLootEE has some differences, such as:
 - Cleans up the building process
 - Supports 1.5.97, 1.6.640 and 1.6.1770 in one DLL (other versions untested but should work)
 	- VR is not supported, but a VR version can be found [here](https://www.nexusmods.com/skyrimspecialedition/mods/102094)
-	- The DLL has been renamed to reflect that change, it is now named `QuickLootEE-NG.dll`
+	- The DLL has been renamed to reflect that change, it is now named `QuickLootIE.dll`
 - Implements the changes from Parapet's [PR](https://github.com/Eloquence4/QuickLootEE/pull/5) that integrates Inventory Interface Information Injector compatibility.
 - Implements the changes from CPPCooper's [PR](https://github.com/Eloquence4/QuickLootEE/pull/3) which adds support for Hunterborn
 
@@ -38,7 +38,7 @@ cmake --preset ALL
 cmake --build build --config Release
 
 # Building the ESP File
-Path/To/Spriggit.CLI.exe deserialize --InputPath Source\\ESP --OutputPath QuickLootEE.esp
+Path/To/Spriggit.CLI.exe deserialize --InputPath Source\\ESP --OutputPath QuickLootIE.esp
 ```
 
 
