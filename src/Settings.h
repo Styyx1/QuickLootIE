@@ -20,6 +20,8 @@ public:
 	static bool ShowDBMFound();
 	static bool ShowDBMNew();
 
+	static bool ShowCompNeeded();
+	static bool ShowCompCollected();
 	static float WindowX();
 	static float WindowY();
 	static float WindowW();
@@ -51,6 +53,9 @@ private:
 	const RE::TESGlobal* m_show_dbm_displayed = nullptr;
 	const RE::TESGlobal* m_show_dbm_found = nullptr;
 	const RE::TESGlobal* m_show_dbm_new = nullptr;
+
+	const RE::TESGlobal* m_show_comp_needed = nullptr;
+	const RE::TESGlobal* m_show_comp_collected = nullptr;
 
 	const RE::TESGlobal* m_window_X = nullptr;
 	const RE::TESGlobal* m_window_Y = nullptr;

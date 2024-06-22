@@ -14,6 +14,8 @@ void Settings::LoadSettings()
 	LoadGlobal(settings.m_show_dbm_new, "QLEEIconShowDBMNew");
 	LoadGlobal(settings.m_disable_for_animals, "QLEEDisableForAnimals");
 	LoadGlobal(settings.m_disable_for_monsters, "QLEEDisableForMonsters");
+	LoadGlobal(settings.m_show_comp_needed, "QLEEShowCompNeeded");
+	LoadGlobal(settings.m_show_comp_collected, "QLEEShowCompCollected");
 	LoadGlobal(settings.m_window_X, "QLEEWindowX");
 	LoadGlobal(settings.m_window_Y, "QLEEWindowY");
 	LoadGlobal(settings.m_window_W, "QLEEWindowW");
@@ -84,6 +86,18 @@ bool Settings::ShowDBMNew()
 {
 	auto& settings = GetSingleton();
 	return settings.m_show_dbm_new && settings.m_show_dbm_new->value > 0;
+}
+
+bool Settings::ShowCompNeeded()
+{
+	auto& settings = GetSingleton();
+	return settings.m_show_comp_needed && settings.m_show_comp_needed->value > 0;
+}
+
+bool Settings::ShowCompCollected()
+{
+	auto& settings = GetSingleton();
+	return settings.m_show_comp_collected && settings.m_show_comp_collected->value > 0;
 }
 
 float Settings::WindowX()

@@ -168,6 +168,10 @@ namespace Items
 		[[nodiscard]] bool                     IsStolen() const;
 		[[nodiscard]] bool                     ItemIsNew() const;
 		[[nodiscard]] bool                     ItemIsFound() const;
+
+		[[nodiscard]] bool                     ItemIsNeeded() const;
+
+		[[nodiscard]] bool                     ItemIsCollected() const;
 		[[nodiscard]] bool                     ItemIsDisplayed() const;
 		[[nodiscard]] RE::GFxValue             GFxValue(RE::GFxMovieView& a_view) const;
 

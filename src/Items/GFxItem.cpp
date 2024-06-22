@@ -777,6 +777,30 @@ namespace Items
 		return result;
 	}
 
+	bool GFxItem::ItemIsNeeded() const
+	{
+		if (_cache[kIsItemTracked]) {
+			return _cache.IsItemTracked();
+		}
+
+		bool result = compAPI::IsItemTracked(GetFormID()) && !compAPI::IsItemCollected(GetFormID());
+
+		_cache.IsItemTracked(result);
+		return result;
+	}
+
+	bool GFxItem::ItemIsCollected() const
+	{
+		if (_cache[kIsItemCollected]) {
+			return _cache.IsItemCollected();
+		}
+
+		bool result = compAPI::IsItemCollected(GetFormID());
+
+		_cache.IsItemCollected(result);
+		return result;
+	}
+
 	RE::GFxValue GFxItem::GFxValue(RE::GFxMovieView& a_view) const
 	{
 		RE::GFxValue value;

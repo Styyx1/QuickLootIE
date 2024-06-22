@@ -16,6 +16,8 @@ enum : std::size_t
 	kIsDBMNew,
 	kIsDBMFound,
 	kIsDBMDisplayed,
+	kIsItemTracked,
+	kIsItemCollected,
 	kTotalFlags,
 
 	kDisplayName = kTotalFlags,
@@ -82,6 +84,12 @@ public:
 
 	[[nodiscard]] double IsDBMDisplayed() const noexcept { return _flags.test(kIsDBMDisplayed); }
 	void IsDBMDisplayed(bool a_value) { CacheFlag(kIsDBMDisplayed, a_value); }
+
+	[[nodiscard]] double IsItemTracked() const noexcept { return _flags.test(kIsItemTracked); }
+	void IsItemTracked(bool a_value) { CacheFlag(kIsItemTracked, a_value); }
+
+	[[nodiscard]] double IsItemCollected() const noexcept { return _flags.test(kIsItemCollected); }
+	void IsItemCollected(bool a_value) { CacheFlag(kIsItemCollected, a_value); }
 
 	[[nodiscard]] constexpr const std::string& DisplayName() const noexcept { return _displayName; }
 	void DisplayName(std::string a_value)

@@ -14,6 +14,10 @@
 	public var dbmNew: MovieClip;
 	public var dbmFound: MovieClip;
 	public var dbmDisp: MovieClip;
+	
+	public var compNew: MovieClip;
+	public var compFnd: MovieClip;
+	
 	public var itemIcon: MovieClip;
 	public var stolenIcon: MovieClip;
 	public var enchantIcon: MovieClip;
@@ -34,7 +38,10 @@
 		dbmNew._visible = false;
 		dbmFound._visible = false;
 		dbmDisp._visible = false;
-
+		
+		compNew._visible = false;
+		compFnd._visible = false;
+		
 		_iconSource = "skyui/icons_item_psychosteve.swf";
 
 		var iconLoader = new MovieClipLoader();
@@ -48,7 +55,7 @@
 		readIcon._visible = false;
 		itemWeight._visible = false;
 		itemValue._visible = false;
-		this.itemValuePerWeight._visible = false;
+		itemValuePerWeight._visible = false;
 	}
 
 
@@ -184,6 +191,16 @@
 			iconPosX += dbmFound._width + iconSpacing;
 		}
 
+		if (data.compNew == true) {
+			compNew._visible = true;
+			compNew._x = iconPosX;
+			iconPosX += compNew._width + iconSpacing;
+		} else if (data.compFnd == true) {
+			compFnd._visible = true;
+			compFnd._x = iconPosX;
+			iconPosX += compFnd._width + iconSpacing;
+		}
+		
 		itemIcon._visible = true;
 
 		_iconLabel = data.iconLabel != undefined ? data.iconLabel : "default_misc";
@@ -196,6 +213,8 @@
 		dbmNew._visible = false;
 		dbmFound._visible = false;
 		dbmDisp._visible = false;
+		compNew._visible = false;
+		compFnd._visible = false;
 		itemIcon._visible = false;
 		stolenIcon._visible = false;
 		enchantIcon._visible = false;
