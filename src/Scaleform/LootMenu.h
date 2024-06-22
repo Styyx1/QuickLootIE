@@ -19,9 +19,9 @@ namespace Scaleform
 	private:
 		using super = RE::IMenu;
 
-		static inline RE::ObjectRefHandle _lastContainer;
-		static inline ptrdiff_t _lastSelectedIndex;
-		static inline bool _restoreLastSelectedIndex;
+		static inline RE::ObjectRefHandle _lastContainer{};
+		static inline ptrdiff_t _lastSelectedIndex = 0;
+		static inline bool _restoreLastSelectedIndex = false;
 
 	public:
 		static constexpr std::string_view MenuName() noexcept { return MENU_NAME; }
@@ -69,7 +69,12 @@ namespace Scaleform
 			_openCloseHandler.SetSource(a_ref);
 			_itemList.SelectedIndex(0);
 
+			logger::trace("Looking at container {:#016x}. Last container was {:#016x}. Last index was {}.",
+				reinterpret_cast<uintptr_t>(a_ref.get().get()), reinterpret_cast<uintptr_t>(_lastContainer.get().get()), _lastSelectedIndex);
 			_restoreLastSelectedIndex = a_ref == _lastContainer;
+			// quick hack to fix behavior if SetContainer is called twice in a row before the ui refresh goes through
+			if (!_restoreLastSelectedIndex)
+				_lastSelectedIndex = 0;
 			_lastContainer = a_ref;
 
 			QueueUIRefresh();
@@ -116,7 +121,7 @@ namespace Scaleform
 				_itemList.InvalidateData();
 
 				if (_restoreLastSelectedIndex) {
-					//logger::info("Looking at the same container as before. Restoring last selection index ({}).", std::to_string(_lastSelectedIndex));
+					logger::trace("Looking at the same container as before. Restoring last selection index ({}).", _lastSelectedIndex);
 					_restoreLastSelectedIndex = false;
 					RestoreIndex(_lastSelectedIndex);
 				} else {
@@ -382,6 +387,8 @@ namespace Scaleform
 
 		void RestoreIndex(std::ptrdiff_t a_oldIdx)
 		{
+			logger::trace("Trying to restore selected index to {} ({} items)", static_cast<uint32_t>(a_oldIdx), static_cast<uint32_t>(std::ssize(_itemListImpl)));
+
 			if (const auto ssize = std::ssize(_itemListImpl); 0 <= a_oldIdx && a_oldIdx < ssize) {
 				_itemList.SelectedIndex(static_cast<double>(a_oldIdx));
 			} else if (!_itemListImpl.empty()) {
@@ -393,6 +400,8 @@ namespace Scaleform
 			} else {
 				_itemList.SelectedIndex(-1.0);
 			}
+
+			logger::trace("New selected index: {}", static_cast<uint32_t>(_itemList.SelectedIndex()));
 		}
 
 		void Sort()
@@ -404,7 +413,7 @@ namespace Scaleform
 
 					if (lhs_addr == 0 || lhs_addr > 0xFFFFFFFFFFFF ||
 						rhs_addr == 0 || rhs_addr > 0xFFFFFFFFFFFF) {
-						logger::info("Error: Invalid pointer address detected."sv);
+						logger::warn("Error: Invalid pointer address detected."sv);
 						return false;
 					}
 
