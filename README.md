@@ -19,6 +19,8 @@ This fork of QuickLootEE has some differences, such as:
 	* Add the environment variable `VCPKG_ROOT` with the value as the path to the folder containing vcpkg
 * [Visual Studio Community 2022](https://visualstudio.microsoft.com/)
 	* Desktop development with C++
+* [Spriggit](https://github.com/Mutagen-Modding/Spriggit)
+	* Below are instructions for the CLI version
 
 ## Register Visual Studio as a Generator
 * Open `x64 Native Tools Command Prompt`
@@ -34,6 +36,9 @@ cd QuickLootEE-NG
 # Building the Cmake project
 cmake --preset ALL
 cmake --build build --config Release
+
+# Building the ESP File
+Path/To/Spriggit.CLI.exe deserialize --InputPath Source\\ESP --OutputPath QuickLootEE.esp
 ```
 
 
@@ -50,5 +55,6 @@ cmake --build build --config Release
 * [Parapets](https://github.com/Exit-9B) for the PR for Inventory Interface Information Injector integration
 * [AtomCrafty](https://github.com/AtomCrafty) for the sorting fix and persistent selection index
 * [Ponzipyramid](https://github.com/ponzipyramid) for the [CommonLibSSE NG Template](https://github.com/ponzipyramid/CommonLibSSE-NG-Template) this fork is based on
+* [Noggog](https://github.com/Noggog) for Spriggit
 * [Komegaki](https://github.com/Komegaki) for the new icon
 
