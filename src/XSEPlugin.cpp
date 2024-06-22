@@ -99,10 +99,8 @@ namespace
 			Settings::LoadSettings();
 			LOTD::LoadLists();
 			break;
-		case SKSE::MessagingInterface::kPostPostLoad:
-			{
-				Completionist_Integration::RegisterListener();
-			}
+		case SKSE::MessagingInterface::kPostLoad:
+			compAPI::Init();
 			break;
 		}
 	}

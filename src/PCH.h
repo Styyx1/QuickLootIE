@@ -138,4 +138,7 @@ using json = nlohmann::json;
 
 #include "SimpleMath.h"
 
+#include "Integrations/Completionist.h"
+using compAPI = QuickLoot::Integrations::Completionist;
+
 using uint = uint32_t;

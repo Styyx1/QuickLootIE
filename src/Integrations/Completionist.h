@@ -18,7 +18,7 @@ namespace QuickLoot::Integrations
 		// Minor version changes must be backwards compatible, so any breaking changes
 		// to the api must increase the major version. New handlers may be added by
 		// new minor versions.
-		static constexpr const char* SERVER_PLUGIN_NAME = "CommonLibSSE_PluginStub";
+		static constexpr const char* SERVER_PLUGIN_NAME = "Completionist";
 		static constexpr uint16_t API_MAJOR_VERSION = 1;
 		static constexpr uint16_t API_MINOR_VERSION = 1;
 

@@ -167,26 +167,15 @@ namespace Items
 
 	const std::string& GFxItem::GetDisplayName() const
 	{
+		if (compAPI::IsReady()) {
+			_cache.DisplayName(std::move(compAPI::GetItemDisplayName(GetFormID(), compAPI::DisplayNameMode::kNewDisplayName)));
+		}
+
 		if (_cache[kDisplayName]) {
 			return _cache.DisplayName();
 		}
 
 		std::string result;
-
-		if (comp_installed) {
-			comp_response = std::nullopt;
-
-			if (auto* messageInterface = SKSE::GetMessagingInterface()) {
-				CompletionistRequestEE request{ GetFormID() };
-				messageInterface->Dispatch(1, &request, sizeof(request), "Completionist");
-				
-				if (comp_response && comp_response->m_formId == GetFormID() && comp_response->m_displayname != "") {
-
-					// DO NOT RETURN A DIRECT REFERENCE TO m_displayname
-					result = comp_response->m_displayname;
-				}
-			}
-		}
 
 		if (result.empty()) {
 			switch (_src.index()) {
@@ -1365,44 +1354,5 @@ namespace Items
 			return strIcons[form_num];
 
 		return strIcons[0];
-	}
-}
-
-namespace Completionist_Integration
-{
-	void RegisterListener()
-	{
-		if (WinAPI::GetModuleHandleA("Completionist")) {
-			logger::info("Completionist is installed, attempting to register listener"sv);
-			auto* messageInterface = SKSE::GetMessagingInterface();
-			comp_installed = messageInterface->RegisterListener("Completionist", CompletionistResponse);
-		}
-
-		if (comp_installed) {
-			logger::info("Completionist listener registered successfully"sv);
-			return;
-		}
-
-		logger::info("Unable to register Completionist listener"sv);
-	}
-
-	void CompletionistResponse(SKSE::MessagingInterface::Message* a_msg)
-	{
-		if (!a_msg) {
-			logger::info("message is Null");
-			return;
-		}
-
-		if (a_msg->type != 2) {
-			logger::info("message type is not 2");
-			return;
-		}
-
-		if (!a_msg->data) {
-			logger::info("message has no data");
-			return;
-		}
-
-		comp_response = *static_cast<CompletionistResponseEE*>(a_msg->data);
 	}
 }
