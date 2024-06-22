@@ -922,11 +922,16 @@ namespace Items
 		if (Settings::ShowBookRead())
 			value.SetMember("isRead", { IsRead() });
 
-		if (Settings::ShowCompNeeded())
-			value.SetMember("compNew", { ItemIsNeeded() });
-		
-		if (Settings::ShowCompCollected())
-			value.SetMember("compFnd", { ItemIsCollected() });
+		if (compAPI::IsIntegrationEnabled()) {
+			if (Settings::ShowCompNeeded())
+				value.SetMember("compNew", { ItemIsNeeded() });
+
+			if (Settings::ShowCompCollected())
+				value.SetMember("compFnd", { ItemIsCollected() });
+
+			if (const auto colorInt = compAPI::GetItemDynamicTextColor(GetFormID()); colorInt != -1)
+				value.SetMember("textColor", colorInt);
+		}
 
 		return value;
 	}

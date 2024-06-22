@@ -35,7 +35,7 @@ namespace QuickLoot::Integrations
 			kGetDynamicItemTextColor = 0x13,
 			kUseNeededItemTextColor = 0x14,
 			kUseFoundItemTextColor = 0x15,
-			kShowIcons = 0x16,
+			kIsIntegrationEnabled = 0x16,
 
 			// Item specific requests
 			kIsItemNeeded = 0x21,
@@ -85,7 +85,7 @@ namespace QuickLoot::Integrations
 
 		static uint32_t GetItemDynamicTextColor(RE::FormID formID)
 		{
-			std::uint32_t response = 0;
+			std::uint32_t response = -1;
 
 			if (const auto error = _client.Query(kGetDynamicItemTextColor, &formID, &response)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
@@ -94,11 +94,11 @@ namespace QuickLoot::Integrations
 			return response;
 		}
 
-		static bool ShowIcons()
+		static bool IsIntegrationEnabled()
 		{
 			bool response = false;
 
-			if (const auto error = _client.Query(kShowIcons, "QuickLootEE - NG", &response)) {
+			if (const auto error = _client.Query(kIsIntegrationEnabled, nullptr, &response)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
 			}
 

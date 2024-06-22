@@ -15,19 +15,19 @@ namespace PluginRequests
 			const char* name;
 			size_t requestDataSize;
 			size_t responseDataSize;
-			std::function<bool(QueryMessage* message)> handler;
-			std::function<bool(QueryMessage* message)> arrayHandler;
+			std::function<bool(const char* sender, QueryMessage* message)> handler;
+			std::function<bool(const char* sender, QueryMessage* message)> arrayHandler;
 		};
 
 		std::unordered_map<uint32_t, HandlerInfo> _handlers{};
 
-		void HandleVersionMessage(VersionMessage* message) const
+		void HandleVersionMessage([[maybe_unused]] const char* sender, VersionMessage* message) const
 		{
 			message->apiMajorVersion = _apiMajorVersion;
 			message->apiMinorVersion = _apiMinorVersion;
 		}
 
-		void HandleQueryMessage(QueryMessage* message, bool isArrayQuery) const
+		void HandleQueryMessage(const char* sender, QueryMessage* message, bool isArrayQuery) const
 		{
 			if (message->apiMajorVersion != _apiMajorVersion ||
 				message->apiMinorVersion > _apiMinorVersion) {
@@ -77,7 +77,7 @@ namespace PluginRequests
 					return;
 				}
 
-				success = info.arrayHandler(message);
+				success = info.arrayHandler(sender, message);
 
 			} else {
 				if (!info.handler) {
@@ -92,11 +92,11 @@ namespace PluginRequests
 					return;
 				}
 
-				success = info.handler(message);
+				success = info.handler(sender, message);
 			}
 
 			if (!success) {
-				SKSE::log::info("Processing error");
+				SKSE::log::error("Processing error");
 				message->responseType = kProcessingError;
 				return;
 			}
@@ -134,9 +134,9 @@ namespace PluginRequests
 				return;
 			}
 
-			const auto handlerWrapper = [handler](QueryMessage* message) {
+			const auto handlerWrapper = [handler](const char* sender, QueryMessage* message) {
 				SKSE::log::trace("Invoking wrapped handler");
-				return handler(static_cast<const TRequest*>(message->requestData), static_cast<TResponse*>(message->responseData));
+				return handler(sender, static_cast<const TRequest*>(message->requestData), static_cast<TResponse*>(message->responseData));
 			};
 
 			HandlerInfo info{
@@ -170,14 +170,14 @@ namespace PluginRequests
 				return;
 			}
 
-			const auto handlerWrapper = [handler](QueryMessage* message) {
+			const auto handlerWrapper = [handler](const char* sender, QueryMessage* message) {
 				const auto callbackWrapper = [message](size_t count, const TResponse* data) {
 					SKSE::log::trace("Server-side callback translation");
 					message->responseCallback(message->responseCallbackUserPtr, count, data);
 				};
 
 				SKSE::log::trace("Invoking wrapped handler");
-				return handler(static_cast<const TRequest*>(message->requestData), callbackWrapper);
+				return handler(sender, static_cast<const TRequest*>(message->requestData), callbackWrapper);
 			};
 
 			HandlerInfo info{
@@ -204,24 +204,24 @@ namespace PluginRequests
 			}
 
 			if (message->type == kVersion && message->dataLen == sizeof(VersionMessage)) {
-				SKSE::log::info("Server handling XVER message from {}", message->sender);
-				HandleVersionMessage(static_cast<VersionMessage*>(message->data));
+				SKSE::log::trace("Server handling XVER message from {}", message->sender);
+				HandleVersionMessage(message->sender, static_cast<VersionMessage*>(message->data));
 				return;
 			}
 
 			if (message->type == kQuery && message->dataLen == sizeof(QueryMessage)) {
-				SKSE::log::info("Server handling XQRY message from {}", message->sender);
-				HandleQueryMessage(static_cast<QueryMessage*>(message->data), false);
+				SKSE::log::trace("Server handling XQRY message from {}", message->sender);
+				HandleQueryMessage(message->sender, static_cast<QueryMessage*>(message->data), false);
 				return;
 			}
 
 			if (message->type == kQueryArray && message->dataLen == sizeof(QueryMessage)) {
-				SKSE::log::info("Server handling XARR message from {}", message->sender);
-				HandleQueryMessage(static_cast<QueryMessage*>(message->data), true);
+				SKSE::log::trace("Server handling XARR message from {}", message->sender);
+				HandleQueryMessage(message->sender, static_cast<QueryMessage*>(message->data), true);
 				return;
 			}
 
-			SKSE::log::info("Server ignored message {} from {}", message->type, message->sender);
+			SKSE::log::trace("Server ignored message {} from {}", message->type, message->sender);
 		}
 	};
 }

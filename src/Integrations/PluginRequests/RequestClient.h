@@ -14,7 +14,6 @@ namespace PluginRequests
 		uint16_t _apiMinorVersion;
 
 		const SKSE::MessagingInterface* _messenger = nullptr;
-		bool _isInitialized = false;
 		bool _isReady = false;
 
 		bool TryConnect()
@@ -107,7 +106,7 @@ namespace PluginRequests
 				.responseCallbackUserPtr = &callbackInfo,
 			};
 
-			SKSE::log::info("Dispatching request type {}, request data [{}:{}], response data [{}:{}]",
+			SKSE::log::trace("Dispatching request type {}, request data [{}:{}], response data [{}:{}]",
 				requestType,
 				sizeof(TRequest), typeid(TRequest).name(),
 				sizeof(TResponse), typeid(TResponse).name());
@@ -156,11 +155,6 @@ namespace PluginRequests
 		// This must be called when the server plugin is ready (for example on kPostLoad or kDataLoaded)
 		void Init(const char* serverPluginName, uint16_t apiMajorVersion, uint16_t apiMinorVersion)
 		{
-			if (_isInitialized) {
-				return;
-			}
-			_isInitialized = true;
-
 			_serverPluginName = serverPluginName;
 			_apiMajorVersion = apiMajorVersion;
 			_apiMinorVersion = apiMinorVersion;

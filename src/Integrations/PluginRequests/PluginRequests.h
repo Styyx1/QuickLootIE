@@ -10,10 +10,10 @@ namespace PluginRequests
 	using WrappedResponseCallback = void (*)(void* userPtr, size_t count, const void* data);
 
 	template <typename TRequest, typename TResponse>
-	using QueryHandler = bool (*)(const TRequest* request, TResponse* response);
+	using QueryHandler = bool (*)(const char* sender, const TRequest* request, TResponse* response);
 
 	template <typename TRequest, typename TResponse>
-	using ArrayQueryHandler = bool (*)(const TRequest* request, const ResponseCallback<TResponse>& responseCallback);
+	using ArrayQueryHandler = bool (*)(const char* sender, const TRequest* request, const ResponseCallback<TResponse>& responseCallback);
 
 	namespace detail
 	{
