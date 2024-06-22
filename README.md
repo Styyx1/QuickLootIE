@@ -30,8 +30,8 @@ This fork of QuickLootEE has some differences, such as:
 ## Building
 ```
 # Cloning the repo with the --recursive flag to init the submodules
-git clone https://github.com/MissCorruption/QuickLootEE-NG --recursive
-cd QuickLootEE-NG
+git clone https://github.com/MissCorruption/QuickLootIE --recursive
+cd QuickLootIE
 
 # Building the Cmake project
 cmake --preset ALL
