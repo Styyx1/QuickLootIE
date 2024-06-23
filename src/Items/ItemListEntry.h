@@ -4,7 +4,8 @@
 #	undef GetObject
 #endif
 
-#include "ItemInfoCache.hpp"
+#include "ItemInfoCache.h"
+#include "ItemType.h"
 #include "LOTD/LOTD.h"
 
 namespace Completionist_Integration
@@ -62,11 +63,9 @@ namespace QuickLoot::Items
 		using inventory_t = RE::InventoryEntryData*;
 		using ground_t = std::span<const RE::ObjectRefHandle>;
 		
-        #include "GFxItemCache.hpp"
-
 		std::variant<inventory_t, ground_t> _src;
 		std::ptrdiff_t _count;
-		mutable Cache _cache{};
+		mutable ItemInfoCache _cache{};
 		bool _stealing;
 		ItemType _item_type;
 	};

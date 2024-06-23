@@ -118,6 +118,12 @@ struct CompletionistResponseEE
 static std::optional<CompletionistResponseEE> comp_response{ std::nullopt };
 static bool comp_installed{};
 
+enum ItemKind
+{
+    kInventory,
+	kGround
+};
+
 namespace QuickLoot::Items
 {
 	ItemListEntry::ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item)
@@ -168,11 +174,11 @@ namespace QuickLoot::Items
 	const std::string& ItemListEntry::GetDisplayName() const
 	{
 		if (compAPI::IsReady()) {
-			_cache.DisplayName(std::move(compAPI::GetItemDisplayName(GetFormID(), compAPI::DisplayNameMode::kNewDisplayName)));
+			_cache.SetDisplayName(compAPI::GetItemDisplayName(GetFormID(), compAPI::DisplayNameMode::kNewDisplayName));
 		}
 
-		if (_cache[kDisplayName]) {
-			return _cache.DisplayName();
+		if (_cache.IsCached(kDisplayName)) {
+			return _cache.GetDisplayName();
 		}
 
 		std::string result;
@@ -201,14 +207,13 @@ namespace QuickLoot::Items
 			}
 		}
 
-		_cache.DisplayName(std::move(result));
-		return _cache.DisplayName();
+		return _cache.SetDisplayName(std::move(result));
 	}
 
 	double ItemListEntry::GetEnchantmentCharge() const
 	{
-		if (_cache[kEnchantmentCharge]) {
-			return _cache.EnchantmentCharge();
+		if (_cache.IsCached(kEnchantmentCharge)) {
+			return _cache.GetEnchantmentCharge();
 		}
 
 		double result = -1.0;
@@ -236,13 +241,12 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.EnchantmentCharge(result);
-		return result;
+		return _cache.SetEnchantmentCharge(result);
 	}
 
 	bool ItemListEntry::IsEnchanted() const
 	{
-		if (!_cache[kIsEnchanted]) {
+		if (!_cache.IsCached(kIsEnchanted)) {
 			SetupEnchantmentFlags();
 		}
 		return _cache.IsEnchanted();
@@ -250,7 +254,7 @@ namespace QuickLoot::Items
 
 	bool ItemListEntry::IsKnownEnchanted() const
 	{
-		if (!_cache[kIsKnownEnchanted]) {
+		if (!_cache.IsCached(kIsKnownEnchanted)) {
 			SetupEnchantmentFlags();
 		}
 		return _cache.IsKnownEnchanted();
@@ -258,7 +262,7 @@ namespace QuickLoot::Items
 
 	bool ItemListEntry::IsSpecialEnchanted() const
 	{
-		if (!_cache[kIsSpecialEnchanted]) {
+		if (!_cache.IsCached(kIsSpecialEnchanted)) {
 			SetupEnchantmentFlags();
 		}
 		return _cache.IsSpecialEnchanted();
@@ -288,8 +292,8 @@ namespace QuickLoot::Items
 
 	RE::FormID ItemListEntry::GetFormID() const
 	{
-		if (_cache[kFormID]) {
-			return _cache.FormID();
+		if (_cache.IsCached(kFormID)) {
+			return _cache.GetFormID();
 		}
 
 		auto result = std::numeric_limits<RE::FormID>::max();
@@ -314,14 +318,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.FormID(result);
-		return result;
+		return _cache.SetFormID(result);
 	}
 
 	ItemType ItemListEntry::GetItemType() const
 	{
-		if (_cache[kItemType]) {
-			return _cache.ItemType();
+		if (_cache.IsCached(kItemType)) {
+			return _cache.GetItemType();
 		}
 
 		auto result = ItemType::None;
@@ -346,14 +349,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.ItemType(result);
-		return result;
+		return _cache.SetItemType(result);
 	}
 
 	std::ptrdiff_t ItemListEntry::GetValue() const
 	{
-		if (_cache[kValue]) {
-			return _cache.Value();
+		if (_cache.IsCached(kValue)) {
+			return _cache.GetValue();
 		}
 
 		auto result = std::numeric_limits<std::ptrdiff_t>::min();
@@ -376,14 +378,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Value(result);
-		return result;
+		return _cache.SetValue(result);
 	}
 
 	double ItemListEntry::GetWeight() const
 	{
-		if (_cache[kWeight]) {
-			return _cache.Weight();
+		if (_cache.IsCached(kWeight)) {
+			return _cache.GetWeight();
 		}
 
 		double result = 0.0;
@@ -406,8 +407,7 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Weight(result);
-		return result;
+		return _cache.SetWeight(result);
 	}
 
 	RE::SOUL_LEVEL ItemListEntry::GetSoulSize() const
@@ -457,8 +457,8 @@ namespace QuickLoot::Items
 
 	bool ItemListEntry::IsAmmo() const
 	{
-		if (_cache[kAmmo]) {
-			return _cache.Ammo();
+		if (_cache.IsCached(kAmmo)) {
+			return _cache.IsAmmo();
 		}
 
 		bool result = false;
@@ -483,14 +483,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Ammo(result);
-		return result;
+		return _cache.SetAmmo(result);
 	}
 
 	bool ItemListEntry::IsBook() const
 	{
-		if (_cache[kBook]) {
-			return _cache.Book();
+		if (_cache.IsCached(kBook)) {
+			return _cache.IsBook();
 		}
 
 		bool result = false;
@@ -515,8 +514,7 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Book(result);
-		return result;
+		return _cache.SetBook(result);
 	}
 
 	bool ItemListEntry::IsRead() const
@@ -525,7 +523,7 @@ namespace QuickLoot::Items
 			return false;
 		}
 
-		if (_cache[kIsRead]) {
+		if (_cache.IsCached(kIsRead)) {
 			return _cache.IsRead();
 		}
 
@@ -551,14 +549,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.IsRead(result);
-		return result;
+		return _cache.SetRead(result);
 	}
 
 	bool ItemListEntry::IsGold() const
 	{
-		if (_cache[kGold]) {
-			return _cache.Gold();
+		if (_cache.IsCached(kGold)) {
+			return _cache.IsGold();
 		}
 
 		bool result = false;
@@ -583,14 +580,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Gold(result);
-		return result;
+		return _cache.SetGold(result);
 	}
 
 	bool ItemListEntry::IsKey() const
 	{
-		if (_cache[kKey]) {
-			return _cache.Key();
+		if (_cache.IsCached(kKey)) {
+			return _cache.IsKey();
 		}
 
 		bool result = false;
@@ -615,14 +611,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Key(result);
-		return result;
+		return _cache.SetKey(result);
 	}
 
 	bool ItemListEntry::IsLockpick() const
 	{
-		if (_cache[kLockpick]) {
-			return _cache.Lockpick();
+		if (_cache.IsCached(kLockpick)) {
+			return _cache.IsLockpick();
 		}
 
 		bool result = false;
@@ -647,14 +642,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Lockpick(result);
-		return result;
+		return _cache.SetLockpick(result);
 	}
 
 	bool ItemListEntry::IsNote() const
 	{
-		if (_cache[kNote]) {
-			return _cache.Note();
+		if (_cache.IsCached(kNote)) {
+			return _cache.IsNote();
 		}
 
 		bool result = false;
@@ -679,14 +673,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.Note(result);
-		return result;
+		return _cache.SetNote(result);
 	}
 
 	bool ItemListEntry::IsQuestItem() const
 	{
-		if (_cache[kQuestItem]) {
-			return _cache.QuestItem();
+		if (_cache.IsCached(kIsQuestItem)) {
+			return _cache.IsQuestItem();
 		}
 
 		bool result = false;
@@ -708,14 +701,13 @@ namespace QuickLoot::Items
 			break;
 		}
 
-		_cache.QuestItem(result);
-		return result;
+		return _cache.SetQuestItem(result);
 	}
 
 	bool ItemListEntry::IsStolen() const
 	{
-		if (_cache[kStolen]) {
-			return _cache.Stolen();
+		if (_cache.IsCached(kIsStolen)) {
+			return _cache.IsStolen();
 		}
 
 		bool result = false;
@@ -740,65 +732,59 @@ namespace QuickLoot::Items
 			}
 		}
 
-		_cache.Stolen(result);
-		return result;
+		return _cache.SetStolen(result);
 	}
 
 	bool ItemListEntry::ItemIsNew() const
 	{
-		if (_cache[kIsDBMNew]) {
-			return _cache.IsDBMNew();
+		if (_cache.IsCached(kIsDbmNew)) {
+			return _cache.IsDbmNew();
 		}
 
 		bool result = LOTD::IsItemNew(GetFormID());
-		_cache.IsDBMNew(result);
-		return result;
+		return _cache.SetsDbmNew(result);
 	}
 
 	bool ItemListEntry::ItemIsFound() const
 	{
-		if (_cache[kIsDBMFound]) {
-			return _cache.IsDBMFound();
+		if (_cache.IsCached(kIsDbmFound)) {
+			return _cache.IsDbmFound();
 		}
 
 		bool result = LOTD::IsItemFound(GetFormID());
-		_cache.IsDBMFound(result);
-		return result;
+		return _cache.SetDbmFound(result);
 	}
 
 	bool ItemListEntry::ItemIsDisplayed() const
 	{
-		if (_cache[kIsDBMDisplayed]) {
-			return _cache.IsDBMDisplayed();
+		if (_cache.IsCached(kIsDbmDisplayed)) {
+			return _cache.IsDbmDisplayed();
 		}
 
 		bool result = LOTD::IsItemDisplayed(GetFormID());
-		_cache.IsDBMDisplayed(result);
-		return result;
+		return _cache.SetDbmDisplayed(result);
 	}
 
 	bool ItemListEntry::ItemIsNeeded() const
 	{
-		if (_cache[kIsItemTracked]) {
-			return _cache.IsItemTracked();
+		if (_cache.IsCached(kIsCompNew)) {
+			return _cache.IsCompNew();
 		}
 
 		bool result = compAPI::IsItemTracked(GetFormID()) && !compAPI::IsItemCollected(GetFormID());
 
-		_cache.IsItemTracked(result);
-		return result;
+		return _cache.SetCompNew(result);
 	}
 
 	bool ItemListEntry::ItemIsCollected() const
 	{
-		if (_cache[kIsItemCollected]) {
-			return _cache.IsItemCollected();
+		if (_cache.IsCached(kIsCompFound)) {
+			return _cache.IsCompFound();
 		}
 
 		bool result = compAPI::IsItemCollected(GetFormID());
 
-		_cache.IsItemCollected(result);
-		return result;
+		return _cache.SetCompFound(result);
 	}
 
 	RE::GFxValue ItemListEntry::GFxValue(RE::GFxMovieView& a_view) const
@@ -1377,9 +1363,9 @@ namespace QuickLoot::Items
 	{
 		EnchantmentType ench_type = GetEnchantmentType();
 
-		_cache.IsEnchanted(ench_type != EnchantmentType::None);
-		_cache.IsKnownEnchanted(ench_type == EnchantmentType::Known);
-		_cache.IsSpecialEnchanted(ench_type == EnchantmentType::CannotDisenchant);
+		_cache.SetEnchanted(ench_type != EnchantmentType::None);
+		_cache.SetKnownEnchanted(ench_type == EnchantmentType::Known);
+		_cache.SetSpecialEnchanted(ench_type == EnchantmentType::CannotDisenchant);
 	}
 
 	const char* ItemListEntry::GetItemIconLabel(ItemType form) const
