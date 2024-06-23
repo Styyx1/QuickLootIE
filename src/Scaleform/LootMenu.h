@@ -437,7 +437,7 @@ namespace Scaleform
 			const std::array mappings{
 				std::make_tuple("sSearch"sv, "Favorites"sv, stealing),
 				std::make_tuple(stealing ? "sSteal"sv : "sTake"sv, "Activate"sv, stealing),
-				std::make_tuple(stealing ? "sSteal All"sv : "sTake All"sv, "Ready Weapon"sv, stealing)
+				std::make_tuple("sTakeAll"sv, "Ready Weapon"sv, stealing),
 			};
 
 			_buttonBarProvider.ClearElements();
@@ -448,9 +448,6 @@ namespace Scaleform
 
 				auto setting = gmst->GetSetting(std::get<0>(mapping).data());
 				std::string label = setting ? setting->GetString() : "<undefined>"s;
-				// Trying to log the settings here crashes the game upon looking at a container
-				// Seemingly, the third button crashes it as "Take" and "Search" are logged
-				// logger::info("Settings are: {}"sv, setting->GetString());
 				srell::smatch matches;
 				if (srell::regex_match(label, matches, pattern)) {
 					if (matches.size() >= 2) {
