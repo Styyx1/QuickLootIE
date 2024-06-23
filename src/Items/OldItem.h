@@ -2,7 +2,7 @@
 
 #include "Items/ItemListEntry.h"
 
-namespace Items
+namespace QuickLoot::Items
 {
 	class OldItem
 	{

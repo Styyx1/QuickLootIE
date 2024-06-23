@@ -2,7 +2,7 @@
 
 #include "Items/OldItem.h"
 
-namespace Items
+namespace QuickLoot::Items
 {
 	class OldGroundItems final :
 		public OldItem

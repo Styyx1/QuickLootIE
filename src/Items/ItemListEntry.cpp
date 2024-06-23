@@ -118,7 +118,7 @@ struct CompletionistResponseEE
 static std::optional<CompletionistResponseEE> comp_response{ std::nullopt };
 static bool comp_installed{};
 
-namespace Items
+namespace QuickLoot::Items
 {
 	ItemListEntry::ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item)
 		: _src(a_item)

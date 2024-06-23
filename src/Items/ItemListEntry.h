@@ -12,7 +12,7 @@ namespace Completionist_Integration
 	void CompletionistResponse(SKSE::MessagingInterface::Message* a_msg);
 }
 
-namespace Items
+namespace QuickLoot::Items
 {
 	enum class kType
 	{

@@ -2,7 +2,7 @@
 
 #include "Items/OldItem.h"
 
-namespace Items
+namespace QuickLoot::Items
 {
 	class OldInventoryItem final :
 		public OldItem
