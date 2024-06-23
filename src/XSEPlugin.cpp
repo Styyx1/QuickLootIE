@@ -4,7 +4,7 @@
 #include "Events/Events.h"
 #include "Hooks.h"
 #include "Loot.h"
-#include "Scaleform/Scaleform.h"
+#include "Scaleform/LootMenu.h"
 #include "Integrations/LOTD.h"
 #include "Integrations/Completionist.h"
 
@@ -93,7 +93,7 @@ namespace
 			Animation::AnimationManager::Install();
 
 			Events::Register();
-			Scaleform::Register();
+			Scaleform::LootMenu::Register();
 
 			Settings::LoadSettings();
             QuickLoot::Integrations::LOTD::Init();
