@@ -108,9 +108,6 @@ namespace
 
 void InitializeLog([[maybe_unused]] spdlog::level::level_enum a_level = spdlog::level::info)
 {
-#ifndef NDEBUG
-	auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
-#else
 	auto path = logger::log_directory();
 	if (!path) {
 		util::report_and_fail("Failed to find standard logging directory"sv);
@@ -118,9 +115,7 @@ void InitializeLog([[maybe_unused]] spdlog::level::level_enum a_level = spdlog::
 
 	*path /= std::format("{}.log"sv, Plugin::NAME);
 	auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
-#endif
-
-	const auto level = a_level;
+	const auto level = spdlog::level::info;
 
 	auto log = std::make_shared<spdlog::logger>("global log"s, std::move(sink));
 	log->set_level(level);

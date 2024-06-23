@@ -140,6 +140,24 @@ namespace Input
 					}
 				}
 			}
+
+			for (auto iter = a_event; iter; iter = iter->next) {
+				auto event = iter->AsButtonEvent();
+				if (!event) {
+					continue;
+				}
+
+				auto controlMap = RE::ControlMap::GetSingleton();
+				const auto idCode =
+					controlMap ?
+						controlMap->GetMappedKey("Ready Weapon"sv, event->GetDevice()) :
+						RE::ControlMap::kInvalid;
+
+				if (event->GetIDCode() == idCode && event->IsDown()) {
+					TakeAll();
+					return;
+				}
+			}
 		}
 
 	private:
@@ -155,6 +173,8 @@ namespace Input
 
 		void TakeStack();
 		void TryGrab();
+
+		void TakeAll();
 
 		stl::observer<const RE::Setting*> _grabDelay{ RE::GetINISetting("fZKeyDelay:Controls") };
 		bool _context{ false };

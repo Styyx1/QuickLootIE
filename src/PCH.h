@@ -50,12 +50,7 @@ void* operator new[](size_t size, size_t alignment, size_t alignmentOffset, cons
 #include <frozen/map.h>
 #include <srell.hpp>
 
-#ifdef NDEBUG
-#	include <spdlog/sinks/basic_file_sink.h>
-#else
-#	include <spdlog/sinks/msvc_sink.h>
-#endif
-
+#include <spdlog/sinks/basic_file_sink.h>
 #pragma warning(pop)
 
 #define WIN32_LEAN_AND_MEAN 1

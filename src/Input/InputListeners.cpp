@@ -71,6 +71,13 @@ namespace Input
 		loot.Close();
 	}
 
+	// TODO: Actually take all items
+	void TakeHandler::TakeAll()
+	{
+		auto& loot = Loot::GetSingleton();
+		loot.TakeStack();
+	}
+
 	void TransferHandler::DoHandle(RE::InputEvent* const& a_event)
 	{
 		for (auto iter = a_event; iter; iter = iter->next) {
@@ -82,7 +89,7 @@ namespace Input
 			auto controlMap = RE::ControlMap::GetSingleton();
 			const auto idCode =
 				controlMap ?
-                    controlMap->GetMappedKey("Ready Weapon"sv, event->GetDevice()) :
+                    controlMap->GetMappedKey("Favorites"sv, event->GetDevice()) :
                     RE::ControlMap::kInvalid;
 
 			if (event->GetIDCode() == idCode && event->IsDown()) {
