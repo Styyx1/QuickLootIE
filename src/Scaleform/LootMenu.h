@@ -344,21 +344,27 @@ namespace Scaleform
 
 		void OnOpen()
 		{
-			using element_t = std::pair<std::reference_wrapper<CLIK::Object>, std::string_view>;
+			// fallback values are for older versions of LootMenu.swf
+
+			using element_t = std::tuple<std::reference_wrapper<CLIK::Object>, std::string_view, std::string_view>;
 			std::array objects{
-				element_t{ std::ref(_rootObj), "_root.rootObj"sv },
-				element_t{ std::ref(_title), "_root.rootObj.title"sv },
-				element_t{ std::ref(_weight), "_root.rootObj.weightContainer.textField"sv },
-				element_t{ std::ref(_itemList), "_root.rootObj.itemList"sv },
-				element_t{ std::ref(_infoBar), "_root.rootObj.infoBar"sv },
-				element_t{ std::ref(_buttonBar), "_root.rootObj.buttonBar"sv }
+				element_t{ std::ref(_rootObj), "_root.lootMenu"sv, "_root.rootObj"sv },
+				element_t{ std::ref(_title), "_root.lootMenu.title"sv, "_root.rootObj.title"sv },
+				element_t{ std::ref(_weight), "_root.lootMenu.weight"sv, "_root.rootObj.weightContainer.textField"sv },
+				element_t{ std::ref(_itemList), "_root.lootMenu.itemList"sv, "_root.rootObj.itemList"sv },
+				element_t{ std::ref(_infoBar), "_root.lootMenu.infoBar"sv, "_root.rootObj.infoBar"sv },
+				element_t{ std::ref(_buttonBar), "_root.lootMenu.buttonBar"sv, "_root.rootObj.buttonBar"sv }
 			};
 
-			for (const auto& [object, path] : objects) {
+			for (const auto& [object, path, fallback] : objects) {
 				auto& instance = object.get().GetInstance();
-				[[maybe_unused]] const auto success =
-					_view->GetVariable(std::addressof(instance), path.data());
-				assert(success && instance.IsObject());
+				bool success = _view->GetVariable(std::addressof(instance), path.data());
+				if (!success) {
+					success = _view->GetVariable(std::addressof(instance), fallback.data());
+				}
+				if (!success || !instance.IsObject()) {
+					logger::error("Failed to find variable {} ({}) in {}.swf", path, fallback, FILE_NAME);
+				}
 			}
 
 			AdjustPosition();
