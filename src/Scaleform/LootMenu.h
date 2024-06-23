@@ -442,7 +442,9 @@ namespace Scaleform
 
 				auto setting = gmst->GetSetting(std::get<0>(mapping).data());
 				std::string label = setting ? setting->GetString() : "<undefined>"s;
-				logger::info("Settings are: {}"sv, setting->GetString());
+				// Trying to log the settings here crashes the game upon looking at a container
+				// Seemingly, the third button crashes it as "Take" and "Search" are logged
+				// logger::info("Settings are: {}"sv, setting->GetString());
 				srell::smatch matches;
 				if (srell::regex_match(label, matches, pattern)) {
 					if (matches.size() >= 2) {
