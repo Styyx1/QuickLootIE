@@ -5,9 +5,9 @@
 #include "CLIK/GFx/Controls/ScrollingList.h"
 #include "CLIK/TextField.h"
 #include "ContainerChangedHandler.h"
-#include "Items/GroundItem.h"
-#include "Items/InventoryItem.h"
-#include "Items/Item.h"
+#include "Items/OldGroundItems.h"
+#include "Items/OldInventoryItem.h"
+#include "Items/OldItem.h"
 #include "OpenCloseHandler.h"
 #include "ViewHandler.h"
 
@@ -98,7 +98,7 @@ namespace Scaleform
 			for (auto& [obj, data] : inv) {
 				auto& [count, entry] = data;
 				if (count > 0 && entry) {
-					_itemListImpl.push_back(std::make_unique<Items::InventoryItem>(count, stealing, std::move(entry), _src));
+					_itemListImpl.push_back(std::make_unique<Items::OldInventoryItem>(count, stealing, std::move(entry), _src));
 				}
 			}
 
@@ -106,7 +106,7 @@ namespace Scaleform
 			for (auto& [obj, data] : dropped) {
 				auto& [count, items] = data;
 				if (count > 0 && !items.empty()) {
-					_itemListImpl.push_back(std::make_unique<Items::GroundItems>(count, stealing, std::move(items)));
+					_itemListImpl.push_back(std::make_unique<Items::OldGroundItems>(count, stealing, std::move(items)));
 				}
 			}
 
@@ -496,8 +496,8 @@ namespace Scaleform
 			const auto idx = static_cast<std::ptrdiff_t>(_itemList.SelectedIndex());
 			if (0 <= idx && idx < std::ssize(_itemListImpl)) {
 				const std::array functors{
-					std::function{ [](const Items::Item& a_val) { return fmt::format(FMT_STRING("{:.1f}"), a_val.Weight()); } },
-					std::function{ [](const Items::Item& a_val) { return fmt::format(FMT_STRING("{}"), a_val.Value()); } },
+					std::function{ [](const Items::OldItem& a_val) { return fmt::format(FMT_STRING("{:.1f}"), a_val.Weight()); } },
+					std::function{ [](const Items::OldItem& a_val) { return fmt::format(FMT_STRING("{}"), a_val.Value()); } },
 				};
 
 				const auto& item = _itemListImpl[static_cast<std::size_t>(idx)];
@@ -572,7 +572,7 @@ namespace Scaleform
 
 		CLIK::GFx::Controls::ScrollingList _itemList;
 		RE::GFxValue _itemListProvider;
-		std::vector<std::unique_ptr<Items::Item>> _itemListImpl;
+		std::vector<std::unique_ptr<Items::OldItem>> _itemListImpl;
 
 		CLIK::GFx::Controls::ButtonBar _infoBar;
 		RE::GFxValue _infoBarProvider;
