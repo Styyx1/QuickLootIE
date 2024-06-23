@@ -104,20 +104,6 @@ static const char* strIcons[] = {
 
 using namespace RE;
 
-struct CompletionistRequestEE
-{
-	RE::FormID m_formId;
-};
-
-struct CompletionistResponseEE
-{
-	RE::FormID m_formId;
-	std::string m_displayname;
-};
-
-static std::optional<CompletionistResponseEE> comp_response{ std::nullopt };
-static bool comp_installed{};
-
 enum ItemKind
 {
     kInventory,
@@ -742,7 +728,7 @@ namespace QuickLoot::Items
 		}
 
 		bool result = LOTD::IsItemNew(GetFormID());
-		return _cache.SetsDbmNew(result);
+		return _cache.SetDbmNew(result);
 	}
 
 	bool ItemListEntry::ItemIsFound() const

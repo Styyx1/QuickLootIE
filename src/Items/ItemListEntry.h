@@ -8,12 +8,6 @@
 #include "ItemType.h"
 #include "LOTD/LOTD.h"
 
-namespace Completionist_Integration
-{
-	void RegisterListener();
-	void CompletionistResponse(SKSE::MessagingInterface::Message* a_msg);
-}
-
 namespace QuickLoot::Items
 {
 	class ItemListEntry

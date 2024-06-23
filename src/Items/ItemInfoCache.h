@@ -127,7 +127,7 @@ namespace QuickLoot::Items
 		bool SetAmmo(bool value) { return StoreFlag(kAmmo, value); }
 		bool SetLockpick(bool value) { return StoreFlag(kLockpick, value); }
 
-		bool SetsDbmNew(bool value) { return StoreFlag(kIsDbmNew, value); }
+		bool SetDbmNew(bool value) { return StoreFlag(kIsDbmNew, value); }
 		bool SetDbmFound(bool value) { return StoreFlag(kIsDbmFound, value); }
 		bool SetDbmDisplayed(bool value) { return StoreFlag(kIsDbmDisplayed, value); }
 
