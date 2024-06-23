@@ -46,22 +46,23 @@
 			var extraRecords = 7 - numberOfRecords;
 			var emptySlots = -40 * extraRecords;
 			var squishBy = 40 * extraRecords;
-			this.squish(lootmenu.background.middle, squishBy, extraRecords);
+			
+			this.squish(lootmenu.bgMiddle, squishBy, extraRecords);
+			this.moveToPos(lootmenu.bgBottom, emptySlots);
+			this.moveToPos(lootmenu.bgBottom, emptySlots);
 			this.moveToPos(lootmenu.buttonBar, emptySlots);
 			this.moveToPos(lootmenu.bottomBar, emptySlots);
 			this.moveToPos(lootmenu.infoBar, emptySlots);
-			this.moveToPos(lootmenu.weightContainer, emptySlots);
-			this.moveToPos(lootmenu.background.bottom, emptySlots);
+			this.moveToPos(lootmenu.weight, emptySlots);
 		}
 		else
 		{
-			this.resetHeight(lootmenu.background.middle);
+			this.resetHeight(lootmenu.bgMiddle);
 			this.resetY(lootmenu.backgroundImage);
 			this.resetY(lootmenu.buttonBar);
 			this.resetY(lootmenu.bottomBar);
 			this.resetY(lootmenu.infoBar);
-			this.resetY(lootmenu.weightContainer);
-			this.resetY(lootmenu.background.bottom);
+			this.resetY(lootmenu.weight);
 		}
 	}
 	function squish(obj, squishBy, emptySlots)
