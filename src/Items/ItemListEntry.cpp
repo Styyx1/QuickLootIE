@@ -1,5 +1,8 @@
 #include "ItemListEntry.h"
 
+#include "Integrations/Completionist.h"
+#include "Integrations/LOTD.h"
+
 #undef GetModuleHandle
 
 static const char* strIcons[] = {
@@ -103,6 +106,7 @@ static const char* strIcons[] = {
 };
 
 using namespace RE;
+using namespace QuickLoot::Integrations;
 
 enum ItemKind
 {
@@ -159,8 +163,8 @@ namespace QuickLoot::Items
 
 	const std::string& ItemListEntry::GetDisplayName() const
 	{
-		if (compAPI::IsReady()) {
-			_cache.SetDisplayName(compAPI::GetItemDisplayName(GetFormID(), compAPI::DisplayNameMode::kNewDisplayName));
+		if (Completionist::IsReady()) {
+			_cache.SetDisplayName(Completionist::GetItemDisplayName(GetFormID(), Completionist::DisplayNameMode::kNewDisplayName));
 		}
 
 		if (_cache.IsCached(kDisplayName)) {
@@ -757,7 +761,7 @@ namespace QuickLoot::Items
 			return _cache.IsCompNew();
 		}
 
-		bool result = compAPI::IsItemTracked(GetFormID()) && !compAPI::IsItemCollected(GetFormID());
+		bool result = Completionist::IsItemTracked(GetFormID()) && !Completionist::IsItemCollected(GetFormID());
 
 		return _cache.SetCompNew(result);
 	}
@@ -768,7 +772,7 @@ namespace QuickLoot::Items
 			return _cache.IsCompFound();
 		}
 
-		bool result = compAPI::IsItemCollected(GetFormID());
+		bool result = Completionist::IsItemCollected(GetFormID());
 
 		return _cache.SetCompFound(result);
 	}
@@ -894,14 +898,14 @@ namespace QuickLoot::Items
 		if (Settings::ShowBookRead())
 			value.SetMember("isRead", { IsRead() });
 
-		if (compAPI::IsIntegrationEnabled()) {
+		if (Completionist::IsIntegrationEnabled()) {
 			if (Settings::ShowCompNeeded())
 				value.SetMember("compNew", { ItemIsNeeded() });
 
 			if (Settings::ShowCompCollected())
 				value.SetMember("compFnd", { ItemIsCollected() });
 
-			if (const auto colorInt = compAPI::GetItemDynamicTextColor(GetFormID()); colorInt != -1)
+			if (const auto colorInt = Completionist::GetItemDynamicTextColor(GetFormID()); colorInt != -1)
 				value.SetMember("textColor", colorInt);
 		}
 

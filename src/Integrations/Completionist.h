@@ -85,7 +85,7 @@ namespace QuickLoot::Integrations
 
 		static uint32_t GetItemDynamicTextColor(RE::FormID formID)
 		{
-			std::uint32_t response = -1;
+			std::uint32_t response = 0;
 
 			if (const auto error = _client.Query(kGetDynamicItemTextColor, &formID, &response)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));

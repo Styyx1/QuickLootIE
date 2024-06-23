@@ -6,7 +6,6 @@
 
 #include "ItemInfoCache.h"
 #include "ItemType.h"
-#include "LOTD/LOTD.h"
 
 namespace QuickLoot::Items
 {
