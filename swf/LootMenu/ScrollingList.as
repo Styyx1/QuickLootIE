@@ -40,7 +40,7 @@
 	function setWindowSize(numberOfRecords)
 	{
 		var lootmenu = this.getParentMovieClip(this);
-		lootmenu.background.alpha = numberOfRecords == 0 ? 0 : 1;
+		lootmenu.alpha = numberOfRecords == 0 ? 0 : 1;
 		if (numberOfRecords < 7)
 		{
 			var extraRecords = 7 - numberOfRecords;
@@ -49,18 +49,15 @@
 			
 			this.squish(lootmenu.bgMiddle, squishBy, extraRecords);
 			this.moveToPos(lootmenu.bgBottom, emptySlots);
-			this.moveToPos(lootmenu.bgBottom, emptySlots);
 			this.moveToPos(lootmenu.buttonBar, emptySlots);
-			this.moveToPos(lootmenu.bottomBar, emptySlots);
 			this.moveToPos(lootmenu.infoBar, emptySlots);
 			this.moveToPos(lootmenu.weight, emptySlots);
 		}
 		else
 		{
 			this.resetHeight(lootmenu.bgMiddle);
-			this.resetY(lootmenu.backgroundImage);
+			this.resetY(lootmenu.bgBottom);
 			this.resetY(lootmenu.buttonBar);
-			this.resetY(lootmenu.bottomBar);
 			this.resetY(lootmenu.infoBar);
 			this.resetY(lootmenu.weight);
 		}
