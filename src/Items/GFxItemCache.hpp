@@ -126,8 +126,8 @@ public:
 		_formID = a_value;
 	}
 
-	[[nodiscard]] constexpr kType ItemType() const noexcept { return _itemType; }
-	void ItemType(kType a_value)
+	[[nodiscard]] constexpr Items::ItemType ItemType() const noexcept { return _itemType; }
+	void ItemType(Items::ItemType a_value)
 	{
 		_cached.set(kItemType);
 		_itemType = a_value;
@@ -148,6 +148,6 @@ private:
 	double                         _weight            = 0.0;
 	std::ptrdiff_t                 _value             = 0;
 	RE::FormID                     _formID            = 0;
-	kType                          _itemType          = kType::None;
+	Items::ItemType _itemType = Items::ItemType::None;
 };
 

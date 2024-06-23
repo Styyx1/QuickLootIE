@@ -4,6 +4,7 @@
 #	undef GetObject
 #endif
 
+#include "ItemInfoCache.hpp"
 #include "LOTD/LOTD.h"
 
 namespace Completionist_Integration
@@ -14,130 +15,6 @@ namespace Completionist_Integration
 
 namespace QuickLoot::Items
 {
-	enum class kType
-	{
-		None,
-		DefaultWeapon,
-		WeaponSword,
-		WeaponGreatSword,
-		WeaponDaedra,
-		WeaponDagger,
-		WeaponWarAxe,
-		WeaponBattleAxe,
-		WeaponMace,
-		WeaponHammer,
-		WeaponStaff,
-		WeaponBow,
-		WeaponArrow,
-		WeaponPickAxe,
-		WeaponWoodAxe,
-		WeaponCrossbow,
-		WeaponBolt,
-
-		DefaultArmor,
-
-		LightArmorBody,
-		LightArmorHead,
-		LightArmorHands,
-		LightArmorForearms,
-		LightArmorFeet,
-		LightArmorCalves,
-		LightArmorShield,
-		LightArmorMask,
-
-		ArmorBody,
-		ArmorHead,
-		ArmorHands,
-		ArmorForearms,
-		ArmorFeet,
-		ArmorCalves,
-		ArmorShield,
-		ArmorMask,
-		ArmorBracer,
-		ArmorDaedra,
-
-		ClothingBody,
-		ClothingRobe,
-		ClothingHead,
-		ClothingPants,
-		ClothingHands,
-		ClothingForearms,
-		ClothingFeet,
-		ClothingCalves,
-		ClothingShoes,
-		ClothingShield,
-		ClothingMask,
-
-		ArmorAmulet,
-		ArmorRing,
-		Circlet,
-
-		DefaultScroll,
-
-		DefaultBook,
-		BookRead,
-		BookTome,
-		TomeRead,
-		BookJournal,
-		BookNote,
-		BookMap,
-
-		DefaultFood,
-		FoodWine,
-		FoodBeer,
-
-		DefaultIngredient,
-
-		DefaultKey,
-		KeyHouse,
-
-		DefaultPotion,
-		PotionHealth,
-		PotionStam,
-		PotionMagic,
-		PotionPoison,
-		PotionFrost,
-		PotionFire,
-		PotionShock,
-
-		DefaultMisc,
-		MiscArtifact,
-		MiscClutter,
-		MiscLockPick,
-		MiscSoulGem,
-
-		SoulGemEmpty,
-		SoulGemPartial,
-		SoulGemFull,
-		SoulGemGrandEmpty,
-		SoulGemGrandPartial,
-		SoulGemGrandFull,
-		SoulGemAzura,
-
-		MiscGem,
-		MiscOre,
-		MiscIngot,
-		MiscHide,
-		MiscStrips,
-		MiscLeather,
-		MiscWood,
-		MiscRemains,
-		MiscTrollSkull,
-		MiscTorch,
-		MiscGoldSack,
-		MiscGold,
-		MiscDragonClaw
-	};
-
-	enum class EnchantmentType
-	{
-		None,
-		Known,
-		CannotDisenchant,
-		Unknown
-	};
-
-
 	class ItemListEntry
 	{
 	public:
@@ -153,7 +30,7 @@ namespace QuickLoot::Items
 		[[nodiscard]] bool                     IsSpecialEnchanted() const;
 		[[nodiscard]] RE::TESForm*             GetObject() const;
 		[[nodiscard]] RE::FormID               GetFormID() const;
-		[[nodiscard]] kType                    GetItemType() const;
+		[[nodiscard]] ItemType                    GetItemType() const;
 		[[nodiscard]] std::ptrdiff_t           GetValue() const;
 		[[nodiscard]] double                   GetWeight() const;
 		[[nodiscard]] RE::SOUL_LEVEL           GetSoulSize() const;
@@ -179,21 +56,19 @@ namespace QuickLoot::Items
 		EnchantmentType GetEnchantmentType() const;
 		void SetupEnchantmentFlags() const;
 
-		kType GetItemType(RE::TESForm *form) const;
-		const char* GetItemIconLabel(kType type) const;
-
-		class Cache;
-
-		#include "GFxItemCache.hpp"
+		ItemType GetItemType(RE::TESForm *form) const;
+		const char* GetItemIconLabel(ItemType type) const;
 
 		using inventory_t = RE::InventoryEntryData*;
 		using ground_t = std::span<const RE::ObjectRefHandle>;
+		
+        #include "GFxItemCache.hpp"
 
 		std::variant<inventory_t, ground_t> _src;
 		std::ptrdiff_t _count;
 		mutable Cache _cache{};
 		bool _stealing;
-		kType _item_type;
+		ItemType _item_type;
 	};
 
 	[[nodiscard]] inline bool operator==(const ItemListEntry& a_lhs, const ItemListEntry& a_rhs) { return a_lhs.Compare(a_rhs) == 0; }

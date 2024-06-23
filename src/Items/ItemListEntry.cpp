@@ -318,13 +318,13 @@ namespace QuickLoot::Items
 		return result;
 	}
 
-	kType ItemListEntry::GetItemType() const
+	ItemType ItemListEntry::GetItemType() const
 	{
 		if (_cache[kItemType]) {
 			return _cache.ItemType();
 		}
 
-		auto result = kType::None;
+		auto result = ItemType::None;
 		switch (_src.index()) {
 		case kInventory:
 			if (const auto obj = std::get<kInventory>(_src)->GetObject(); obj) {
@@ -936,78 +936,78 @@ namespace QuickLoot::Items
 		return value;
 	}
 
-	static kType GetItemTypeWeapon(TESObjectWEAP* weap)
+	static ItemType GetItemTypeWeapon(TESObjectWEAP* weap)
 	{
-		kType type = kType::DefaultWeapon;
+		ItemType type = ItemType::DefaultWeapon;
 
 		switch (weap->GetWeaponType()) {
 		case RE::WEAPON_TYPE::kOneHandSword:
-			type = kType::WeaponSword;
+			type = ItemType::WeaponSword;
 			break;
 		case RE::WEAPON_TYPE::kOneHandDagger:
-			type = kType::WeaponDagger;
+			type = ItemType::WeaponDagger;
 			break;
 		case RE::WEAPON_TYPE::kOneHandAxe:
-			type = kType::WeaponWarAxe;
+			type = ItemType::WeaponWarAxe;
 			break;
 		case RE::WEAPON_TYPE::kOneHandMace:
-			type = kType::WeaponMace;
+			type = ItemType::WeaponMace;
 			break;
 		case RE::WEAPON_TYPE::kTwoHandSword:
-			type = kType::WeaponGreatSword;
+			type = ItemType::WeaponGreatSword;
 			break;
 		case RE::WEAPON_TYPE::kTwoHandAxe:
-			type = kType::WeaponBattleAxe;
+			type = ItemType::WeaponBattleAxe;
 			break;
 		case RE::WEAPON_TYPE::kBow:
-			type = kType::WeaponBow;
+			type = ItemType::WeaponBow;
 			break;
 		case RE::WEAPON_TYPE::kStaff:
-			type = kType::WeaponStaff;
+			type = ItemType::WeaponStaff;
 			break;
 		case RE::WEAPON_TYPE::kCrossbow:
-			type = kType::WeaponCrossbow;
+			type = ItemType::WeaponCrossbow;
 			break;
 		}
 
 		return type;
 	}
 
-	static kType GetItemTypeArmor(TESObjectARMO* armor)
+	static ItemType GetItemTypeArmor(TESObjectARMO* armor)
 	{
-		static kType types[] = {
-			kType::LightArmorBody,  // 0
-			kType::LightArmorHead,
-			kType::LightArmorHands,
-			kType::LightArmorForearms,
-			kType::LightArmorFeet,
-			kType::LightArmorCalves,
-			kType::LightArmorShield,
-			kType::LightArmorMask,
+		static ItemType types[] = {
+			ItemType::LightArmorBody,  // 0
+			ItemType::LightArmorHead,
+			ItemType::LightArmorHands,
+			ItemType::LightArmorForearms,
+			ItemType::LightArmorFeet,
+			ItemType::LightArmorCalves,
+			ItemType::LightArmorShield,
+			ItemType::LightArmorMask,
 
-			kType::ArmorBody,  // 8
-			kType::ArmorHead,
-			kType::ArmorHands,
-			kType::ArmorForearms,
-			kType::ArmorFeet,
-			kType::ArmorCalves,
-			kType::ArmorShield,
-			kType::ArmorMask,
+			ItemType::ArmorBody,  // 8
+			ItemType::ArmorHead,
+			ItemType::ArmorHands,
+			ItemType::ArmorForearms,
+			ItemType::ArmorFeet,
+			ItemType::ArmorCalves,
+			ItemType::ArmorShield,
+			ItemType::ArmorMask,
 
-			kType::ClothingBody,  // 16
-			kType::ClothingHead,
-			kType::ClothingHands,
-			kType::ClothingForearms,
-			kType::ClothingFeet,
-			kType::ClothingCalves,
-			kType::ClothingShield,
-			kType::ClothingMask,
+			ItemType::ClothingBody,  // 16
+			ItemType::ClothingHead,
+			ItemType::ClothingHands,
+			ItemType::ClothingForearms,
+			ItemType::ClothingFeet,
+			ItemType::ClothingCalves,
+			ItemType::ClothingShield,
+			ItemType::ClothingMask,
 
-			kType::ArmorAmulet,  // 24
-			kType::ArmorRing,
-			kType::Circlet,
+			ItemType::ArmorAmulet,  // 24
+			ItemType::ArmorRing,
+			ItemType::Circlet,
 
-			kType::DefaultArmor  // 27
+			ItemType::DefaultArmor  // 27
 		};
 
 		UINT32 index = 0;
@@ -1058,20 +1058,20 @@ namespace QuickLoot::Items
 		return types[index];
 	}
 
-	static kType GetItemTypePotion(AlchemyItem* potion)
+	static ItemType GetItemTypePotion(AlchemyItem* potion)
 	{
-		kType type = kType::DefaultPotion;
+		ItemType type = ItemType::DefaultPotion;
 
 		if (potion->IsFood()) {
-			type = kType::DefaultFood;
+			type = ItemType::DefaultFood;
 
 			const static UINT32 ITMPosionUse = 0x000B6435;
 			if (potion->data.consumptionSound && potion->data.consumptionSound->formID == ITMPosionUse)
-				type = kType::FoodWine;
+				type = ItemType::FoodWine;
 		} else if (potion->IsPoison()) {
-			type = kType::PotionPoison;
+			type = ItemType::PotionPoison;
 		} else {
-			type = kType::DefaultPotion;
+			type = ItemType::DefaultPotion;
 
 			//MagicItem::EffectItem* pEffect = CALL_MEMBER_FN(potion, GetCostliestEffectItem)(5, false);
 			Effect* pEffect = potion->GetCostliestEffectItem(RE::MagicSystem::Delivery::kTotal, false);
@@ -1084,22 +1084,22 @@ namespace QuickLoot::Items
 
 				switch (primaryValue) {
 				case ActorValue::kHealth:
-					type = kType::PotionHealth;
+					type = ItemType::PotionHealth;
 					break;
 				case ActorValue::kMagicka:
-					type = kType::PotionMagic;
+					type = ItemType::PotionMagic;
 					break;
 				case ActorValue::kStamina:
-					type = kType::PotionStam;
+					type = ItemType::PotionStam;
 					break;
 				case ActorValue::kResistFire:
-					type = kType::PotionFire;
+					type = ItemType::PotionFire;
 					break;
 				case ActorValue::kResistShock:
-					type = kType::PotionShock;
+					type = ItemType::PotionShock;
 					break;
 				case ActorValue::kResistFrost:
-					type = kType::PotionFrost;
+					type = ItemType::PotionFrost;
 					break;
 				}
 			}
@@ -1108,9 +1108,9 @@ namespace QuickLoot::Items
 		return type;
 	}
 
-	static kType GetItemTypeMisc(TESObjectMISC* misc)
+	static ItemType GetItemTypeMisc(TESObjectMISC* misc)
 	{
-		kType type = kType::DefaultMisc;
+		ItemType type = ItemType::DefaultMisc;
 
 		static const UINT32 LockPick = 0x00000A;
 		static const UINT32 Gold = 0x00000F;
@@ -1139,85 +1139,85 @@ namespace QuickLoot::Items
 		static const UINT32 MS13GoldenClaw = 0x039647;
 
 		if (misc->formID == LockPick)
-			type = kType::MiscLockPick;
+			type = ItemType::MiscLockPick;
 		else if (misc->formID == Gold)
-			type = kType::MiscGold;
+			type = ItemType::MiscGold;
 		else if (misc->formID == Leather01)
-			type = kType::MiscLeather;
+			type = ItemType::MiscLeather;
 		else if (misc->formID == LeatherStrips)
-			type = kType::MiscStrips;
+			type = ItemType::MiscStrips;
 		else if (misc->HasKeywordID(VendorItemAnimalHideFormId))
-			type = kType::MiscHide;
+			type = ItemType::MiscHide;
 		else if (misc->HasKeywordID(VendorItemDaedricArtifactFormId))
-			type = kType::MiscArtifact;
+			type = ItemType::MiscArtifact;
 		else if (misc->HasKeywordID(VendorItemGemFormId))
-			type = kType::MiscGem;
+			type = ItemType::MiscGem;
 		else if (misc->HasKeywordID(VendorItemAnimalPartFormId))
-			type = kType::MiscRemains;
+			type = ItemType::MiscRemains;
 		else if (misc->HasKeywordID(VendorItemOreIngotFormId))
-			type = kType::MiscIngot;
+			type = ItemType::MiscIngot;
 		else if (misc->HasKeywordID(VendorItemClutterFormId))
-			type = kType::MiscClutter;
+			type = ItemType::MiscClutter;
 		else if (misc->HasKeywordID(VendorItemFirewoodFormId))
-			type = kType::MiscWood;
+			type = ItemType::MiscWood;
 		else if (misc->formID == RubyDragonClaw || misc->formID == IvoryDragonClaw || misc->formID == GlassCraw || misc->formID == EbonyCraw || misc->formID == EmeraldDragonClaw || misc->formID == DiamondClaw || misc->formID == IronClaw || misc->formID == CoralDragonClaw || misc->formID == E3GoldenClaw || misc->formID == SapphireDragonClaw || misc->formID == MS13GoldenClaw)
-			type = kType::MiscDragonClaw;
+			type = ItemType::MiscDragonClaw;
 
 		return type;
 	}
 
-	static kType GetItemTypeSoulGem(TESSoulGem* gem)
+	static ItemType GetItemTypeSoulGem(TESSoulGem* gem)
 	{
-		kType type = kType::MiscSoulGem;
+		ItemType type = ItemType::MiscSoulGem;
 
 		const static UINT32 DA01SoulGemAzurasStar = 0x063B27;
 		const static UINT32 DA01SoulGemBlackStar = 0x063B29;
 
 		if (gem->formID == DA01SoulGemBlackStar || gem->formID == DA01SoulGemAzurasStar) {
-			type = kType::SoulGemAzura;
+			type = ItemType::SoulGemAzura;
 		} else {
 			if (gem->GetMaximumCapacity() < SOUL_LEVEL::kGrand) {
 				if (gem->GetContainedSoul() == SOUL_LEVEL::kNone)
-					type = kType::SoulGemEmpty;
+					type = ItemType::SoulGemEmpty;
 				else if (gem->GetContainedSoul() >= gem->GetMaximumCapacity())
-					type = kType::SoulGemFull;
+					type = ItemType::SoulGemFull;
 				else
-					type = kType::SoulGemPartial;
+					type = ItemType::SoulGemPartial;
 			} else {
 				if (gem->GetContainedSoul() == SOUL_LEVEL::kNone)
-					type = kType::SoulGemGrandEmpty;
+					type = ItemType::SoulGemGrandEmpty;
 				else if (gem->GetContainedSoul() >= gem->GetMaximumCapacity())
-					type = kType::SoulGemGrandFull;
+					type = ItemType::SoulGemGrandFull;
 				else
-					type = kType::SoulGemGrandPartial;
+					type = ItemType::SoulGemGrandPartial;
 			}
 		}
 
 		return type;
 	}
 
-	const kType GetItemTypeBook(TESObjectBOOK* book)
+	const ItemType GetItemTypeBook(TESObjectBOOK* book)
 	{
-		kType type = kType::DefaultBook;
+		ItemType type = ItemType::DefaultBook;
 
 		const static UINT32 VendorItemRecipeFormID = 0x000F5CB0;
 		const static UINT32 VendorItemSpellTomeFormID = 0x000937A5;
 
 		if (book->data.type.underlying() == 0xFF || book->HasKeywordID(VendorItemRecipeFormID)) {
-			type = kType::BookNote;
+			type = ItemType::BookNote;
 		} else if (book->HasKeywordID(VendorItemSpellTomeFormID)) {
-			type = kType::BookTome;
+			type = ItemType::BookTome;
 		}
 
 		return type;
 	}
-	kType ItemListEntry::GetItemType(TESForm* form) const
+	ItemType ItemListEntry::GetItemType(TESForm* form) const
 	{
-		kType type = kType::None;
+		ItemType type = ItemType::None;
 
 		switch (form->formType.get()) {
 		case FormType::Scroll:
-			type = kType::DefaultScroll;
+			type = ItemType::DefaultScroll;
 			break;
 		case FormType::Armor:
 			type = GetItemTypeArmor(static_cast<TESObjectARMO*>(form));
@@ -1226,10 +1226,10 @@ namespace QuickLoot::Items
 			type = GetItemTypeBook(static_cast<TESObjectBOOK*>(form));
 			break;
 		case FormType::Ingredient:
-			type = kType::DefaultIngredient;
+			type = ItemType::DefaultIngredient;
 			break;
 		case FormType::Light:
-			type = kType::MiscTorch;
+			type = ItemType::MiscTorch;
 			break;
 		case FormType::Misc:
 			type = GetItemTypeMisc(static_cast<TESObjectMISC*>(form));
@@ -1238,10 +1238,10 @@ namespace QuickLoot::Items
 			type = GetItemTypeWeapon(static_cast<TESObjectWEAP*>(form));
 			break;
 		case FormType::Ammo:
-			type = (static_cast<TESAmmo*>(form)->IsBolt()) ? kType::WeaponBolt : kType::WeaponArrow;
+			type = (static_cast<TESAmmo*>(form)->IsBolt()) ? ItemType::WeaponBolt : ItemType::WeaponArrow;
 			break;
 		case FormType::KeyMaster:
-			type = kType::DefaultKey;
+			type = ItemType::DefaultKey;
 			break;
 		case FormType::AlchemyItem:
 			type = GetItemTypePotion(static_cast<AlchemyItem*>(form));
@@ -1382,7 +1382,7 @@ namespace QuickLoot::Items
 		_cache.IsSpecialEnchanted(ench_type == EnchantmentType::CannotDisenchant);
 	}
 
-	const char* ItemListEntry::GetItemIconLabel(kType form) const
+	const char* ItemListEntry::GetItemIconLabel(ItemType form) const
 	{
 		size_t form_num = static_cast<size_t>(form);
 		if (form_num < sizeof(strIcons) / sizeof(strIcons[0]))
