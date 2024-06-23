@@ -138,14 +138,14 @@ namespace Items
 	};
 
 
-	class GFxItem
+	class ItemListEntry
 	{
 	public:
 
-		GFxItem(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item);
-		GFxItem(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items);
+		ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item);
+		ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items);
 		[[nodiscard]] constexpr std::ptrdiff_t Count() const noexcept { return _count; }
-		[[nodiscard]] int                      Compare(const GFxItem& a_rhs) const;
+		[[nodiscard]] int                      Compare(const ItemListEntry& a_rhs) const;
 		[[nodiscard]] const std::string&       GetDisplayName() const;
 		[[nodiscard]] double                   GetEnchantmentCharge() const;
 		[[nodiscard]] bool                     IsEnchanted() const;
@@ -196,11 +196,11 @@ namespace Items
 		kType _item_type;
 	};
 
-	[[nodiscard]] inline bool operator==(const GFxItem& a_lhs, const GFxItem& a_rhs) { return a_lhs.Compare(a_rhs) == 0; }
-	[[nodiscard]] inline bool operator!=(const GFxItem& a_lhs, const GFxItem& a_rhs) { return a_lhs.Compare(a_rhs) != 0; }
-	[[nodiscard]] inline bool operator< (const GFxItem& a_lhs, const GFxItem& a_rhs) { return a_lhs.Compare(a_rhs) <  0; }
-	[[nodiscard]] inline bool operator> (const GFxItem& a_lhs, const GFxItem& a_rhs) { return a_lhs.Compare(a_rhs) >  0; }
-	[[nodiscard]] inline bool operator<=(const GFxItem& a_lhs, const GFxItem& a_rhs) { return a_lhs.Compare(a_rhs) <= 0; }
-	[[nodiscard]] inline bool operator>=(const GFxItem& a_lhs, const GFxItem& a_rhs) { return a_lhs.Compare(a_rhs) >= 0; }
+	[[nodiscard]] inline bool operator==(const ItemListEntry& a_lhs, const ItemListEntry& a_rhs) { return a_lhs.Compare(a_rhs) == 0; }
+	[[nodiscard]] inline bool operator!=(const ItemListEntry& a_lhs, const ItemListEntry& a_rhs) { return a_lhs.Compare(a_rhs) != 0; }
+	[[nodiscard]] inline bool operator< (const ItemListEntry& a_lhs, const ItemListEntry& a_rhs) { return a_lhs.Compare(a_rhs) <  0; }
+	[[nodiscard]] inline bool operator> (const ItemListEntry& a_lhs, const ItemListEntry& a_rhs) { return a_lhs.Compare(a_rhs) >  0; }
+	[[nodiscard]] inline bool operator<=(const ItemListEntry& a_lhs, const ItemListEntry& a_rhs) { return a_lhs.Compare(a_rhs) <= 0; }
+	[[nodiscard]] inline bool operator>=(const ItemListEntry& a_lhs, const ItemListEntry& a_rhs) { return a_lhs.Compare(a_rhs) >= 0; }
 }
 

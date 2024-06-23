@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Items/GFxItem.h"
+#include "Items/ItemListEntry.h"
 
 namespace Items
 {
@@ -45,7 +45,7 @@ namespace Items
 		[[nodiscard]] bool Stolen() const { return _item.IsStolen(); }
 
 	private:
-		GFxItem _item;
+		ItemListEntry _item;
 	};
 
 	[[nodiscard]] inline bool operator==(const Item& a_lhs, const Item& a_rhs) { return a_lhs.Compare(a_rhs) == 0; }

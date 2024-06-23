@@ -1,4 +1,4 @@
-#include "GFxItem.h"
+#include "ItemListEntry.h"
 
 #undef GetModuleHandle
 
@@ -120,7 +120,7 @@ static bool comp_installed{};
 
 namespace Items
 {
-	GFxItem::GFxItem(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item)
+	ItemListEntry::ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item)
 		: _src(a_item)
 		, _count(a_count)
 		, _stealing(a_stealing)
@@ -128,15 +128,15 @@ namespace Items
 		assert(a_item != nullptr);
 	}
 
-	GFxItem::GFxItem(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items)
+	ItemListEntry::ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items)
 		: _src(a_items)
 		, _count(a_count)
 		, _stealing(a_stealing)
 	{}
 
-	int GFxItem::Compare(const GFxItem& a_rhs) const
+	int ItemListEntry::Compare(const ItemListEntry& a_rhs) const
 	{
-		const GFxItem& a_lhs = *this;
+		const ItemListEntry& a_lhs = *this;
 
 		if (a_lhs.IsQuestItem() != a_rhs.IsQuestItem()) return a_lhs.IsQuestItem() ? -1 : 1;
 		if (a_lhs.IsKey() != a_rhs.IsKey()) return a_lhs.IsKey() ? -1 : 1;
@@ -165,7 +165,7 @@ namespace Items
         return 0;
     }
 
-	const std::string& GFxItem::GetDisplayName() const
+	const std::string& ItemListEntry::GetDisplayName() const
 	{
 		if (compAPI::IsReady()) {
 			_cache.DisplayName(std::move(compAPI::GetItemDisplayName(GetFormID(), compAPI::DisplayNameMode::kNewDisplayName)));
@@ -205,7 +205,7 @@ namespace Items
 		return _cache.DisplayName();
 	}
 
-	double GFxItem::GetEnchantmentCharge() const
+	double ItemListEntry::GetEnchantmentCharge() const
 	{
 		if (_cache[kEnchantmentCharge]) {
 			return _cache.EnchantmentCharge();
@@ -240,7 +240,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsEnchanted() const
+	bool ItemListEntry::IsEnchanted() const
 	{
 		if (!_cache[kIsEnchanted]) {
 			SetupEnchantmentFlags();
@@ -248,7 +248,7 @@ namespace Items
 		return _cache.IsEnchanted();
 	}
 
-	bool GFxItem::IsKnownEnchanted() const
+	bool ItemListEntry::IsKnownEnchanted() const
 	{
 		if (!_cache[kIsKnownEnchanted]) {
 			SetupEnchantmentFlags();
@@ -256,7 +256,7 @@ namespace Items
 		return _cache.IsKnownEnchanted();
 	}
 
-	bool GFxItem::IsSpecialEnchanted() const
+	bool ItemListEntry::IsSpecialEnchanted() const
 	{
 		if (!_cache[kIsSpecialEnchanted]) {
 			SetupEnchantmentFlags();
@@ -264,7 +264,7 @@ namespace Items
 		return _cache.IsSpecialEnchanted();
 	}
 
-	RE::TESForm* GFxItem::GetObject() const
+	RE::TESForm* ItemListEntry::GetObject() const
 	{
 		switch (_src.index()) {
 		case kInventory:
@@ -286,7 +286,7 @@ namespace Items
 		return nullptr;
 	}
 
-	RE::FormID GFxItem::GetFormID() const
+	RE::FormID ItemListEntry::GetFormID() const
 	{
 		if (_cache[kFormID]) {
 			return _cache.FormID();
@@ -318,7 +318,7 @@ namespace Items
 		return result;
 	}
 
-	kType GFxItem::GetItemType() const
+	kType ItemListEntry::GetItemType() const
 	{
 		if (_cache[kItemType]) {
 			return _cache.ItemType();
@@ -350,7 +350,7 @@ namespace Items
 		return result;
 	}
 
-	std::ptrdiff_t GFxItem::GetValue() const
+	std::ptrdiff_t ItemListEntry::GetValue() const
 	{
 		if (_cache[kValue]) {
 			return _cache.Value();
@@ -380,7 +380,7 @@ namespace Items
 		return result;
 	}
 
-	double GFxItem::GetWeight() const
+	double ItemListEntry::GetWeight() const
 	{
 		if (_cache[kWeight]) {
 			return _cache.Weight();
@@ -410,7 +410,7 @@ namespace Items
 		return result;
 	}
 
-	RE::SOUL_LEVEL GFxItem::GetSoulSize() const
+	RE::SOUL_LEVEL ItemListEntry::GetSoulSize() const
 	{
 		RE::SOUL_LEVEL result = RE::SOUL_LEVEL::kNone;
 		const RE::InventoryEntryData* item_inventory_entry = nullptr;
@@ -455,7 +455,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsAmmo() const
+	bool ItemListEntry::IsAmmo() const
 	{
 		if (_cache[kAmmo]) {
 			return _cache.Ammo();
@@ -487,7 +487,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsBook() const
+	bool ItemListEntry::IsBook() const
 	{
 		if (_cache[kBook]) {
 			return _cache.Book();
@@ -519,7 +519,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsRead() const
+	bool ItemListEntry::IsRead() const
 	{
 		if (!IsBook()) {
 			return false;
@@ -555,7 +555,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsGold() const
+	bool ItemListEntry::IsGold() const
 	{
 		if (_cache[kGold]) {
 			return _cache.Gold();
@@ -587,7 +587,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsKey() const
+	bool ItemListEntry::IsKey() const
 	{
 		if (_cache[kKey]) {
 			return _cache.Key();
@@ -619,7 +619,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsLockpick() const
+	bool ItemListEntry::IsLockpick() const
 	{
 		if (_cache[kLockpick]) {
 			return _cache.Lockpick();
@@ -651,7 +651,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsNote() const
+	bool ItemListEntry::IsNote() const
 	{
 		if (_cache[kNote]) {
 			return _cache.Note();
@@ -683,7 +683,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsQuestItem() const
+	bool ItemListEntry::IsQuestItem() const
 	{
 		if (_cache[kQuestItem]) {
 			return _cache.QuestItem();
@@ -712,7 +712,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsStolen() const
+	bool ItemListEntry::IsStolen() const
 	{
 		if (_cache[kStolen]) {
 			return _cache.Stolen();
@@ -744,7 +744,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::ItemIsNew() const
+	bool ItemListEntry::ItemIsNew() const
 	{
 		if (_cache[kIsDBMNew]) {
 			return _cache.IsDBMNew();
@@ -755,7 +755,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::ItemIsFound() const
+	bool ItemListEntry::ItemIsFound() const
 	{
 		if (_cache[kIsDBMFound]) {
 			return _cache.IsDBMFound();
@@ -766,7 +766,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::ItemIsDisplayed() const
+	bool ItemListEntry::ItemIsDisplayed() const
 	{
 		if (_cache[kIsDBMDisplayed]) {
 			return _cache.IsDBMDisplayed();
@@ -777,7 +777,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::ItemIsNeeded() const
+	bool ItemListEntry::ItemIsNeeded() const
 	{
 		if (_cache[kIsItemTracked]) {
 			return _cache.IsItemTracked();
@@ -789,7 +789,7 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::ItemIsCollected() const
+	bool ItemListEntry::ItemIsCollected() const
 	{
 		if (_cache[kIsItemCollected]) {
 			return _cache.IsItemCollected();
@@ -801,7 +801,7 @@ namespace Items
 		return result;
 	}
 
-	RE::GFxValue GFxItem::GFxValue(RE::GFxMovieView& a_view) const
+	RE::GFxValue ItemListEntry::GFxValue(RE::GFxMovieView& a_view) const
 	{
 		RE::GFxValue value;
 		a_view.CreateObject(std::addressof(value));
@@ -1211,7 +1211,7 @@ namespace Items
 
 		return type;
 	}
-	kType GFxItem::GetItemType(TESForm* form) const
+	kType ItemListEntry::GetItemType(TESForm* form) const
 	{
 		kType type = kType::None;
 
@@ -1276,7 +1276,7 @@ namespace Items
 		return false;
 	}
 
-	EnchantmentType GFxItem::GetEnchantmentType() const
+	EnchantmentType ItemListEntry::GetEnchantmentType() const
 	{
 		EnchantmentType result = EnchantmentType::None;
 		const RE::InventoryEntryData* item_inventory_entry = nullptr;
@@ -1373,7 +1373,7 @@ namespace Items
 	}
 
 	// Almost straight up copied from MoreHudSE. Had to change some things to work with this. https://github.com/ahzaab/moreHUDSE
-	void GFxItem::SetupEnchantmentFlags() const
+	void ItemListEntry::SetupEnchantmentFlags() const
 	{
 		EnchantmentType ench_type = GetEnchantmentType();
 
@@ -1382,7 +1382,7 @@ namespace Items
 		_cache.IsSpecialEnchanted(ench_type == EnchantmentType::CannotDisenchant);
 	}
 
-	const char* GFxItem::GetItemIconLabel(kType form) const
+	const char* ItemListEntry::GetItemIconLabel(kType form) const
 	{
 		size_t form_num = static_cast<size_t>(form);
 		if (form_num < sizeof(strIcons) / sizeof(strIcons[0]))

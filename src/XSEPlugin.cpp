@@ -7,7 +7,7 @@
 #include "Loot.h"
 #include "Scaleform/Scaleform.h"
 #include "LOTD/LOTD.h"
-#include "Items/GFxItem.h"
+#include "Items/ItemListEntry.h"
 
 namespace
 {
