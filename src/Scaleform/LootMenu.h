@@ -160,6 +160,25 @@ namespace Scaleform
 			QueueInventoryRefresh();
 		}
 
+		// TODO: This code works, but could be improved by using TransferInventory
+		// Albeit there's currently no noticable lag doing it this way.
+		void TakeAll()
+		{
+			auto dst = _dst.get();
+			if (dst) {
+				for (std::size_t i = 0; i < _itemListImpl.size(); ++i) {
+					_itemListImpl[i]->TakeAll(*dst);
+				}
+				_openCloseHandler.Open();
+
+				if (Settings::DispelInvisibility() && dst->AsMagicTarget()) {
+					DispelEffectsWithArchetype(dst->AsMagicTarget(), RE::EffectArchetypes::ArchetypeID::kInvisibility, false);
+				}
+			}
+
+			QueueInventoryRefresh();
+		}
+
 		void DispelEffectsWithArchetype(RE::MagicTarget* a_target, RE::MagicTarget::Archetype a_type, bool a_force)
 		{
 			if (!a_target || !a_target->GetActiveEffectList()) {

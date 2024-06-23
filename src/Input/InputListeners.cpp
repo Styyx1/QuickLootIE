@@ -75,7 +75,7 @@ namespace Input
 	void TakeHandler::TakeAll()
 	{
 		auto& loot = Loot::GetSingleton();
-		loot.TakeStack();
+		loot.TakeAll();
 	}
 
 	void TransferHandler::DoHandle(RE::InputEvent* const& a_event)

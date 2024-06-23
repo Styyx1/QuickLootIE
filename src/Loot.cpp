@@ -55,6 +55,13 @@ void Loot::TakeStack()
 	});
 }
 
+void Loot::TakeAll()
+{
+	AddTask([](LootMenu& a_menu) {
+		a_menu.TakeAll();
+	});
+}
+
 void Loot::Process(LootMenu& a_menu)
 {
 	if (!_taskQueue.empty()) {

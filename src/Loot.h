@@ -52,6 +52,7 @@ public:
 
 	void SetContainer(RE::ObjectRefHandle a_container);
 	void TakeStack();
+	void TakeAll();
 
 protected:
 	friend class LootMenu;
