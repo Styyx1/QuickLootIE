@@ -59,7 +59,7 @@ cmake --preset ALL
 cmake --build build --config Release
 
 # Building the ESP File
-Path/To/Spriggit.CLI.exe deserialize --InputPath Source\\ESP --OutputPath QuickLootIE.esp
+Path/To/Spriggit.CLI.exe deserialize --InputPath Source\ESP --OutputPath QuickLootIE.esp
 ```
 
 
