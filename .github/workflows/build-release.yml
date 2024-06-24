@@ -210,9 +210,6 @@ jobs:
     needs: check-changes
     if: ${{ needs.check-changes.outputs.should_run >= 1 || (github.event_name == 'workflow_dispatch' && always()) }}
     runs-on: windows-latest
-    strategy:
-      matrix:
-        os: [windows-latest]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -237,32 +234,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cmake-
 
-      - name: Cache CMake binaries
-        id: cache-cmake-bin
-        uses: actions/cache@v4
-        with:
-          path: build/Debug/
-          key: ${{ runner.os }}-cmake-bin-${{ hashFiles('**/CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-cmake-bin-
-
       - name: Setup vcpkg
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
           vcpkgJsonGlob: 'vcpkg.json'
 
       - name: Setup CMake
+        if: steps.cache-cmake.outputs.cache-hit != 'true'
         uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.24.0"
           ninjaVersion: "~1.11.1"
 
-      - name: Run CMake configure and build
-        shell: bash
+      - name: Configure CMake
         run: |
-          cmake --preset ALL --compile-no-warning-as-error
-          cmake --build build --config Debug
+            cmake -S . -B build -G Ninja
+            cmake --preset ALL
+
+      - name: Build with CMake
+        run: cmake --build build --config Debug --parallel
 
       - name: Copy artifacts to pack folder
         shell: bash
@@ -271,7 +263,6 @@ jobs:
           mv build/Debug/QuickLootIE.dll "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.dll"
           mv build/Debug/QuickLootIE.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.pdb"
       
-
       - name: Upload SKSE plugin artifact
         uses: actions/upload-artifact@v4
         with:
