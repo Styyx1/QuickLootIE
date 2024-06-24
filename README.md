@@ -1,5 +1,14 @@
 ![image](.github/docs/QuickLootIE.png)
-# Differences to upstream
+
+# QuickLootIE
+
+QuickLootIE is a fork from QuickLootEE which aims to offer the definitive version of QuickLoot.
+It intregates several features scattered across different QL versions under one umbrella to
+remove the burden of choice from the End User, while also adding new features to it.
+Below you can find a list of new features and requirements to use and/or build the project.
+
+_Special thanks to Faen90 and AtomCrafty for helping with this project. 
+This would have taken longer if not right impossible without them!_
 
 ## New features
 
@@ -58,7 +67,7 @@ Path/To/Spriggit.CLI.exe deserialize --InputPath Source\\ESP --OutputPath QuickL
 * [Microsoft Visual C++ Redistributable for Visual Studio 2022](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170)
 * [SKSE64](https://skse.silverlock.org/)
 * [SkyUI](https://www.nexusmods.com/skyrimspecialedition/mods/12604)
-## Optional
+* [PapyrusUtil SE - Modders Scripting Utility Functions](https://www.nexusmods.com/skyrimspecialedition/mods/13048)
 * [Inventory Interface Information Injector](https://www.nexusmods.com/skyrimspecialedition/mods/85702)
 
 ## Credits
