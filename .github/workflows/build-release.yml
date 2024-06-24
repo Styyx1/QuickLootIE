@@ -242,13 +242,13 @@ jobs:
           vcpkgJsonGlob: 'vcpkg.json'
 
       - name: Setup CMake
-        if: steps.cache-cmake.outputs.cache-hit != 'true'
         uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.24.0"
           ninjaVersion: "~1.11.1"
 
       - name: Configure CMake
+        if: steps.cache-cmake.outputs.cache-hit != 'true'
         run: |
             cmake --preset ALL
 
