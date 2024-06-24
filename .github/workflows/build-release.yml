@@ -5,8 +5,12 @@ on:
     - cron: '0 0 * * *'
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    paths-ignore:
+    - |
+        '.github/**'
+        '*.yaml'
+        '*.txt'
+        '*.md'
   workflow_dispatch:
     inputs:
       version:
@@ -17,6 +21,10 @@ on:
         description: Publish Release?
         type: boolean
         default: true
+      release-body:
+        description: Release body
+        required: false
+        default: 'Latest nightly of QuickLootIE. These builds are untested and may contain bugs.'
       spriggit_tool_version:
         description: Spriggit version (optional)
         required: false
@@ -34,8 +42,8 @@ jobs:
         id: should_run
         shell: bash
         run: |
-          git log --since="1 days ago" --name-only
-          echo "should_run=$(git log --since="1 days ago" --name-only | grep "" -c)" >> "$GITHUB_OUTPUT"
+            CHANGED_FILES=$(git log --since="1 days ago" --name-only | grep -v '\.(md|txt)$')
+            echo "should_run=$(echo "$CHANGED_FILES" | wc -l)" >> "$GITHUB_ENV"
           
   build-plugin:
     name: Build ESP from Spriggit files
@@ -362,7 +370,7 @@ jobs:
           allowUpdates: true
           name: ${{inputs.version || 'nightly'}}
           draft: false
-          body: 'Latest nightly of QuickLootIE. These builds are untested and may contain bugs.'
+          body: '${{inputs.release-body}}'
           tag: ${{inputs.version || 'nightly'}}
           prerelease: true
           makeLatest: false
