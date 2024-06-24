@@ -106,6 +106,7 @@ jobs:
           path: |
             .github/Papyrus/SRC
             .github/Papyrus/SRC_SKYUI
+            .github/Papyrus/SRC_PAPUTIL
           key: script-sources-clean
 
       - name: Cache Compiler
