@@ -305,7 +305,7 @@ jobs:
           mkdir -p "${{ github.workspace }}/to-pack/Interface"
           cp "QuickLootIE.esp" "${{ github.workspace }}/to-pack/QuickLootIE.esp"
           cp -a "swf/bin/." "${{ github.workspace }}/to-pack/Interface"
-          cp -a "Interface" "${{ github.workspace }}/to-pack/Interface"
+          cp -a "Interface/." "${{ github.workspace }}/to-pack/Interface"
           cp -a "SKSE/." "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp -a "Scripts" "${{ github.workspace }}/to-pack/"
           cp -a "Source" "${{ github.workspace }}/to-pack/"
