@@ -1,21 +1,21 @@
 #pragma once
 
-#include "Items/Item.h"
+#include "Items/OldItem.h"
 
-namespace Items
+namespace QuickLoot::Items
 {
-	class InventoryItem final :
-		public Item
+	class OldInventoryItem final :
+		public OldItem
 	{
 	private:
-		using super = Item;
+		using super = OldItem;
 
 	public:
-		InventoryItem() = delete;
-		InventoryItem(const InventoryItem&) = delete;
-		InventoryItem(InventoryItem&&) = default;
+		OldInventoryItem() = delete;
+		OldInventoryItem(const OldInventoryItem&) = delete;
+		OldInventoryItem(OldInventoryItem&&) = default;
 
-		InventoryItem(std::ptrdiff_t a_count, bool a_stealing, std::unique_ptr<RE::InventoryEntryData> a_item, RE::ObjectRefHandle a_container) :
+		OldInventoryItem(std::ptrdiff_t a_count, bool a_stealing, std::unique_ptr<RE::InventoryEntryData> a_item, RE::ObjectRefHandle a_container) :
 			super(a_count, a_stealing, a_item.get()),
 			_entry(std::move(a_item)),
 			_container(a_container)
@@ -25,10 +25,10 @@ namespace Items
 			assert(_container);
 		}
 
-		~InventoryItem() = default;
+		~OldInventoryItem() = default;
 
-		InventoryItem& operator=(const InventoryItem&) = delete;
-		InventoryItem& operator=(InventoryItem&&) = default;
+		OldInventoryItem& operator=(const OldInventoryItem&) = delete;
+		OldInventoryItem& operator=(OldInventoryItem&&) = default;
 
 	protected:
 		void DoTake(RE::Actor& a_dst, std::ptrdiff_t a_count) override

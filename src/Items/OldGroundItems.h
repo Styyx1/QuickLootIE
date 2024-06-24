@@ -1,29 +1,29 @@
 #pragma once
 
-#include "Items/Item.h"
+#include "Items/OldItem.h"
 
-namespace Items
+namespace QuickLoot::Items
 {
-	class GroundItems final :
-		public Item
+	class OldGroundItems final :
+		public OldItem
 	{
 	private:
-		using super = Item;
+		using super = OldItem;
 
 	public:
-		GroundItems() = delete;
-		GroundItems(const GroundItems&) = delete;
-		GroundItems(GroundItems&&) = default;
+		OldGroundItems() = delete;
+		OldGroundItems(const OldGroundItems&) = delete;
+		OldGroundItems(OldGroundItems&&) = default;
 
-		 GroundItems(std::ptrdiff_t a_count, bool a_stealing, std::vector<RE::ObjectRefHandle> a_items) :
+		 OldGroundItems(std::ptrdiff_t a_count, bool a_stealing, std::vector<RE::ObjectRefHandle> a_items) :
 			super(a_count, a_stealing, { a_items.data(), a_items.size() }),
 			_items(std::move(a_items))
 		{}
 
-		~GroundItems() = default;
+		~OldGroundItems() = default;
 
-		GroundItems& operator=(const GroundItems&) = delete;
-		GroundItems& operator=(GroundItems&&) = default;
+		OldGroundItems& operator=(const OldGroundItems&) = delete;
+		OldGroundItems& operator=(OldGroundItems&&) = default;
 
 	protected:
 		 void DoTake(RE::Actor& a_dst, std::ptrdiff_t a_count) override

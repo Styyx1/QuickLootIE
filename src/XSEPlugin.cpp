@@ -3,11 +3,10 @@
 #include "Animation/Animation.h"
 #include "Events/Events.h"
 #include "Hooks.h"
-#include "Input/Input.h"
 #include "Loot.h"
-#include "Scaleform/Scaleform.h"
-#include "LOTD/LOTD.h"
-#include "Items/GFxItem.h"
+#include "Scaleform/LootMenu.h"
+#include "Integrations/LOTD.h"
+#include "Integrations/Completionist.h"
 
 namespace
 {
@@ -94,14 +93,11 @@ namespace
 			Animation::AnimationManager::Install();
 
 			Events::Register();
-			Scaleform::Register();
+			Scaleform::LootMenu::Register();
 
 			Settings::LoadSettings();
-			LOTD::LoadLists();
-			break;
-		case SKSE::MessagingInterface::kPostLoad:
-			compAPI::Init();
-			break;
+            QuickLoot::Integrations::LOTD::Init();
+			QuickLoot::Integrations::Completionist::Init();
 		}
 	}
 }

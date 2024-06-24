@@ -1,4 +1,7 @@
-#include "GFxItem.h"
+#include "ItemListEntry.h"
+
+#include "Integrations/Completionist.h"
+#include "Integrations/LOTD.h"
 
 #undef GetModuleHandle
 
@@ -103,24 +106,17 @@ static const char* strIcons[] = {
 };
 
 using namespace RE;
+using namespace QuickLoot::Integrations;
 
-struct CompletionistRequestEE
+enum ItemKind
 {
-	RE::FormID m_formId;
+    kInventory,
+	kGround
 };
 
-struct CompletionistResponseEE
+namespace QuickLoot::Items
 {
-	RE::FormID m_formId;
-	std::string m_displayname;
-};
-
-static std::optional<CompletionistResponseEE> comp_response{ std::nullopt };
-static bool comp_installed{};
-
-namespace Items
-{
-	GFxItem::GFxItem(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item)
+	ItemListEntry::ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, SKSE::stl::observer<RE::InventoryEntryData*> a_item)
 		: _src(a_item)
 		, _count(a_count)
 		, _stealing(a_stealing)
@@ -128,15 +124,15 @@ namespace Items
 		assert(a_item != nullptr);
 	}
 
-	GFxItem::GFxItem(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items)
+	ItemListEntry::ItemListEntry(std::ptrdiff_t a_count, bool a_stealing, std::span<const RE::ObjectRefHandle> a_items)
 		: _src(a_items)
 		, _count(a_count)
 		, _stealing(a_stealing)
 	{}
 
-	int GFxItem::Compare(const GFxItem& a_rhs) const
+	int ItemListEntry::Compare(const ItemListEntry& a_rhs) const
 	{
-		const GFxItem& a_lhs = *this;
+		const ItemListEntry& a_lhs = *this;
 
 		if (a_lhs.IsQuestItem() != a_rhs.IsQuestItem()) return a_lhs.IsQuestItem() ? -1 : 1;
 		if (a_lhs.IsKey() != a_rhs.IsKey()) return a_lhs.IsKey() ? -1 : 1;
@@ -165,14 +161,14 @@ namespace Items
         return 0;
     }
 
-	const std::string& GFxItem::GetDisplayName() const
+	const std::string& ItemListEntry::GetDisplayName() const
 	{
-		if (compAPI::IsReady()) {
-			_cache.DisplayName(std::move(compAPI::GetItemDisplayName(GetFormID(), compAPI::DisplayNameMode::kNewDisplayName)));
+		if (Completionist::IsReady()) {
+			_cache.SetDisplayName(Completionist::GetItemDisplayName(GetFormID(), Completionist::DisplayNameMode::kNewDisplayName));
 		}
 
-		if (_cache[kDisplayName]) {
-			return _cache.DisplayName();
+		if (_cache.IsCached(kDisplayName)) {
+			return _cache.GetDisplayName();
 		}
 
 		std::string result;
@@ -201,14 +197,13 @@ namespace Items
 			}
 		}
 
-		_cache.DisplayName(std::move(result));
-		return _cache.DisplayName();
+		return _cache.SetDisplayName(std::move(result));
 	}
 
-	double GFxItem::GetEnchantmentCharge() const
+	double ItemListEntry::GetEnchantmentCharge() const
 	{
-		if (_cache[kEnchantmentCharge]) {
-			return _cache.EnchantmentCharge();
+		if (_cache.IsCached(kEnchantmentCharge)) {
+			return _cache.GetEnchantmentCharge();
 		}
 
 		double result = -1.0;
@@ -236,35 +231,34 @@ namespace Items
 			break;
 		}
 
-		_cache.EnchantmentCharge(result);
-		return result;
+		return _cache.SetEnchantmentCharge(result);
 	}
 
-	bool GFxItem::IsEnchanted() const
+	bool ItemListEntry::IsEnchanted() const
 	{
-		if (!_cache[kIsEnchanted]) {
+		if (!_cache.IsCached(kIsEnchanted)) {
 			SetupEnchantmentFlags();
 		}
 		return _cache.IsEnchanted();
 	}
 
-	bool GFxItem::IsKnownEnchanted() const
+	bool ItemListEntry::IsKnownEnchanted() const
 	{
-		if (!_cache[kIsKnownEnchanted]) {
+		if (!_cache.IsCached(kIsKnownEnchanted)) {
 			SetupEnchantmentFlags();
 		}
 		return _cache.IsKnownEnchanted();
 	}
 
-	bool GFxItem::IsSpecialEnchanted() const
+	bool ItemListEntry::IsSpecialEnchanted() const
 	{
-		if (!_cache[kIsSpecialEnchanted]) {
+		if (!_cache.IsCached(kIsSpecialEnchanted)) {
 			SetupEnchantmentFlags();
 		}
 		return _cache.IsSpecialEnchanted();
 	}
 
-	RE::TESForm* GFxItem::GetObject() const
+	RE::TESForm* ItemListEntry::GetObject() const
 	{
 		switch (_src.index()) {
 		case kInventory:
@@ -286,10 +280,10 @@ namespace Items
 		return nullptr;
 	}
 
-	RE::FormID GFxItem::GetFormID() const
+	RE::FormID ItemListEntry::GetFormID() const
 	{
-		if (_cache[kFormID]) {
-			return _cache.FormID();
+		if (_cache.IsCached(kFormID)) {
+			return _cache.GetFormID();
 		}
 
 		auto result = std::numeric_limits<RE::FormID>::max();
@@ -314,17 +308,16 @@ namespace Items
 			break;
 		}
 
-		_cache.FormID(result);
-		return result;
+		return _cache.SetFormID(result);
 	}
 
-	kType GFxItem::GetItemType() const
+	ItemType ItemListEntry::GetItemType() const
 	{
-		if (_cache[kItemType]) {
-			return _cache.ItemType();
+		if (_cache.IsCached(kItemType)) {
+			return _cache.GetItemType();
 		}
 
-		auto result = kType::None;
+		auto result = ItemType::None;
 		switch (_src.index()) {
 		case kInventory:
 			if (const auto obj = std::get<kInventory>(_src)->GetObject(); obj) {
@@ -346,14 +339,13 @@ namespace Items
 			break;
 		}
 
-		_cache.ItemType(result);
-		return result;
+		return _cache.SetItemType(result);
 	}
 
-	std::ptrdiff_t GFxItem::GetValue() const
+	std::ptrdiff_t ItemListEntry::GetValue() const
 	{
-		if (_cache[kValue]) {
-			return _cache.Value();
+		if (_cache.IsCached(kValue)) {
+			return _cache.GetValue();
 		}
 
 		auto result = std::numeric_limits<std::ptrdiff_t>::min();
@@ -376,14 +368,13 @@ namespace Items
 			break;
 		}
 
-		_cache.Value(result);
-		return result;
+		return _cache.SetValue(result);
 	}
 
-	double GFxItem::GetWeight() const
+	double ItemListEntry::GetWeight() const
 	{
-		if (_cache[kWeight]) {
-			return _cache.Weight();
+		if (_cache.IsCached(kWeight)) {
+			return _cache.GetWeight();
 		}
 
 		double result = 0.0;
@@ -406,11 +397,10 @@ namespace Items
 			break;
 		}
 
-		_cache.Weight(result);
-		return result;
+		return _cache.SetWeight(result);
 	}
 
-	RE::SOUL_LEVEL GFxItem::GetSoulSize() const
+	RE::SOUL_LEVEL ItemListEntry::GetSoulSize() const
 	{
 		RE::SOUL_LEVEL result = RE::SOUL_LEVEL::kNone;
 		const RE::InventoryEntryData* item_inventory_entry = nullptr;
@@ -455,10 +445,10 @@ namespace Items
 		return result;
 	}
 
-	bool GFxItem::IsAmmo() const
+	bool ItemListEntry::IsAmmo() const
 	{
-		if (_cache[kAmmo]) {
-			return _cache.Ammo();
+		if (_cache.IsCached(kAmmo)) {
+			return _cache.IsAmmo();
 		}
 
 		bool result = false;
@@ -483,14 +473,13 @@ namespace Items
 			break;
 		}
 
-		_cache.Ammo(result);
-		return result;
+		return _cache.SetAmmo(result);
 	}
 
-	bool GFxItem::IsBook() const
+	bool ItemListEntry::IsBook() const
 	{
-		if (_cache[kBook]) {
-			return _cache.Book();
+		if (_cache.IsCached(kBook)) {
+			return _cache.IsBook();
 		}
 
 		bool result = false;
@@ -515,17 +504,16 @@ namespace Items
 			break;
 		}
 
-		_cache.Book(result);
-		return result;
+		return _cache.SetBook(result);
 	}
 
-	bool GFxItem::IsRead() const
+	bool ItemListEntry::IsRead() const
 	{
 		if (!IsBook()) {
 			return false;
 		}
 
-		if (_cache[kIsRead]) {
+		if (_cache.IsCached(kIsRead)) {
 			return _cache.IsRead();
 		}
 
@@ -551,14 +539,13 @@ namespace Items
 			break;
 		}
 
-		_cache.IsRead(result);
-		return result;
+		return _cache.SetRead(result);
 	}
 
-	bool GFxItem::IsGold() const
+	bool ItemListEntry::IsGold() const
 	{
-		if (_cache[kGold]) {
-			return _cache.Gold();
+		if (_cache.IsCached(kGold)) {
+			return _cache.IsGold();
 		}
 
 		bool result = false;
@@ -583,14 +570,13 @@ namespace Items
 			break;
 		}
 
-		_cache.Gold(result);
-		return result;
+		return _cache.SetGold(result);
 	}
 
-	bool GFxItem::IsKey() const
+	bool ItemListEntry::IsKey() const
 	{
-		if (_cache[kKey]) {
-			return _cache.Key();
+		if (_cache.IsCached(kKey)) {
+			return _cache.IsKey();
 		}
 
 		bool result = false;
@@ -615,14 +601,13 @@ namespace Items
 			break;
 		}
 
-		_cache.Key(result);
-		return result;
+		return _cache.SetKey(result);
 	}
 
-	bool GFxItem::IsLockpick() const
+	bool ItemListEntry::IsLockpick() const
 	{
-		if (_cache[kLockpick]) {
-			return _cache.Lockpick();
+		if (_cache.IsCached(kLockpick)) {
+			return _cache.IsLockpick();
 		}
 
 		bool result = false;
@@ -647,14 +632,13 @@ namespace Items
 			break;
 		}
 
-		_cache.Lockpick(result);
-		return result;
+		return _cache.SetLockpick(result);
 	}
 
-	bool GFxItem::IsNote() const
+	bool ItemListEntry::IsNote() const
 	{
-		if (_cache[kNote]) {
-			return _cache.Note();
+		if (_cache.IsCached(kNote)) {
+			return _cache.IsNote();
 		}
 
 		bool result = false;
@@ -679,14 +663,13 @@ namespace Items
 			break;
 		}
 
-		_cache.Note(result);
-		return result;
+		return _cache.SetNote(result);
 	}
 
-	bool GFxItem::IsQuestItem() const
+	bool ItemListEntry::IsQuestItem() const
 	{
-		if (_cache[kQuestItem]) {
-			return _cache.QuestItem();
+		if (_cache.IsCached(kIsQuestItem)) {
+			return _cache.IsQuestItem();
 		}
 
 		bool result = false;
@@ -708,14 +691,13 @@ namespace Items
 			break;
 		}
 
-		_cache.QuestItem(result);
-		return result;
+		return _cache.SetQuestItem(result);
 	}
 
-	bool GFxItem::IsStolen() const
+	bool ItemListEntry::IsStolen() const
 	{
-		if (_cache[kStolen]) {
-			return _cache.Stolen();
+		if (_cache.IsCached(kIsStolen)) {
+			return _cache.IsStolen();
 		}
 
 		bool result = false;
@@ -740,68 +722,62 @@ namespace Items
 			}
 		}
 
-		_cache.Stolen(result);
-		return result;
+		return _cache.SetStolen(result);
 	}
 
-	bool GFxItem::ItemIsNew() const
+	bool ItemListEntry::ItemIsNew() const
 	{
-		if (_cache[kIsDBMNew]) {
-			return _cache.IsDBMNew();
+		if (_cache.IsCached(kIsDbmNew)) {
+			return _cache.IsDbmNew();
 		}
 
 		bool result = LOTD::IsItemNew(GetFormID());
-		_cache.IsDBMNew(result);
-		return result;
+		return _cache.SetDbmNew(result);
 	}
 
-	bool GFxItem::ItemIsFound() const
+	bool ItemListEntry::ItemIsFound() const
 	{
-		if (_cache[kIsDBMFound]) {
-			return _cache.IsDBMFound();
+		if (_cache.IsCached(kIsDbmFound)) {
+			return _cache.IsDbmFound();
 		}
 
 		bool result = LOTD::IsItemFound(GetFormID());
-		_cache.IsDBMFound(result);
-		return result;
+		return _cache.SetDbmFound(result);
 	}
 
-	bool GFxItem::ItemIsDisplayed() const
+	bool ItemListEntry::ItemIsDisplayed() const
 	{
-		if (_cache[kIsDBMDisplayed]) {
-			return _cache.IsDBMDisplayed();
+		if (_cache.IsCached(kIsDbmDisplayed)) {
+			return _cache.IsDbmDisplayed();
 		}
 
 		bool result = LOTD::IsItemDisplayed(GetFormID());
-		_cache.IsDBMDisplayed(result);
-		return result;
+		return _cache.SetDbmDisplayed(result);
 	}
 
-	bool GFxItem::ItemIsNeeded() const
+	bool ItemListEntry::ItemIsNeeded() const
 	{
-		if (_cache[kIsItemTracked]) {
-			return _cache.IsItemTracked();
+		if (_cache.IsCached(kIsCompNew)) {
+			return _cache.IsCompNew();
 		}
 
-		bool result = compAPI::IsItemTracked(GetFormID()) && !compAPI::IsItemCollected(GetFormID());
+		bool result = Completionist::IsItemTracked(GetFormID()) && !Completionist::IsItemCollected(GetFormID());
 
-		_cache.IsItemTracked(result);
-		return result;
+		return _cache.SetCompNew(result);
 	}
 
-	bool GFxItem::ItemIsCollected() const
+	bool ItemListEntry::ItemIsCollected() const
 	{
-		if (_cache[kIsItemCollected]) {
-			return _cache.IsItemCollected();
+		if (_cache.IsCached(kIsCompFound)) {
+			return _cache.IsCompFound();
 		}
 
-		bool result = compAPI::IsItemCollected(GetFormID());
+		bool result = Completionist::IsItemCollected(GetFormID());
 
-		_cache.IsItemCollected(result);
-		return result;
+		return _cache.SetCompFound(result);
 	}
 
-	RE::GFxValue GFxItem::GFxValue(RE::GFxMovieView& a_view) const
+	RE::GFxValue ItemListEntry::GFxValue(RE::GFxMovieView& a_view) const
 	{
 		RE::GFxValue value;
 		a_view.CreateObject(std::addressof(value));
@@ -922,92 +898,92 @@ namespace Items
 		if (Settings::ShowBookRead())
 			value.SetMember("isRead", { IsRead() });
 
-		if (compAPI::IsIntegrationEnabled()) {
+		if (Completionist::IsIntegrationEnabled()) {
 			if (Settings::ShowCompNeeded())
 				value.SetMember("compNew", { ItemIsNeeded() });
 
 			if (Settings::ShowCompCollected())
 				value.SetMember("compFnd", { ItemIsCollected() });
 
-			if (const auto colorInt = compAPI::GetItemDynamicTextColor(GetFormID()); colorInt != -1)
+			if (const auto colorInt = Completionist::GetItemDynamicTextColor(GetFormID()); colorInt != -1)
 				value.SetMember("textColor", colorInt);
 		}
 
 		return value;
 	}
 
-	static kType GetItemTypeWeapon(TESObjectWEAP* weap)
+	static ItemType GetItemTypeWeapon(TESObjectWEAP* weap)
 	{
-		kType type = kType::DefaultWeapon;
+		ItemType type = ItemType::DefaultWeapon;
 
 		switch (weap->GetWeaponType()) {
 		case RE::WEAPON_TYPE::kOneHandSword:
-			type = kType::WeaponSword;
+			type = ItemType::WeaponSword;
 			break;
 		case RE::WEAPON_TYPE::kOneHandDagger:
-			type = kType::WeaponDagger;
+			type = ItemType::WeaponDagger;
 			break;
 		case RE::WEAPON_TYPE::kOneHandAxe:
-			type = kType::WeaponWarAxe;
+			type = ItemType::WeaponWarAxe;
 			break;
 		case RE::WEAPON_TYPE::kOneHandMace:
-			type = kType::WeaponMace;
+			type = ItemType::WeaponMace;
 			break;
 		case RE::WEAPON_TYPE::kTwoHandSword:
-			type = kType::WeaponGreatSword;
+			type = ItemType::WeaponGreatSword;
 			break;
 		case RE::WEAPON_TYPE::kTwoHandAxe:
-			type = kType::WeaponBattleAxe;
+			type = ItemType::WeaponBattleAxe;
 			break;
 		case RE::WEAPON_TYPE::kBow:
-			type = kType::WeaponBow;
+			type = ItemType::WeaponBow;
 			break;
 		case RE::WEAPON_TYPE::kStaff:
-			type = kType::WeaponStaff;
+			type = ItemType::WeaponStaff;
 			break;
 		case RE::WEAPON_TYPE::kCrossbow:
-			type = kType::WeaponCrossbow;
+			type = ItemType::WeaponCrossbow;
 			break;
 		}
 
 		return type;
 	}
 
-	static kType GetItemTypeArmor(TESObjectARMO* armor)
+	static ItemType GetItemTypeArmor(TESObjectARMO* armor)
 	{
-		static kType types[] = {
-			kType::LightArmorBody,  // 0
-			kType::LightArmorHead,
-			kType::LightArmorHands,
-			kType::LightArmorForearms,
-			kType::LightArmorFeet,
-			kType::LightArmorCalves,
-			kType::LightArmorShield,
-			kType::LightArmorMask,
+		static ItemType types[] = {
+			ItemType::LightArmorBody,  // 0
+			ItemType::LightArmorHead,
+			ItemType::LightArmorHands,
+			ItemType::LightArmorForearms,
+			ItemType::LightArmorFeet,
+			ItemType::LightArmorCalves,
+			ItemType::LightArmorShield,
+			ItemType::LightArmorMask,
 
-			kType::ArmorBody,  // 8
-			kType::ArmorHead,
-			kType::ArmorHands,
-			kType::ArmorForearms,
-			kType::ArmorFeet,
-			kType::ArmorCalves,
-			kType::ArmorShield,
-			kType::ArmorMask,
+			ItemType::ArmorBody,  // 8
+			ItemType::ArmorHead,
+			ItemType::ArmorHands,
+			ItemType::ArmorForearms,
+			ItemType::ArmorFeet,
+			ItemType::ArmorCalves,
+			ItemType::ArmorShield,
+			ItemType::ArmorMask,
 
-			kType::ClothingBody,  // 16
-			kType::ClothingHead,
-			kType::ClothingHands,
-			kType::ClothingForearms,
-			kType::ClothingFeet,
-			kType::ClothingCalves,
-			kType::ClothingShield,
-			kType::ClothingMask,
+			ItemType::ClothingBody,  // 16
+			ItemType::ClothingHead,
+			ItemType::ClothingHands,
+			ItemType::ClothingForearms,
+			ItemType::ClothingFeet,
+			ItemType::ClothingCalves,
+			ItemType::ClothingShield,
+			ItemType::ClothingMask,
 
-			kType::ArmorAmulet,  // 24
-			kType::ArmorRing,
-			kType::Circlet,
+			ItemType::ArmorAmulet,  // 24
+			ItemType::ArmorRing,
+			ItemType::Circlet,
 
-			kType::DefaultArmor  // 27
+			ItemType::DefaultArmor  // 27
 		};
 
 		UINT32 index = 0;
@@ -1058,20 +1034,20 @@ namespace Items
 		return types[index];
 	}
 
-	static kType GetItemTypePotion(AlchemyItem* potion)
+	static ItemType GetItemTypePotion(AlchemyItem* potion)
 	{
-		kType type = kType::DefaultPotion;
+		ItemType type = ItemType::DefaultPotion;
 
 		if (potion->IsFood()) {
-			type = kType::DefaultFood;
+			type = ItemType::DefaultFood;
 
 			const static UINT32 ITMPosionUse = 0x000B6435;
 			if (potion->data.consumptionSound && potion->data.consumptionSound->formID == ITMPosionUse)
-				type = kType::FoodWine;
+				type = ItemType::FoodWine;
 		} else if (potion->IsPoison()) {
-			type = kType::PotionPoison;
+			type = ItemType::PotionPoison;
 		} else {
-			type = kType::DefaultPotion;
+			type = ItemType::DefaultPotion;
 
 			//MagicItem::EffectItem* pEffect = CALL_MEMBER_FN(potion, GetCostliestEffectItem)(5, false);
 			Effect* pEffect = potion->GetCostliestEffectItem(RE::MagicSystem::Delivery::kTotal, false);
@@ -1084,22 +1060,22 @@ namespace Items
 
 				switch (primaryValue) {
 				case ActorValue::kHealth:
-					type = kType::PotionHealth;
+					type = ItemType::PotionHealth;
 					break;
 				case ActorValue::kMagicka:
-					type = kType::PotionMagic;
+					type = ItemType::PotionMagic;
 					break;
 				case ActorValue::kStamina:
-					type = kType::PotionStam;
+					type = ItemType::PotionStam;
 					break;
 				case ActorValue::kResistFire:
-					type = kType::PotionFire;
+					type = ItemType::PotionFire;
 					break;
 				case ActorValue::kResistShock:
-					type = kType::PotionShock;
+					type = ItemType::PotionShock;
 					break;
 				case ActorValue::kResistFrost:
-					type = kType::PotionFrost;
+					type = ItemType::PotionFrost;
 					break;
 				}
 			}
@@ -1108,9 +1084,9 @@ namespace Items
 		return type;
 	}
 
-	static kType GetItemTypeMisc(TESObjectMISC* misc)
+	static ItemType GetItemTypeMisc(TESObjectMISC* misc)
 	{
-		kType type = kType::DefaultMisc;
+		ItemType type = ItemType::DefaultMisc;
 
 		static const UINT32 LockPick = 0x00000A;
 		static const UINT32 Gold = 0x00000F;
@@ -1139,85 +1115,85 @@ namespace Items
 		static const UINT32 MS13GoldenClaw = 0x039647;
 
 		if (misc->formID == LockPick)
-			type = kType::MiscLockPick;
+			type = ItemType::MiscLockPick;
 		else if (misc->formID == Gold)
-			type = kType::MiscGold;
+			type = ItemType::MiscGold;
 		else if (misc->formID == Leather01)
-			type = kType::MiscLeather;
+			type = ItemType::MiscLeather;
 		else if (misc->formID == LeatherStrips)
-			type = kType::MiscStrips;
+			type = ItemType::MiscStrips;
 		else if (misc->HasKeywordID(VendorItemAnimalHideFormId))
-			type = kType::MiscHide;
+			type = ItemType::MiscHide;
 		else if (misc->HasKeywordID(VendorItemDaedricArtifactFormId))
-			type = kType::MiscArtifact;
+			type = ItemType::MiscArtifact;
 		else if (misc->HasKeywordID(VendorItemGemFormId))
-			type = kType::MiscGem;
+			type = ItemType::MiscGem;
 		else if (misc->HasKeywordID(VendorItemAnimalPartFormId))
-			type = kType::MiscRemains;
+			type = ItemType::MiscRemains;
 		else if (misc->HasKeywordID(VendorItemOreIngotFormId))
-			type = kType::MiscIngot;
+			type = ItemType::MiscIngot;
 		else if (misc->HasKeywordID(VendorItemClutterFormId))
-			type = kType::MiscClutter;
+			type = ItemType::MiscClutter;
 		else if (misc->HasKeywordID(VendorItemFirewoodFormId))
-			type = kType::MiscWood;
+			type = ItemType::MiscWood;
 		else if (misc->formID == RubyDragonClaw || misc->formID == IvoryDragonClaw || misc->formID == GlassCraw || misc->formID == EbonyCraw || misc->formID == EmeraldDragonClaw || misc->formID == DiamondClaw || misc->formID == IronClaw || misc->formID == CoralDragonClaw || misc->formID == E3GoldenClaw || misc->formID == SapphireDragonClaw || misc->formID == MS13GoldenClaw)
-			type = kType::MiscDragonClaw;
+			type = ItemType::MiscDragonClaw;
 
 		return type;
 	}
 
-	static kType GetItemTypeSoulGem(TESSoulGem* gem)
+	static ItemType GetItemTypeSoulGem(TESSoulGem* gem)
 	{
-		kType type = kType::MiscSoulGem;
+		ItemType type = ItemType::MiscSoulGem;
 
 		const static UINT32 DA01SoulGemAzurasStar = 0x063B27;
 		const static UINT32 DA01SoulGemBlackStar = 0x063B29;
 
 		if (gem->formID == DA01SoulGemBlackStar || gem->formID == DA01SoulGemAzurasStar) {
-			type = kType::SoulGemAzura;
+			type = ItemType::SoulGemAzura;
 		} else {
 			if (gem->GetMaximumCapacity() < SOUL_LEVEL::kGrand) {
 				if (gem->GetContainedSoul() == SOUL_LEVEL::kNone)
-					type = kType::SoulGemEmpty;
+					type = ItemType::SoulGemEmpty;
 				else if (gem->GetContainedSoul() >= gem->GetMaximumCapacity())
-					type = kType::SoulGemFull;
+					type = ItemType::SoulGemFull;
 				else
-					type = kType::SoulGemPartial;
+					type = ItemType::SoulGemPartial;
 			} else {
 				if (gem->GetContainedSoul() == SOUL_LEVEL::kNone)
-					type = kType::SoulGemGrandEmpty;
+					type = ItemType::SoulGemGrandEmpty;
 				else if (gem->GetContainedSoul() >= gem->GetMaximumCapacity())
-					type = kType::SoulGemGrandFull;
+					type = ItemType::SoulGemGrandFull;
 				else
-					type = kType::SoulGemGrandPartial;
+					type = ItemType::SoulGemGrandPartial;
 			}
 		}
 
 		return type;
 	}
 
-	const kType GetItemTypeBook(TESObjectBOOK* book)
+	const ItemType GetItemTypeBook(TESObjectBOOK* book)
 	{
-		kType type = kType::DefaultBook;
+		ItemType type = ItemType::DefaultBook;
 
 		const static UINT32 VendorItemRecipeFormID = 0x000F5CB0;
 		const static UINT32 VendorItemSpellTomeFormID = 0x000937A5;
 
 		if (book->data.type.underlying() == 0xFF || book->HasKeywordID(VendorItemRecipeFormID)) {
-			type = kType::BookNote;
+			type = ItemType::BookNote;
 		} else if (book->HasKeywordID(VendorItemSpellTomeFormID)) {
-			type = kType::BookTome;
+			type = ItemType::BookTome;
 		}
 
 		return type;
 	}
-	kType GFxItem::GetItemType(TESForm* form) const
+	ItemType ItemListEntry::GetItemType(TESForm* form) const
 	{
-		kType type = kType::None;
+		ItemType type = ItemType::None;
 
 		switch (form->formType.get()) {
 		case FormType::Scroll:
-			type = kType::DefaultScroll;
+			type = ItemType::DefaultScroll;
 			break;
 		case FormType::Armor:
 			type = GetItemTypeArmor(static_cast<TESObjectARMO*>(form));
@@ -1226,10 +1202,10 @@ namespace Items
 			type = GetItemTypeBook(static_cast<TESObjectBOOK*>(form));
 			break;
 		case FormType::Ingredient:
-			type = kType::DefaultIngredient;
+			type = ItemType::DefaultIngredient;
 			break;
 		case FormType::Light:
-			type = kType::MiscTorch;
+			type = ItemType::MiscTorch;
 			break;
 		case FormType::Misc:
 			type = GetItemTypeMisc(static_cast<TESObjectMISC*>(form));
@@ -1238,10 +1214,10 @@ namespace Items
 			type = GetItemTypeWeapon(static_cast<TESObjectWEAP*>(form));
 			break;
 		case FormType::Ammo:
-			type = (static_cast<TESAmmo*>(form)->IsBolt()) ? kType::WeaponBolt : kType::WeaponArrow;
+			type = (static_cast<TESAmmo*>(form)->IsBolt()) ? ItemType::WeaponBolt : ItemType::WeaponArrow;
 			break;
 		case FormType::KeyMaster:
-			type = kType::DefaultKey;
+			type = ItemType::DefaultKey;
 			break;
 		case FormType::AlchemyItem:
 			type = GetItemTypePotion(static_cast<AlchemyItem*>(form));
@@ -1276,7 +1252,7 @@ namespace Items
 		return false;
 	}
 
-	EnchantmentType GFxItem::GetEnchantmentType() const
+	EnchantmentType ItemListEntry::GetEnchantmentType() const
 	{
 		EnchantmentType result = EnchantmentType::None;
 		const RE::InventoryEntryData* item_inventory_entry = nullptr;
@@ -1373,16 +1349,16 @@ namespace Items
 	}
 
 	// Almost straight up copied from MoreHudSE. Had to change some things to work with this. https://github.com/ahzaab/moreHUDSE
-	void GFxItem::SetupEnchantmentFlags() const
+	void ItemListEntry::SetupEnchantmentFlags() const
 	{
 		EnchantmentType ench_type = GetEnchantmentType();
 
-		_cache.IsEnchanted(ench_type != EnchantmentType::None);
-		_cache.IsKnownEnchanted(ench_type == EnchantmentType::Known);
-		_cache.IsSpecialEnchanted(ench_type == EnchantmentType::CannotDisenchant);
+		_cache.SetEnchanted(ench_type != EnchantmentType::None);
+		_cache.SetKnownEnchanted(ench_type == EnchantmentType::Known);
+		_cache.SetSpecialEnchanted(ench_type == EnchantmentType::CannotDisenchant);
 	}
 
-	const char* GFxItem::GetItemIconLabel(kType form) const
+	const char* ItemListEntry::GetItemIconLabel(ItemType form) const
 	{
 		size_t form_num = static_cast<size_t>(form);
 		if (form_num < sizeof(strIcons) / sizeof(strIcons[0]))
