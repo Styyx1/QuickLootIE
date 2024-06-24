@@ -70,6 +70,7 @@ Path/To/Spriggit.CLI.exe deserialize --InputPath Source\\ESP --OutputPath QuickL
 * [SkyUI](https://www.nexusmods.com/skyrimspecialedition/mods/12604)
 * [PapyrusUtil SE - Modders Scripting Utility Functions](https://www.nexusmods.com/skyrimspecialedition/mods/13048)
 * [Inventory Interface Information Injector](https://www.nexusmods.com/skyrimspecialedition/mods/85702)
+	* Not required for the mod to function, only required if you want to benefit from it's integration.
 
 ## Credits
 * [ilian53](https://github.com/Eloquence4) for the original QuickLootEE
