@@ -90,7 +90,7 @@ jobs:
 
       - name: Run spriggit
         shell: bash
-        run: .github/spriggit/Spriggit.CLI deserialize --InputPath "Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootIE.esp"
+        run: .github/spriggit/Spriggit.CLI deserialize --InputPath "Papyrus/Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootIE.esp"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -198,7 +198,7 @@ jobs:
       - name: Run Caprica
         shell: bash
         run: |
-          .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
+          .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "Papyrus/Source/Scripts" -R -q
         
       - uses: actions/upload-artifact@v4
         with:
@@ -312,12 +312,14 @@ jobs:
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
           mkdir -p "${{ github.workspace }}/to-pack/Interface"
+          mkdir -p "${{ github.workspace }}/to-pack/Scripts"
+          mkdir -p "${{ github.workspace }}/to-pack/Source"
           cp "QuickLootIE.esp" "${{ github.workspace }}/to-pack/QuickLootIE.esp"
           cp -a "swf/bin/." "${{ github.workspace }}/to-pack/Interface"
-          cp -a "Interface/." "${{ github.workspace }}/to-pack/Interface"
+          cp -a "Papyrus/Interface/." "${{ github.workspace }}/to-pack/Interface"
           cp -a "SKSE/." "${{ github.workspace }}/to-pack/SKSE/Plugins"
-          cp -a "Scripts" "${{ github.workspace }}/to-pack/"
-          cp -a "Source" "${{ github.workspace }}/to-pack/"
+          cp -a "Scripts/." "${{ github.workspace }}/to-pack/Scripts"
+          cp -a "Papyrus/Source/." "${{ github.workspace }}/to-pack/Source"
       
       - name: Zip release files
         uses: vimtor/action-zip@v1.2
