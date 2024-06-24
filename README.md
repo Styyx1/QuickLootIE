@@ -1,15 +1,23 @@
 ![image](.github/docs/QuickLootIE.png)
 # Differences to upstream
 
-This fork of QuickLootEE has some differences, such as:
+## New features
 
-- Moves the CLib dependency into a submodule
-- Cleans up the building process
-- Supports 1.5.97, 1.6.640 and 1.6.1770 in one DLL (other versions untested but should work)
-	- VR is not supported, but a VR version can be found [here](https://www.nexusmods.com/skyrimspecialedition/mods/102094)
-	- The DLL has been renamed to reflect that change, it is now named `QuickLootIE.dll`
-- Implements the changes from Parapet's [PR](https://github.com/Eloquence4/QuickLootEE/pull/5) that integrates Inventory Interface Information Injector compatibility.
-- Implements the changes from CPPCooper's [PR](https://github.com/Eloquence4/QuickLootEE/pull/3) which adds support for Hunterborn
+* A new name, QuickLootIE, to differentiate from the original
+* A new icon, made by [Komegaki](https://github.com/Komegaki)
+* One DLL for all Flatrim versions of Skyrim (1.5.97 <-> 1.6.1170)
+	* A VR version of QuickLoot can be found [here](https://www.nexusmods.com/skyrimspecialedition/mods/102094) 
+* An entirely overhauled MCM with new settings
+	* Courtesy of Faen90 
+	* Including a toggle to disable QuickLoot for animals to ensure compatibility with Hunting Overhauls
+		* Courtey of [CPPCooper](https://github.com/Eloquence4/QuickLootEE/pull/3) 
+* A new, customizable sorting system
+	* Users can choose what should be sorted at the top of the LootMenu (i.e. Gold)
+	* Courtesy of AtomCrafty
+* A revamped LOTD integration with a Completionist one to match, including icons
+* A `Take All` button has been added to the LootMenu
+* Inventory Interface Information Injector integration to display icons in the LootMenu
+	* Courtesy of [Parapet](https://github.com/Eloquence4/QuickLootEE/pull/5)  
 
 ## Build Requirements
 * [CMake](https://cmake.org/)
@@ -21,13 +29,16 @@ This fork of QuickLootEE has some differences, such as:
 	* Desktop development with C++
 * [Spriggit](https://github.com/Mutagen-Modding/Spriggit)
 	* Below are instructions for the CLI version
+* [Caprica](https://github.com/Orvid/Caprica)
+	* To compile the papyrus scripts
+	* Due to the scripts being declared as native, Skyrim's CK will not be able to compile them
 
 ## Register Visual Studio as a Generator
 * Open `x64 Native Tools Command Prompt`
 * Run `cmake`
 * Close the cmd window
 
-## Building
+## Building Instructions
 ```
 # Cloning the repo with the --recursive flag to init the submodules
 git clone https://github.com/MissCorruption/QuickLootIE --recursive
@@ -53,8 +64,10 @@ Path/To/Spriggit.CLI.exe deserialize --InputPath Source\\ESP --OutputPath QuickL
 ## Credits
 * [ilian53](https://github.com/Eloquence4) for the original QuickLootEE
 * [Parapets](https://github.com/Exit-9B) for the PR for Inventory Interface Information Injector integration
-* [AtomCrafty](https://github.com/AtomCrafty) for the sorting fix and persistent selection index
+* [AtomCrafty](https://github.com/AtomCrafty) for major contributions to the codebase, notably the sorting system
+* [Faen90](https://github.com/Faen668) for major contributions to the codebase, notably the MCM
 * [Ponzipyramid](https://github.com/ponzipyramid) for the [CommonLibSSE NG Template](https://github.com/ponzipyramid/CommonLibSSE-NG-Template) this fork is based on
 * [Noggog](https://github.com/Noggog) for Spriggit
+* [Orvid](https://github.com/Orvid) for Caprica
 * [Komegaki](https://github.com/Komegaki) for the new icon
 
