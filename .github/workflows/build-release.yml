@@ -154,6 +154,20 @@ jobs:
           git fetch --depth=1 origin main
           git checkout main
           rm -rf .git
+
+      - name: Checkout PapyrusUtil Sources
+        if: steps.cache-ss.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          cd .github/Papyrus
+          mkdir SRC_PAPUTIL
+          cd SRC_PAPUTIL
+          git init
+          git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
+          git sparse-checkout set --no-cone 'SRC_PAPUTIL'
+          git fetch --depth=1 origin main
+          git checkout main
+          rm -rf .git
         
       - name: Checkout TESV Flags File
         if: steps.cache-ss.outputs.cache-hit != 'true'
@@ -175,7 +189,7 @@ jobs:
       - name: Run Caprica
         shell: bash
         run: |
-          .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
+          .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "Source/Scripts" -R -q
         
       - uses: actions/upload-artifact@v4
         with:
