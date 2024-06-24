@@ -25,6 +25,7 @@ This would have taken longer if not outright impossible without them!_
 	* Courtesy of AtomCrafty
 * A revamped LOTD integration with a Completionist one to match, including icons
 * A `Take All` button has been added to the LootMenu
+* Dynamically scale the LootMenu based on the amount of items in the container
 * Inventory Interface Information Injector integration to display icons in the LootMenu
 	* Courtesy of [Parapet](https://github.com/Eloquence4/QuickLootEE/pull/5)  
 
