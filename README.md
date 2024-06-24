@@ -8,7 +8,7 @@ remove the burden of choice from the End User, while also adding new features to
 Below you can find a list of new features and requirements to use and/or build the project.
 
 _Special thanks to Faen90 and AtomCrafty for helping with this project. 
-This would have taken longer if not right impossible without them!_
+This would have taken longer if not outright impossible without them!_
 
 ## New features
 
