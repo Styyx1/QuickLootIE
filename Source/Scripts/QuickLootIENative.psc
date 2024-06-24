@@ -1,4 +1,4 @@
-scriptname QuickLootIENative hidden
+scriptname QuickLootIENative hidden native
 
 ; Gets the Current Plugin Version As A Full String e.g "1.0.1.2"
 string function GetVersion() global native

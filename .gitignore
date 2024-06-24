@@ -11,7 +11,7 @@ dist/
 *.code-workspace
 *.ppj
 *.esp
-/Scripts
+Scripts/
 
 ## Flash
 swf/artifacts/
