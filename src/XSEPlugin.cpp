@@ -4,16 +4,11 @@
 #include "Events/Events.h"
 #include "Hooks.h"
 #include "Loot.h"
-<<<<<<< Updated upstream
 #include "Scaleform/LootMenu.h"
 #include "Integrations/LOTD.h"
 #include "Integrations/Completionist.h"
-=======
-#include "Scaleform/Scaleform.h"
-#include "LOTD/LOTD.h"
-#include "Items/GFxItem.h"
 #include "Papyrus/Papyrus.h"
->>>>>>> Stashed changes
+
 
 namespace
 {
@@ -100,20 +95,12 @@ namespace
 			Animation::AnimationManager::Install();
 
 			Events::Register();
-<<<<<<< Updated upstream
 			Scaleform::LootMenu::Register();
 
-			Settings::LoadSettings();
+			QuickLoot::Papyrus::Init();
             QuickLoot::Integrations::LOTD::Init();
 			QuickLoot::Integrations::Completionist::Init();
-=======
-			Scaleform::Register();
-			LOTD::LoadLists();
 			break;
-		case SKSE::MessagingInterface::kPostLoad:
-			compAPI::Init();
-			break;
->>>>>>> Stashed changes
 		}
 	}
 }
@@ -150,7 +137,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	}
 	
 	Hooks::Install();
-	QuickLoot::Papyrus::Install();
+	QuickLoot::Papyrus::Init();
 
 	return true;
 }
