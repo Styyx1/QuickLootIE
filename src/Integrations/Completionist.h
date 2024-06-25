@@ -96,6 +96,10 @@ namespace QuickLoot::Integrations
 
 		static bool IsIntegrationEnabled()
 		{
+			if (!IsReady()) {
+				return false;
+			}
+
 			bool response = false;
 
 			if (const auto error = _client.Query(kIsIntegrationEnabled, nullptr, &response)) {

@@ -776,6 +776,31 @@ namespace QuickLoot::Items
 
 		return _cache.SetCompFound(result);
 	}
+	
+	static RE::GFxValue GetKeywords(RE::GFxMovieView& view, TESForm* form)
+	{
+		GFxValue keywords;
+		view.CreateObject(&keywords);
+
+		const auto keywordForm = form->As<BGSKeywordForm>();
+		if (!keywordForm) {
+			return "";
+		}
+
+		for (uint32_t k = 0; k < keywordForm->GetNumKeywords(); k++) {
+			const auto keyword = keywordForm->GetKeywordAt(k).value_or(nullptr);
+			if (!keyword)
+				continue;
+
+			const auto editorId = keyword->GetFormEditorID();
+			if (!editorId || !editorId[0])
+				continue;
+
+			keywords.SetMember(editorId, true);
+		}
+
+		return keywords;
+	}
 
 	RE::GFxValue ItemListEntry::GFxValue(RE::GFxMovieView& a_view) const
 	{
@@ -785,6 +810,7 @@ namespace QuickLoot::Items
 		auto formType = obj ? obj->GetFormType() : RE::FormType::None;
 		value.SetMember("formType", formType);
 		value.SetMember("formId", obj ? obj->GetFormID() : 0);
+		value.SetMember("keywords", GetKeywords(a_view, obj));
 
 		switch (formType) {
 		case RE::FormType::Armor:
