@@ -815,10 +815,16 @@ namespace QuickLoot::Items
 		switch (formType) {
 		case RE::FormType::Armor:
 		{
+			// TODO: Fix subType, currently not being processed correctly
+			// All icons are helmets, possibly related to subType being incorrect?
 			RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
 			if (armor) {
+				value.SetMember("parts", armor->bipedModelData.bipedObjectSlots.underlying());
+				value.SetMember("mainPart", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
+				value.SetMember("equipSlot", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
+				value.SetMember("subType", armor->bipedModelData.armorType.underlying());	
 			}
 			break;
 		}
@@ -832,6 +838,7 @@ namespace QuickLoot::Items
 		}
 		case RE::FormType::Weapon:
 		{
+			// TODO: Implement isEnchanted, subType (not sure if done correctly)
 			RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
 			if (weapon) {
 				value.SetMember("subType", weapon->weaponData.animationType.underlying());
@@ -875,12 +882,14 @@ namespace QuickLoot::Items
 			}
 			break;
 		}
+
 		case RE::FormType::Book:
 		{
 			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
 			if (book) {
 				value.SetMember("flags", book->data.flags.underlying());
 				value.SetMember("bookType", book->data.type.underlying());
+				value.SetMember("subType", book->data.type.underlying());
 				if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
 					value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
 				} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
