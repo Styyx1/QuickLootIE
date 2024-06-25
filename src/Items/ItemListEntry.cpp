@@ -879,6 +879,7 @@ namespace QuickLoot::Items
 			RE::AlchemyItem* alchemy = skyrim_cast<RE::AlchemyItem*>(obj);
 			if (alchemy) {
 				value.SetMember("flags", alchemy->data.flags.underlying());
+				value.SetMember("subType", alchemy->data.flags.underlying());
 			}
 			break;
 		}
@@ -889,7 +890,6 @@ namespace QuickLoot::Items
 			if (book) {
 				value.SetMember("flags", book->data.flags.underlying());
 				value.SetMember("bookType", book->data.type.underlying());
-				value.SetMember("subType", book->data.type.underlying());
 				if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
 					value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
 				} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
@@ -899,6 +899,7 @@ namespace QuickLoot::Items
 					}
 
 					value.SetMember("teachesSpell", formID);
+					value.SetMember("subType", book->data.type.underlying());
 				}
 			}
 			break;
