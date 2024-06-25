@@ -197,6 +197,12 @@
 		_iconLabel = data.iconLabel != undefined ? data.iconLabel : "default_misc";
 		itemIcon.gotoAndStop(_iconLabel);
 		itemIcon._width = itemIcon._height = 18;
+		
+		var colorTransform = new flash.geom.ColorTransform();
+		colorTransform.rgb = data.iconColor != undefined ? data.iconColor : 16777215;
+		
+		var transform = new flash.geom.Transform(MovieClip(itemIcon));
+		transform.colorTransform = colorTransform;
 	}
 	
 	public function reset(): Void
