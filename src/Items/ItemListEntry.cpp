@@ -808,11 +808,10 @@ namespace QuickLoot::Items
 		a_view.CreateObject(std::addressof(value));
 		auto obj = GetObject();
 		auto formType = obj ? obj->GetFormType() : RE::FormType::None;
-		auto isFormEnchanted = IsEnchanted();
 		value.SetMember("formType", formType);
 		value.SetMember("formId", obj ? obj->GetFormID() : 0);
 		value.SetMember("keywords", GetKeywords(a_view, obj));
-		value.SetMember("isEnchanted", isFormEnchanted);
+		value.SetMember("isEnchanted", IsEnchanted());
 		
 
 		switch (formType) {
