@@ -827,6 +827,7 @@ namespace QuickLoot::Items
 				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
 				value.SetMember("subType", armor->bipedModelData.bipedObjectSlots.underlying());
+				value.SetMember("armor", armor->GetArmorRating());
 				RE::BGSEquipSlot* equipSlot = armor->equipSlot;
 				if (equipSlot) {
 					value.SetMember("equipSlot", equipSlot->formID);
