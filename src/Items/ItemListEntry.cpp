@@ -808,23 +808,30 @@ namespace QuickLoot::Items
 		a_view.CreateObject(std::addressof(value));
 		auto obj = GetObject();
 		auto formType = obj ? obj->GetFormType() : RE::FormType::None;
+		auto isFormEnchanted = IsEnchanted();
 		value.SetMember("formType", formType);
 		value.SetMember("formId", obj ? obj->GetFormID() : 0);
 		value.SetMember("keywords", GetKeywords(a_view, obj));
+		value.SetMember("isEnchanted", isFormEnchanted);
+		
 
 		switch (formType) {
 		case RE::FormType::Armor:
 		{
-			// TODO: Fix subType, currently not being processed correctly
-			// All icons are helmets, possibly related to subType being incorrect?
+			// TODO:
+			// parts | Array of Numbers
+			// mainPart | Number
+			// armor | Number (the armor value)
+			// subType | ?? (Gauntlets display as feet currently)
 			RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
 			if (armor) {
-				value.SetMember("parts", armor->bipedModelData.bipedObjectSlots.underlying());
-				value.SetMember("mainPart", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
-				value.SetMember("equipSlot", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
-				value.SetMember("subType", armor->bipedModelData.armorType.underlying());	
+				value.SetMember("subType", armor->bipedModelData.bipedObjectSlots.underlying());
+				RE::BGSEquipSlot* equipSlot = armor->equipSlot;
+				if (equipSlot) {
+					value.SetMember("equipSlot", equipSlot->formID);
+				}
 			}
 			break;
 		}
@@ -833,16 +840,18 @@ namespace QuickLoot::Items
 			RE::TESAmmo* ammo = skyrim_cast<RE::TESAmmo*>(obj);
 			if (ammo) {
 				value.SetMember("flags", ammo->data.flags.underlying());
+				value.SetMember("damage", ammo->data.damage);
 			}
 			break;
 		}
 		case RE::FormType::Weapon:
 		{
-			// TODO: Implement isEnchanted, subType (not sure if done correctly)
+			// TODO: Fix Staffs being treated as bows
+			// TODO: isPoisoned  bool
 			RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
 			if (weapon) {
-				value.SetMember("subType", weapon->weaponData.animationType.underlying());
 				value.SetMember("weaponType", weapon->weaponData.animationType.underlying());
+				value.SetMember("subType", weapon->weaponData.animationType.underlying());
 				value.SetMember("speed", weapon->weaponData.speed);
 				value.SetMember("reach", weapon->weaponData.reach);
 				value.SetMember("stagger", weapon->weaponData.staggerValue);
@@ -874,18 +883,9 @@ namespace QuickLoot::Items
 			}
 			break;
 		}
-		case RE::FormType::AlchemyItem:
-		{
-			RE::AlchemyItem* alchemy = skyrim_cast<RE::AlchemyItem*>(obj);
-			if (alchemy) {
-				value.SetMember("flags", alchemy->data.flags.underlying());
-				value.SetMember("subType", alchemy->data.flags.underlying());
-			}
-			break;
-		}
-
 		case RE::FormType::Book:
 		{
+			// TODO: Fix Notes icon, they're displayed as books
 			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
 			if (book) {
 				value.SetMember("flags", book->data.flags.underlying());
@@ -901,6 +901,26 @@ namespace QuickLoot::Items
 					value.SetMember("teachesSpell", formID);
 					value.SetMember("subType", book->data.type.underlying());
 				}
+			}
+			break;
+		}
+		case RE::FormType::Scroll:
+		{
+			// TODO:
+			// school | Enumeration (Alteration, Destruction, Restoration, Illusion, Conjuration)
+			// GetAssociatedSkill() returns an enum but it's kDestruction instead of Destruction etc.
+			RE::ScrollItem* scroll = skyrim_cast<RE::ScrollItem*>(obj);
+			if (scroll) {
+				value.SetMember("flags", scroll->formFlags);
+			}
+			break;
+		}
+		case RE::FormType::AlchemyItem:
+		{
+			RE::AlchemyItem* alchemy = skyrim_cast<RE::AlchemyItem*>(obj);
+			if (alchemy) {
+				value.SetMember("flags", alchemy->data.flags.underlying());
+				value.SetMember("subType", alchemy->data.flags.underlying());
 			}
 			break;
 		}
