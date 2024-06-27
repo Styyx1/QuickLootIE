@@ -935,25 +935,36 @@ namespace QuickLoot::Items
 		case RE::FormType::Book:
 		{
 			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
-			if (book) {
-				if (IsNote()) {
-					value.SetMember("bookType", 255);
-					value.SetMember("subType", 1);
-				} else {
-					value.SetMember("bookType", 0);
-					value.SetMember("subType", 0);
-				}
-				value.SetMember("flags", book->data.flags.underlying());
-				if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
-					value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
-				} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
-					double formID = -1;
-					if (auto spell = book->data.teaches.spell; spell) {
-						formID = spell->GetFormID();
-					}
+			if (!book) {
+				break;
+			}
 
-					value.SetMember("teachesSpell", formID);
+			RE::BGSKeyword* vendorItemRecipeKeyword;
+			vendorItemRecipeKeyword = RE::TESForm::LookupByID(0x000F5CB0)->As<RE::BGSKeyword>();
+
+			const bool isNote = IsNote();
+			const bool hasRecipeKeyword = book->HasKeyword(vendorItemRecipeKeyword);
+
+			value.SetMember("bookType", 255);
+
+			if (isNote) {
+				value.SetMember("bookType", 255);
+				value.SetMember("subType", hasRecipeKeyword ? 2 : 1);
+			} else {
+				value.SetMember("bookType", 0);
+				value.SetMember("subType", 0);
+			}
+
+			value.SetMember("flags", book->data.flags.underlying());
+
+			if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
+				value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
+			} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
+				double formID = -1;
+				if (auto spell = book->data.teaches.spell; spell) {
+					formID = spell->GetFormID();
 				}
+				value.SetMember("teachesSpell", formID);
 			}
 			break;
 		}
