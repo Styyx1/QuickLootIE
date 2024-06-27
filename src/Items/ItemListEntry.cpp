@@ -637,81 +637,58 @@ namespace QuickLoot::Items
 
 	bool ItemListEntry::IsNote() const
 	{
-		if (_cache.IsCached(kNote)) {
-			return _cache.IsNote();
-		}
+	    if (_cache.IsCached(kNote)) {
+	        return _cache.IsNote();
+	    }
 
-		bool result = false;
-		switch (_src.index()) {
-		case kInventory:
-			if (const auto obj = std::get<kInventory>(_src)->GetObject(); obj) {
-				RE::TESObjectBOOK* book = nullptr;
-				RE::FormID objFormID = obj->GetFormID();
-				if (objFormID) {
-					book = RE::TESForm::LookupByID<RE::TESObjectBOOK>(static_cast<RE::FormID>(objFormID));
+	    auto isNoteBook = [](const RE::TESObjectBOOK* book) {
+	        if (!book) return false;
+	        auto stem = std::filesystem::path(book->model.c_str()).stem().string();
+	        auto range = std::ranges::search(stem, "Note"sv, [](char ch1, char ch2) {
+	            return std::toupper(ch1) == std::toupper(ch2);
+	        });
+	        return !range.empty();
+	    };
 
-					if (!book) {
-						result = false;
-						break;
-					}
+	    auto lookupBook = [](RE::TESForm* obj) -> RE::TESObjectBOOK* {
+	        if (!obj) return nullptr;
+	        RE::FormID objFormID = obj->GetFormID();
+	        if (!objFormID) return nullptr;
+	        return RE::TESForm::LookupByID<RE::TESObjectBOOK>(objFormID);
+	    };
 
-					auto stem = std::filesystem::path(book->model.c_str()).stem().string();
+	    bool result = false;
 
-					auto range = std::ranges::search(
-						stem,
-						"Note"sv,
-					[](char ch1, char ch2){
-						return std::toupper(ch1) == std::toupper(ch2);
-					});
+	    switch (_src.index()) {
+	    case kInventory: {
+	        if (const auto obj = std::get<kInventory>(_src)->GetObject(); obj) {
+	            if (auto book = lookupBook(obj); isNoteBook(book)) {
+	                result = true;
+	            }
+	        }
+	        break;
+	    }
+	    case kGround: {
+	        for (const auto& handle : std::get<kGround>(_src)) {
+	            if (const auto item = handle.get(); item) {
+	                if (const auto obj = item->GetObjectReference(); obj) {
+	                    if (auto book = lookupBook(obj); isNoteBook(book)) {
+	                        result = true;
+	                        break;
+	                    }
+	                }
+	            }
+	        }
+	        break;
+	    }
+	    default:
+	        assert(false);
+	        break;
+	    }
 
-					bool isNote = !range.empty();
-
-					if (isNote) {
-						result = true;
-					}
-				}
-			}
-			break;
-		case kGround:
-			for (const auto& handle : std::get<kGround>(_src)) {
-				const auto item = handle.get();
-				const auto obj = item ? item->GetObjectReference() : nullptr;
-				if (obj) {
-					RE::TESObjectBOOK* book = nullptr;
-					RE::FormID objFormID = obj->GetFormID();
-					if (objFormID) {
-						book = RE::TESForm::LookupByID<RE::TESObjectBOOK>(static_cast<RE::FormID>(objFormID));
-
-						if (!book) {
-							result = false;
-							break;
-						}
-
-						auto stem = std::filesystem::path(book->model.c_str()).stem().string();
-
-						auto range = std::ranges::search(
-							stem,
-							"Note"sv,
-						[](char ch1, char ch2){
-							return std::toupper(ch1) == std::toupper(ch2);
-						});
-
-						bool isNote = !range.empty();
-
-						if (isNote) {
-							result = true;
-						}
-					}
-				}
-			}
-			break;
-		default:
-			assert(false);
-			break;
-		}
-
-		return _cache.SetNote(result);
+	    return _cache.SetNote(result);
 	}
+
 
 	bool ItemListEntry::IsQuestItem() const
 	{
