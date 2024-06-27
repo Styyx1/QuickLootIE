@@ -911,9 +911,7 @@ namespace QuickLoot::Items
 		case RE::FormType::Ammo:
 		{
 			RE::TESAmmo* ammo = skyrim_cast<RE::TESAmmo*>(obj);
-			if (!ammo) {
-				break;
-			}
+			if (!ammo) break;
 
 			value.SetMember("flags", ammo->data.flags.underlying());
 			value.SetMember("damage", ammo->data.damage);
@@ -923,80 +921,81 @@ namespace QuickLoot::Items
 		}
 		case RE::FormType::Weapon:
 		{
-		    // TODO: isPoisoned bool
+		    // TODO: isPoisoned | bool
 
 		    RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
-		    if (weapon) {
-		        auto& weaponData = weapon->weaponData;
-		        auto& criticalData = weapon->criticalData;
+			if (!weapon) break;
 
-		        value.SetMember("weaponType", weaponData.animationType.underlying());
-		        value.SetMember("subType", weaponData.animationType.underlying());
-		        value.SetMember("speed", weaponData.speed);
-		        value.SetMember("reach", weaponData.reach);
-		        value.SetMember("stagger", weaponData.staggerValue);
-		        value.SetMember("critDamage", criticalData.damage);
-		        value.SetMember("minRange", weaponData.minRange);
-		        value.SetMember("maxRange", weaponData.maxRange);
-		        value.SetMember("baseDamage", weapon->attackDamage);
+	        auto& weaponData = weapon->weaponData;
+	        auto& criticalData = weapon->criticalData;
 
-		        RE::BGSEquipSlot* equipSlot = weapon->equipSlot;
-		        if (equipSlot) {
-		            value.SetMember("equipSlot", equipSlot->formID);
-		        }
+	        value.SetMember("weaponType", weaponData.animationType.underlying());
+	        value.SetMember("subType", weaponData.animationType.underlying());
+	        value.SetMember("speed", weaponData.speed);
+	        value.SetMember("reach", weaponData.reach);
+	        value.SetMember("stagger", weaponData.staggerValue);
+	        value.SetMember("critDamage", criticalData.damage);
+	        value.SetMember("minRange", weaponData.minRange);
+	        value.SetMember("maxRange", weaponData.maxRange);
+	        value.SetMember("baseDamage", weapon->attackDamage);
 
-		        int subType = -1;  // Default unknown weapon type
-				const bool isWarhammer = weapon->HasKeywordID(0x0006d930);
+	        RE::BGSEquipSlot* equipSlot = weapon->equipSlot;
+	        if (equipSlot) {
+	            value.SetMember("equipSlot", equipSlot->formID);
+	        }
 
-		        if (weapon->IsOneHandedSword()) {
-		            subType = 1;
-		        } else if (weapon->IsOneHandedDagger()) {
-		            subType = 2;
-		        } else if (weapon->IsOneHandedAxe()) {
-		            subType = 3;
-		        } else if (weapon->IsOneHandedMace()) {
-		            subType = 4;
-		        } else if (weapon->IsTwoHandedSword()) {
-		            subType = 5;
-		        } else if (weapon->IsTwoHandedAxe() && !isWarhammer) {
-		            subType = 6;
-		        } else if (weapon->IsTwoHandedAxe() && isWarhammer) {
-		            subType = 7;
-		        } else if (weapon->IsBow()) {
-		            subType = 8;
-		        } else if (weapon->IsCrossbow()) {
-		            subType = 9;
-		        } else if (weapon->IsStaff()) {
-		            subType = 10;
-		        }
+	        int subType = -1;  // Default unknown weapon type
+			const bool isWarhammer = weapon->HasKeywordID(0x0006d930);
 
-		        value.SetMember("subType", subType);
-		    }
+	        if (weapon->IsOneHandedSword()) {
+	            subType = 1;
+	        } else if (weapon->IsOneHandedDagger()) {
+	            subType = 2;
+	        } else if (weapon->IsOneHandedAxe()) {
+	            subType = 3;
+	        } else if (weapon->IsOneHandedMace()) {
+	            subType = 4;
+	        } else if (weapon->IsTwoHandedSword()) {
+	            subType = 5;
+	        } else if (weapon->IsTwoHandedAxe() && !isWarhammer) {
+	            subType = 6;
+	        } else if (weapon->IsTwoHandedAxe() && isWarhammer) {
+	            subType = 7;
+	        } else if (weapon->IsBow()) {
+	            subType = 8;
+	        } else if (weapon->IsCrossbow()) {
+	            subType = 9;
+	        } else if (weapon->IsStaff()) {
+	            subType = 10;
+	        }
+
+	        value.SetMember("subType", subType);
+
+			break;
 		}
 
 		case RE::FormType::SoulGem:
 		{
 			RE::TESSoulGem* soulGem = skyrim_cast<RE::TESSoulGem*>(obj);
-			if (soulGem) {
-				RE::SOUL_LEVEL currentSoul = GetSoulSize();
-				value.SetMember("gemSize", soulGem->soulCapacity.underlying());
-				value.SetMember("soulSize", currentSoul);
-				if (currentSoul == RE::SOUL_LEVEL::kNone) {
-					value.SetMember("status", 0);
-				} else if (currentSoul >= soulGem->soulCapacity) {
-					value.SetMember("status", 2);
-				} else {
-					value.SetMember("status", 1);
-				}
+			if (!soulGem) break;
+			
+			RE::SOUL_LEVEL currentSoul = GetSoulSize();
+			value.SetMember("gemSize", soulGem->soulCapacity.underlying());
+			value.SetMember("soulSize", currentSoul);
+			if (currentSoul == RE::SOUL_LEVEL::kNone) {
+				value.SetMember("status", 0);
+			} else if (currentSoul >= soulGem->soulCapacity) {
+				value.SetMember("status", 2);
+			} else {
+				value.SetMember("status", 1);
 			}
+		
 			break;
 		}
 		case RE::FormType::Book:
 		{
 			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
-			if (!book) {
-				break;
-			}
+			if (!book) break;
 
 			const bool isNote = IsNote();
 			const bool hasRecipeKeyword = book->HasKeywordID(0x000F5CB0);
@@ -1027,19 +1026,22 @@ namespace QuickLoot::Items
 		case RE::FormType::Scroll:
 		{
 			RE::ScrollItem* scroll = skyrim_cast<RE::ScrollItem*>(obj);
-			if (scroll) {
-				value.SetMember("flags", scroll->formFlags);
-				value.SetMember("school", scroll->GetAVEffect()->data.associatedSkill);
-			}
+			if (!scroll) break;
+
+			value.SetMember("flags", scroll->formFlags);
+			value.SetMember("school", scroll->GetAVEffect()->data.associatedSkill);
+		
 			break;
 		}
 		case RE::FormType::AlchemyItem:
 		{
 			RE::AlchemyItem* alchemy = skyrim_cast<RE::AlchemyItem*>(obj);
-			if (alchemy) {
-				value.SetMember("flags", alchemy->data.flags.underlying());
-				value.SetMember("subType", alchemy->data.flags.underlying());
-			}
+			if (!alchemy) break;
+
+			// TODO: subType is very likely wrong here
+			value.SetMember("flags", alchemy->data.flags.underlying());
+			value.SetMember("subType", alchemy->data.flags.underlying());
+		
 			break;
 		}
 		}
