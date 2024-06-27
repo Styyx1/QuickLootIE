@@ -887,16 +887,14 @@ namespace QuickLoot::Items
 		case RE::FormType::Ammo:
 		{
 			RE::TESAmmo* ammo = skyrim_cast<RE::TESAmmo*>(obj);
-			if (ammo) {
-				value.SetMember("flags", ammo->data.flags.underlying());
-				value.SetMember("damage", ammo->data.damage);
-
-				if (ammo->IsBolt()) {
-					value.SetMember("subType", 1);
-				} else {
-					value.SetMember("subType", 0);
-				}
+			if (!ammo) {
+				break;
 			}
+
+			value.SetMember("flags", ammo->data.flags.underlying());
+			value.SetMember("damage", ammo->data.damage);
+			value.SetMember("subType", ammo->IsBolt() ? 1 : 0);
+
 			break;
 		}
 		case RE::FormType::Weapon:
