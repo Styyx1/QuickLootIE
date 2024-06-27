@@ -923,7 +923,6 @@ namespace QuickLoot::Items
 		}
 		case RE::FormType::Weapon:
 		{
-		    // TODO: Fix Staffs being treated as bows
 		    // TODO: isPoisoned bool
 
 		    RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
