@@ -890,6 +890,12 @@ namespace QuickLoot::Items
 			if (ammo) {
 				value.SetMember("flags", ammo->data.flags.underlying());
 				value.SetMember("damage", ammo->data.damage);
+
+				if (ammo->IsBolt()) {
+					value.SetMember("subType", 1);
+				} else {
+					value.SetMember("subType", 0);
+				}
 			}
 			break;
 		}
