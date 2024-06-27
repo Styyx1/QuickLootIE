@@ -864,26 +864,50 @@ namespace QuickLoot::Items
 		switch (formType) {
 		case RE::FormType::Armor:
 		{
-			// TODO:
-			// parts | Array of Numbers
-			// mainPart | Number
-			// partMask and subType are wrong
-			// Should be | What we return
-			// partMask = 4 |  4.19431e+06
-			// subType = 3 | partMask: 4.19431e+06
-			RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
-			if (armor) {
-				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
-				value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
-				value.SetMember("subType", armor->bipedModelData.bipedObjectSlots.underlying());
-				value.SetMember("armor", armor->armorRating);
-				RE::BGSEquipSlot* equipSlot = armor->equipSlot;
-				if (equipSlot) {
-					value.SetMember("equipSlot", equipSlot->formID);
-				}
-			}
-			break;
+			// Not implemented yet (with examples):
+			// parts | [32, 51]
+			// mainPart | 4
+			// partMask | 5
+		    RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
+		    if (!armor) break; // Early return if armor is null
+
+		    value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
+		    value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
+		    value.SetMember("armor", armor->armorRating);
+		    RE::BGSEquipSlot* equipSlot = armor->equipSlot;
+		    if (equipSlot) {
+		        value.SetMember("equipSlot", equipSlot->formID);
+		    }
+
+		    int subType = -1;
+		    std::unordered_map<BGSBipedObjectForm::BipedObjectSlot, int> partMap = {
+		        {BGSBipedObjectForm::BipedObjectSlot::kHead, 0}, // EquipType::Head
+		        {BGSBipedObjectForm::BipedObjectSlot::kHair, 1}, // EquipType::Hair
+		        {BGSBipedObjectForm::BipedObjectSlot::kLongHair, 2}, // EquipType::LongHair
+		        {BGSBipedObjectForm::BipedObjectSlot::kBody, 3}, // EquipType::Body
+		        {BGSBipedObjectForm::BipedObjectSlot::kForearms, 4}, // EquipType::Forearms
+		        {BGSBipedObjectForm::BipedObjectSlot::kHands, 5}, // EquipType::Hands
+		        {BGSBipedObjectForm::BipedObjectSlot::kShield, 6}, // EquipType::Shield
+		        {BGSBipedObjectForm::BipedObjectSlot::kCalves, 7}, // EquipType::Calves
+		        {BGSBipedObjectForm::BipedObjectSlot::kFeet, 8}, // EquipType::Feet
+		        {BGSBipedObjectForm::BipedObjectSlot::kCirclet, 9}, // EquipType::Circlet
+		        {BGSBipedObjectForm::BipedObjectSlot::kAmulet, 10}, // EquipType::Amulet
+		        {BGSBipedObjectForm::BipedObjectSlot::kEars, 11}, // EquipType::Ears
+		        {BGSBipedObjectForm::BipedObjectSlot::kRing, 12}, // EquipType::Ring
+		        {BGSBipedObjectForm::BipedObjectSlot::kTail, 13} // EquipType::Tail
+		    };
+
+		    for (const auto& pair : partMap) {
+		        if (armor->HasPartOf(pair.first)) {
+		            subType = pair.second;
+		            break;
+		        }
+		    }
+
+		    value.SetMember("subType", subType);
+		    break;
 		}
+
 		case RE::FormType::Ammo:
 		{
 			RE::TESAmmo* ammo = skyrim_cast<RE::TESAmmo*>(obj);
