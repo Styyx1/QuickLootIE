@@ -905,9 +905,6 @@ namespace QuickLoot::Items
 		}
 		case RE::FormType::Scroll:
 		{
-			// TODO:
-			// school | Enumeration (Alteration, Destruction, Restoration, Illusion, Conjuration)
-			// GetAssociatedSkill() returns an enum but it's kDestruction instead of Destruction etc.
 			RE::ScrollItem* scroll = skyrim_cast<RE::ScrollItem*>(obj);
 			if (scroll) {
 				value.SetMember("flags", scroll->formFlags);
