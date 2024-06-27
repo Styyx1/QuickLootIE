@@ -645,7 +645,31 @@ namespace QuickLoot::Items
 		switch (_src.index()) {
 		case kInventory:
 			if (const auto obj = std::get<kInventory>(_src)->GetObject(); obj) {
-				result = obj->IsNote();
+				RE::TESObjectBOOK* book = nullptr;
+				RE::FormID objFormID = obj->GetFormID();
+				if (objFormID) {
+					book = RE::TESForm::LookupByID<RE::TESObjectBOOK>(static_cast<RE::FormID>(objFormID));
+
+					if (!book) {
+						result = false;
+						break;
+					}
+
+					auto stem = std::filesystem::path(book->model.c_str()).stem().string();
+
+					auto range = std::ranges::search(
+						stem,
+						"Note"sv,
+					[](char ch1, char ch2){
+						return std::toupper(ch1) == std::toupper(ch2);
+					});
+
+					bool isNote = !range.empty();
+
+					if (isNote) {
+						result = true;
+					}
+				}
 			}
 			break;
 		case kGround:
@@ -653,8 +677,31 @@ namespace QuickLoot::Items
 				const auto item = handle.get();
 				const auto obj = item ? item->GetObjectReference() : nullptr;
 				if (obj) {
-					result = obj->IsNote();
-					break;
+					RE::TESObjectBOOK* book = nullptr;
+					RE::FormID objFormID = obj->GetFormID();
+					if (objFormID) {
+						book = RE::TESForm::LookupByID<RE::TESObjectBOOK>(static_cast<RE::FormID>(objFormID));
+
+						if (!book) {
+							result = false;
+							break;
+						}
+
+						auto stem = std::filesystem::path(book->model.c_str()).stem().string();
+
+						auto range = std::ranges::search(
+							stem,
+							"Note"sv,
+						[](char ch1, char ch2){
+							return std::toupper(ch1) == std::toupper(ch2);
+						});
+
+						bool isNote = !range.empty();
+
+						if (isNote) {
+							result = true;
+						}
+					}
 				}
 			}
 			break;
@@ -820,7 +867,10 @@ namespace QuickLoot::Items
 			// TODO:
 			// parts | Array of Numbers
 			// mainPart | Number
-			// subType | int
+			// partMask and subType are wrong
+			// Should be | What we return
+			// partMask = 4 |  4.19431e+06
+			// subType = 3 | partMask: 4.19431e+06
 			RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
 			if (armor) {
 				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
@@ -846,7 +896,6 @@ namespace QuickLoot::Items
 		case RE::FormType::Weapon:
 		{
 			// TODO: Fix Staffs being treated as bows
-			// re:TODO: Maybe get keywords and if it's a staff, return subType 10?
 			// TODO: isPoisoned  bool
 			RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
 			if (weapon) {
@@ -885,13 +934,16 @@ namespace QuickLoot::Items
 		}
 		case RE::FormType::Book:
 		{
-			// TODO: Fix Notes icon, they're displayed as books
-			// Re:TODO: book->data.type.underlying() is always zero
-			// Re:TODO: book->data.type.GetSanitizedType is also always zero
 			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
 			if (book) {
+				if (IsNote()) {
+					value.SetMember("bookType", 255);
+					value.SetMember("subType", 1);
+				} else {
+					value.SetMember("bookType", 0);
+					value.SetMember("subType", 0);
+				}
 				value.SetMember("flags", book->data.flags.underlying());
-				//value.SetMember("bookType", book->data.GetSanitizedType());
 				if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
 					value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
 				} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
