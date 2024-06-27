@@ -820,13 +820,12 @@ namespace QuickLoot::Items
 			// TODO:
 			// parts | Array of Numbers
 			// mainPart | Number
-			// armor | Number (the armor value)
-			// subType | ?? (Gauntlets display as feet currently)
+			// subType | int
 			RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
 			if (armor) {
 				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
-				value.SetMember("subType", armor->bipedModelData.armorType.underlying());
+				value.SetMember("subType", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("armor", armor->armorRating);
 				RE::BGSEquipSlot* equipSlot = armor->equipSlot;
 				if (equipSlot) {
@@ -847,6 +846,7 @@ namespace QuickLoot::Items
 		case RE::FormType::Weapon:
 		{
 			// TODO: Fix Staffs being treated as bows
+			// re:TODO: Maybe get keywords and if it's a staff, return subType 10?
 			// TODO: isPoisoned  bool
 			RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
 			if (weapon) {
@@ -886,10 +886,12 @@ namespace QuickLoot::Items
 		case RE::FormType::Book:
 		{
 			// TODO: Fix Notes icon, they're displayed as books
+			// Re:TODO: book->data.type.underlying() is always zero
+			// Re:TODO: book->data.type.GetSanitizedType is also always zero
 			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
 			if (book) {
 				value.SetMember("flags", book->data.flags.underlying());
-				value.SetMember("bookType", book->data.type.all());
+				//value.SetMember("bookType", book->data.GetSanitizedType());
 				if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
 					value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
 				} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
