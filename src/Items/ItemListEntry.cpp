@@ -826,8 +826,8 @@ namespace QuickLoot::Items
 			if (armor) {
 				value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
 				value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
-				value.SetMember("subType", armor->bipedModelData.bipedObjectSlots.underlying());
-				value.SetMember("armor", armor->GetArmorRating());
+				value.SetMember("subType", armor->bipedModelData.armorType.underlying());
+				value.SetMember("armor", armor->armorRating);
 				RE::BGSEquipSlot* equipSlot = armor->equipSlot;
 				if (equipSlot) {
 					value.SetMember("equipSlot", equipSlot->formID);
@@ -899,7 +899,6 @@ namespace QuickLoot::Items
 					}
 
 					value.SetMember("teachesSpell", formID);
-					value.SetMember("subType", book->data.type.underlying());
 				}
 			}
 			break;
@@ -912,6 +911,7 @@ namespace QuickLoot::Items
 			RE::ScrollItem* scroll = skyrim_cast<RE::ScrollItem*>(obj);
 			if (scroll) {
 				value.SetMember("flags", scroll->formFlags);
+				value.SetMember("school", scroll->GetAVEffect()->data.associatedSkill);
 			}
 			break;
 		}
