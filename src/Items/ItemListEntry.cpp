@@ -967,11 +967,8 @@ namespace QuickLoot::Items
 				break;
 			}
 
-			RE::BGSKeyword* vendorItemRecipeKeyword;
-			vendorItemRecipeKeyword = RE::TESForm::LookupByID(0x000F5CB0)->As<RE::BGSKeyword>();
-
 			const bool isNote = IsNote();
-			const bool hasRecipeKeyword = book->HasKeyword(vendorItemRecipeKeyword);
+			const bool hasRecipeKeyword = book->HasKeywordID(0x000F5CB0);
 
 			value.SetMember("bookType", 255);
 
