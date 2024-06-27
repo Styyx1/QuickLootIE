@@ -889,7 +889,7 @@ namespace QuickLoot::Items
 			RE::TESObjectBOOK* book = skyrim_cast<RE::TESObjectBOOK*>(obj);
 			if (book) {
 				value.SetMember("flags", book->data.flags.underlying());
-				value.SetMember("bookType", book->data.type.underlying());
+				value.SetMember("bookType", book->data.type.all());
 				if (book->data.flags.all(RE::OBJ_BOOK::Flag::kAdvancesActorValue)) {
 					value.SetMember("teachesSkill", book->data.teaches.actorValueToAdvance);
 				} else if (book->data.flags.all(RE::OBJ_BOOK::Flag::kTeachesSpell)) {
