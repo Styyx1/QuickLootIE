@@ -923,26 +923,58 @@ namespace QuickLoot::Items
 		}
 		case RE::FormType::Weapon:
 		{
-			// TODO: Fix Staffs being treated as bows
-			// TODO: isPoisoned  bool
-			RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
-			if (weapon) {
-				value.SetMember("weaponType", weapon->weaponData.animationType.underlying());
-				value.SetMember("subType", weapon->weaponData.animationType.underlying());
-				value.SetMember("speed", weapon->weaponData.speed);
-				value.SetMember("reach", weapon->weaponData.reach);
-				value.SetMember("stagger", weapon->weaponData.staggerValue);
-				value.SetMember("critDamage", weapon->criticalData.damage);
-				value.SetMember("minRange", weapon->weaponData.minRange);
-				value.SetMember("maxRange", weapon->weaponData.maxRange);
-				value.SetMember("baseDamage", weapon->attackDamage);
-				RE::BGSEquipSlot* equipSlot = weapon->equipSlot;
-				if (equipSlot) {
-					value.SetMember("equipSlot", equipSlot->formID);
-				}
-			}
-			break;
+		    // TODO: Fix Staffs being treated as bows
+		    // TODO: isPoisoned bool
+
+		    RE::TESObjectWEAP* weapon = skyrim_cast<RE::TESObjectWEAP*>(obj);
+		    if (weapon) {
+		        auto& weaponData = weapon->weaponData;
+		        auto& criticalData = weapon->criticalData;
+
+		        value.SetMember("weaponType", weaponData.animationType.underlying());
+		        value.SetMember("subType", weaponData.animationType.underlying());
+		        value.SetMember("speed", weaponData.speed);
+		        value.SetMember("reach", weaponData.reach);
+		        value.SetMember("stagger", weaponData.staggerValue);
+		        value.SetMember("critDamage", criticalData.damage);
+		        value.SetMember("minRange", weaponData.minRange);
+		        value.SetMember("maxRange", weaponData.maxRange);
+		        value.SetMember("baseDamage", weapon->attackDamage);
+
+		        RE::BGSEquipSlot* equipSlot = weapon->equipSlot;
+		        if (equipSlot) {
+		            value.SetMember("equipSlot", equipSlot->formID);
+		        }
+
+		        int subType = -1;  // Default unknown weapon type
+				const bool isWarhammer = weapon->HasKeywordID(0x0006d930);
+
+		        if (weapon->IsOneHandedSword()) {
+		            subType = 1;
+		        } else if (weapon->IsOneHandedDagger()) {
+		            subType = 2;
+		        } else if (weapon->IsOneHandedAxe()) {
+		            subType = 3;
+		        } else if (weapon->IsOneHandedMace()) {
+		            subType = 4;
+		        } else if (weapon->IsTwoHandedSword()) {
+		            subType = 5;
+		        } else if (weapon->IsTwoHandedAxe() && !isWarhammer) {
+		            subType = 6;
+		        } else if (weapon->IsTwoHandedAxe() && isWarhammer) {
+		            subType = 7;
+		        } else if (weapon->IsBow()) {
+		            subType = 8;
+		        } else if (weapon->IsCrossbow()) {
+		            subType = 9;
+		        } else if (weapon->IsStaff()) {
+		            subType = 10;
+		        }
+
+		        value.SetMember("subType", subType);
+		    }
 		}
+
 		case RE::FormType::SoulGem:
 		{
 			RE::TESSoulGem* soulGem = skyrim_cast<RE::TESSoulGem*>(obj);
