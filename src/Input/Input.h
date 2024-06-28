@@ -82,6 +82,7 @@ namespace Input
 			UserEventMap() :
 				_mappings{}
 			{
+				insert("Favorites"sv);
 				insert("Activate"sv);
 				insert("Ready Weapon"sv);
 			}
