@@ -846,7 +846,7 @@ namespace QuickLoot::Items
 			// mainPart | 4
 			// partMask | 5
 		    RE::TESObjectARMO* armor = skyrim_cast<RE::TESObjectARMO*>(obj);
-		    if (!armor) break; // Early return if armor is null
+		    if (!armor) break;
 
 		    value.SetMember("partMask", armor->bipedModelData.bipedObjectSlots.underlying());
 		    value.SetMember("weightClass", armor->bipedModelData.armorType.underlying());
@@ -976,8 +976,6 @@ namespace QuickLoot::Items
 
 			const bool isNote = IsNote();
 			const bool hasRecipeKeyword = book->HasKeywordID(0x000F5CB0);
-
-			value.SetMember("bookType", 255);
 
 			if (isNote) {
 				value.SetMember("bookType", 255);
