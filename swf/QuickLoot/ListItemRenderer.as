@@ -1,4 +1,4 @@
-﻿class LootMenu.ListItemRenderer extends gfx.controls.ListItemRenderer
+﻿class QuickLoot.ListItemRenderer extends gfx.controls.ListItemRenderer
 {
 	/* PRIVATE VARIABLES */
 

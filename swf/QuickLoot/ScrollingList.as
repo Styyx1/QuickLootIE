@@ -1,4 +1,4 @@
-﻿class LootMenu.ScrollingList extends gfx.controls.ScrollingList
+﻿class QuickLoot.ScrollingList extends gfx.controls.ScrollingList
 {
 	/* INITIALIZATION */
 

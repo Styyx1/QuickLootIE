@@ -1,21 +1,11 @@
-class LootMenu.InfoBar extends gfx.controls.ButtonBar
+class QuickLoot.ButtonBar extends gfx.controls.ButtonBar
 {
 	/* INITIALIZATION */
 
 	// @override ButtonBar
-	public function InfoBar()
+	public function ButtonBar()
 	{
 		super();
-	}
-
-
-	/* PUBLIC FUNCTIONS */
-
-	// @override gfx.controls.ButtonBar
-	public function invalidateData(): Void
-	{
-		reflowing = false;
-		invalidate();
 	}
 
 
@@ -49,7 +39,7 @@ class LootMenu.InfoBar extends gfx.controls.ButtonBar
 
 	/**
 	 * @override gfx.controls.ButtonBar
-	 * implements a horizontal, right-aligned layout
+	 * implements a horizontal, centered layout
 	 */
 	private function drawLayout(): Boolean
 	{
@@ -61,20 +51,31 @@ class LootMenu.InfoBar extends gfx.controls.ButtonBar
 		}
 		reflowing = false;
 
+		var totalW: Number = 0;
+		for (var i: Number = 0; i < renderers.length; ++i) {
+			var renderer: MovieClip = renderers[i];
+			// Manually size the renderer
+			if (_autoSize == "none" && _buttonWidth > 0) {
+				renderer.width = _buttonWidth;
+			}
+
+			totalW += renderer.width;
+		}
+
+		totalW += _spacing * (renderers.length - 1);
+
 		var calcY: Function = function(a_height: Number): Number {
 			return Math.max((this.height - a_height) / 2, 0);
 		};
 
-		var pos: Number = width;
+		var midpoint: Number = width / 2;
+		var w: Number = midpoint - totalW / 2;
 		for (var i: Number = 0; i < renderers.length; ++i) {
 			var renderer: MovieClip = renderers[i];
-
-			pos -= renderer.width;
-			renderer._x = pos;
-			pos -= _spacing;
-
+			renderer._x = w;
 			renderer._y = calcY(renderer.height);
 			renderer._visible = true;
+			w += renderer.width + _spacing;
 		}
 
 		return true;

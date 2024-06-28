@@ -1,4 +1,4 @@
-class LootMenu.Button extends gfx.controls.Button
+class QuickLoot.Button extends gfx.controls.Button
 {
 	/* PRIVATE VARIABLES */
 

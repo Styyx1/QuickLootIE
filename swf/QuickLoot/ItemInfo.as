@@ -1,4 +1,4 @@
-﻿class LootMenu.ItemInfo extends gfx.controls.Button
+﻿class QuickLoot.ItemInfo extends gfx.controls.Button
 {
 	/* INITIALIZATION */
 
