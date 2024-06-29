@@ -357,6 +357,8 @@ namespace Scaleform
 			assert(success);
 			//success = _view->SetVariable("_global.noInvisibleAdvance", boolean);
 			assert(success);
+
+			InjectUtilsClass();
 		}
 
 		void OnClose() { return; }
@@ -409,6 +411,8 @@ namespace Scaleform
 		void ProcessDelegate();
 		void QueueInventoryRefresh();
 		void QueueUIRefresh();
+		void UtilsLog(const RE::GFxFunctionHandler::Params& params);
+		void InjectUtilsClass();
 
 		void RestoreIndex(std::ptrdiff_t a_oldIdx)
 		{
