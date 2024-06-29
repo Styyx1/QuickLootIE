@@ -47,16 +47,14 @@
 			var emptySlots = -40 * extraRecords;
 			var squishBy = 40 * extraRecords;
 			
-			this.squish(lootmenu.bgMiddle, squishBy, extraRecords);
-			this.moveToPos(lootmenu.bgBottom, emptySlots);
+			this.squish(lootmenu.background, squishBy, extraRecords);
 			this.moveToPos(lootmenu.buttonBar, emptySlots);
 			this.moveToPos(lootmenu.infoBar, emptySlots);
 			this.moveToPos(lootmenu.weight, emptySlots);
 		}
 		else
 		{
-			this.resetHeight(lootmenu.bgMiddle);
-			this.resetY(lootmenu.bgBottom);
+			this.resetHeight(lootmenu.background);
 			this.resetY(lootmenu.buttonBar);
 			this.resetY(lootmenu.infoBar);
 			this.resetY(lootmenu.weight);
