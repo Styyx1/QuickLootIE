@@ -119,6 +119,7 @@ namespace Scaleform
 					_itemListProvider.PushBack(elem->GFxValue(*_view));
 				}
 				_itemList.InvalidateData();
+				_rootObj.GetInstance().Invoke("refresh");
 
 				if (_restoreLastSelectedIndex) {
 					logger::trace("Looking at the same container as before. Restoring last selection index ({}).", _lastSelectedIndex);
@@ -406,6 +407,12 @@ namespace Scaleform
 			_buttonBar.DataProvider(CLIK::Array{ _buttonBarProvider });
 
 			ProcessDelegate();
+
+			RE::GFxValue arg;
+			_view->CreateObject(&arg);
+			arg.SetMember("maxLines", 3);
+
+			_rootObj.GetInstance().Invoke("init", nullptr, &arg, 1);
 		}
 
 		void ProcessDelegate();
