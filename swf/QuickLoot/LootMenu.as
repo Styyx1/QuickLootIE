@@ -7,10 +7,6 @@
 	var infoBar: QuickLoot.InfoBar;
 	var buttonBar: QuickLoot.ButtonBar;
 	
-	var bgTop: MovieClip;
-	var bgMiddle: MovieClip;
-	var bgBottom: MovieClip;
-	
 	var background: MovieClip;
 	
 	var movingElements: Array;
@@ -75,7 +71,7 @@
 		//itemList.height = maxLines * 39;
 		//itemList.invalidate();
 		
-		movingElements = [bgBottom, weight, infoBar, buttonBar];
+		movingElements = [weight, infoBar, buttonBar];
 		saveInitialElementBounds();
 		refresh();
 	}
@@ -97,7 +93,7 @@
 		
 		var shiftAmount = (lineCount - neutralLineCount) * heightPerLine;
 		
-		QuickLoot.Utils.log("Resizing to " + lineCount + " lines (shift by " + shiftAmount + ")");
+		//QuickLoot.Utils.log("Resizing to " + lineCount + " lines (shift by " + shiftAmount + ")");
 		
 		background._height = background._originalH + shiftAmount;
 		
@@ -114,7 +110,7 @@
 		
 			if(!(element instanceof MovieClip) && !(element instanceof TextField)) continue;
 			
-			QuickLoot.Utils.log(member + ": " + element._x + ", " + element._y + ", " + element._width + ", " + element._height);
+			//QuickLoot.Utils.log(member + ": " + element._x + ", " + element._y + ", " + element._width + ", " + element._height);
 			
 			element._originalX = element._x;
 			element._originalY = element._y;
