@@ -68,7 +68,7 @@
 		
 		// TODO figure out how to change the number of rows without completely breaking the ScrollingList
 		//itemList.rowCount = maxLines;
-		//itemList.height = maxLines * 39;
+		//itemList.height = maxLines * 40;
 		//itemList.invalidate();
 		
 		movingElements = [weight, infoBar, buttonBar];
@@ -85,7 +85,7 @@
 	{
 		// How many lines the stage placement accounts for.
 		var neutralLineCount = 7;
-		var heightPerLine = 39;
+		var heightPerLine = 40;
 		
 		lineCount = Math.min(lineCount, neutralLineCount);
 		//lineCount = Math.min(lineCount, maxLines);

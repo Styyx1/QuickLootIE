@@ -9,6 +9,7 @@
 	private static var DEFAULT_ICON_SOURCE = "skyui/icons_item_psychosteve.swf";
 	private static var DEFAULT_ICON_LABEL = "default_misc";
 	private static var DEFAULT_ICON_COLOR = 0xFFFFFF;
+	private static var ICON_SIZE = 24;
 	
 	private var _iconLoader: MovieClipLoader;
 	private var _iconSource: String = DEFAULT_ICON_SOURCE;
@@ -193,7 +194,7 @@
 	private function onLoadInit(icon: MovieClip): Void
 	{
 		icon.gotoAndStop(_iconLabel);
-		icon._width = itemIcon._height = 18;
+		icon._width = itemIcon._height = ICON_SIZE;
 		
 		var colorTransform = new flash.geom.ColorTransform();
 		colorTransform.rgb = _iconColor;
