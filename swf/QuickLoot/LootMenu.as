@@ -1,70 +1,82 @@
 ﻿class QuickLoot.LootMenu extends gfx.core.UIComponent
 {
 	// stage elements
-	var itemList: QuickLoot.ScrollingList;
-	var title: TextField;
-	var weight: TextField;
-	var infoBar: QuickLoot.InfoBar;
-	var buttonBar: QuickLoot.ButtonBar;
 	
-	var background: MovieClip;
+	private var itemList: QuickLoot.ScrollingList;
+	private var title: TextField;
+	private var weight: TextField;
+	private var infoBar: QuickLoot.InfoBar;
+	private var buttonBar: QuickLoot.ButtonBar;
 	
-	var movingElements: Array;
+	private var background: MovieClip;
+	
+	// private variables
+	
+	private var movingElements: Array;
+	private var nonTransparentElements: Array;
+	
+	private var stageCenterX: Number;
+	private var stageCenterY: Number;
 	
 	// settings
-	var minLines = 3;
-	var maxLines = 7;
 	
-	var alphaNormal = 100;
-	var alphaEmpty = 30;
+	public var useStealingTextColor = true;
 	
-	var useStealingTextColor = true;
-	var showStealingIcon = true;
-	var showReadIcon = true;
+	public var showStealingIcon = true;
+	public var showReadIcon = true;
 	
-	var showEnchantmentIcon = true;
-	var showKnownEnchantmentIcon = true;
-	var showSpecialEnchantmentIcon = true;
+	public var showEnchantmentIcon = true;
+	public var showKnownEnchantmentIcon = true;
+	public var showSpecialEnchantmentIcon = true;
 	
-	var showDbmNewIcon = true;
-	var showDbmFoundIcon = true;
-	var showDbmDisplayedIcon = true;
+	public var showDbmNewIcon = true;
+	public var showDbmFoundIcon = true;
+	public var showDbmDisplayedIcon = true;
 	
-	var showCompNewIcon = true;
-	var showCompFoundIcon = true;
+	public var showCompNewIcon = true;
+	public var showCompFoundIcon = true;
 	
-	public function init(settings)
+	public var minLines = 3;
+	public var maxLines = 10;
+	
+	public var offsetX = 100;
+	public var offsetY = -200;
+	public var scale = 1;
+	
+	public var alphaNormal = 100;
+	public var alphaEmpty = 30;
+	
+	// public functions
+	
+	public function init(settings: Object)
 	{
-		if (typeof(settings.minLines) == "number" && settings.minLines >= 0 && settings.minLines <= 10)
-			minLines = settings.minLines;
-		if (typeof(settings.maxLines) == "number" && settings.maxLines >= minLines && settings.maxLines <= 10)
-			maxLines = settings.maxLines;
+		QuickLoot.Utils.log("Initializing LootMenu");
 		
-		if (typeof(settings.useStealingTextColor) == "boolean")
-			useStealingTextColor = settings.useStealingTextColor;
-		if (typeof(settings.showStealingIcon) == "boolean")
-			showStealingIcon = settings.showStealingIcon;
-		if (typeof(settings.showReadIcon) == "boolean")
-			showReadIcon = settings.showReadIcon;
+		loadSetting(settings, "useStealingTextColor", "boolean");
 		
-		if (typeof(settings.showEnchantmentIcon) == "boolean")
-			showEnchantmentIcon = settings.showEnchantmentIcon;
-		if (typeof(settings.showKnownEnchantmentIcon) == "boolean")
-			showKnownEnchantmentIcon = settings.showKnownEnchantmentIcon;
-		if (typeof(settings.showSpecialEnchantmentIcon) == "boolean")
-			showSpecialEnchantmentIcon = settings.showSpecialEnchantmentIcon;
+		loadSetting(settings, "showStealingIcon", "boolean");
+		loadSetting(settings, "showReadIcon", "boolean");
 		
-		if (typeof(settings.showDbmNewIcon) == "boolean")
-			showDbmNewIcon = settings.showDbmNewIcon;
-		if (typeof(settings.showDbmFoundIcon) == "boolean")
-			showDbmFoundIcon = settings.showDbmFoundIcon;
-		if (typeof(settings.showDbmDisplayedIcon) == "boolean")
-			showDbmDisplayedIcon = settings.showDbmDisplayedIcon;
+		loadSetting(settings, "showEnchantmentIcon", "boolean");
+		loadSetting(settings, "showKnownEnchantmentIcon", "boolean");
+		loadSetting(settings, "showSpecialEnchantmentIcon", "boolean");
 		
-		if (typeof(settings.showCompNewIcon) == "boolean")
-			showCompNewIcon = settings.showCompNewIcon;
-		if (typeof(settings.showCompFoundIcon) == "boolean")
-			showCompFoundIcon = settings.showCompFoundIcon;
+		loadSetting(settings, "showDbmNewIcon", "boolean");
+		loadSetting(settings, "showDbmFoundIcon", "boolean");
+		loadSetting(settings, "showDbmDisplayedIcon", "boolean");
+		
+		loadSetting(settings, "showCompNewIcon", "boolean");
+		loadSetting(settings, "showCompFoundIcon", "boolean");
+		
+		loadSetting(settings, "minLines", "number");
+		loadSetting(settings, "maxLines", "number");
+		
+		loadSetting(settings, "offsetX", "number");
+		loadSetting(settings, "offsetY", "number");
+		loadSetting(settings, "scale", "number");
+		
+		loadSetting(settings, "alphaNormal", "number");
+		loadSetting(settings, "alphaEmpty", "number");
 		
 		// The CoreList constructor sets a scale9Grid, which causes very odd
 		// behavior when changing the list size after it's created.
@@ -72,13 +84,31 @@
 		itemList.rowCount = maxLines;
 		
 		movingElements = [weight, infoBar, buttonBar];
+		nonTransparentElements = [buttonBar];
+		
 		saveInitialElementBounds();
 		refresh();
 	}
 	
-	public function refresh():Void
+	public function refresh()
 	{
-		resizeContainer(itemList.dataProvider.length);
+		var lineCount = itemList.dataProvider.length;
+		var isEmpty = lineCount == 0;
+		
+		resizeContainer(lineCount);
+		setOpacity(isEmpty ? alphaEmpty : alphaNormal);
+		updateScale();
+	}
+	
+	// private functions
+	
+	private function loadSetting(settings: Object, name: String, type: String)
+	{
+		//QuickLoot.Utils.log(name + " (" + type + "): " + settings[name]);
+		
+		if(typeof(settings[name]) == type) {
+			this[name] = settings[name];
+		}
 	}
 	
 	private function resizeContainer(lineCount: Number)
@@ -102,11 +132,37 @@
 		}
 	}
 	
-	private function saveInitialElementBounds()
+	private function updateScale()
+	{
+		var bounds = getBounds(this);
+		
+		_width = (bounds.xMax - bounds.xMin) * scale;
+		_height = (bounds.yMax - bounds.yMin) * scale;
+		_x = stageCenterX + offsetX;
+		_y = stageCenterY + offsetY;
+	}
+	
+	private function setOpacity(opacity: Number)
 	{
 		for(var member in this) {
 			var element = this[member];
+			
+			if(nonTransparentElements.indexOf(element) >= 0) {
+				continue;
+			}
+			
+			element._alpha = opacity;
+		}
+	}
+	
+	private function saveInitialElementBounds()
+	{
+		stageCenterX = _x;
+		stageCenterY = _y;
 		
+		for(var member in this) {
+			var element = this[member];
+			
 			if(!(element instanceof MovieClip) && !(element instanceof TextField)) continue;
 			
 			//QuickLoot.Utils.log(member + ": " + element._x + ", " + element._y + ", " + element._width + ", " + element._height);

@@ -321,32 +321,6 @@ namespace Scaleform
 			return true;
 		}
 
-		void AdjustPosition()
-		{
-			auto def = _view->GetMovieDef();
-
-			if (!def) {
-				return;
-			}
-
-			const float WindowX = Settings::WindowX();
-			const float WindowY = Settings::WindowY();
-			const float WindowW = Settings::WindowW();
-			const float WindowH = Settings::WindowH();
-
-			_rootObj.X( WindowX > 1.f ? WindowX : _rootObj.X() + def->GetWidth() / 5);
-
-			if (WindowY > 1.f)
-				_rootObj.Y( WindowY);
-
-			if (WindowW > 1.f)
-				_rootObj.Width( WindowW);
-
-			if (WindowH > 1.f)
-				_rootObj.Height( WindowH);
-
-		}
-
 		void Close();
 
 		void InitExtensions()
@@ -389,7 +363,8 @@ namespace Scaleform
 				}
 			}
 
-			AdjustPosition();
+			const RE::GFxValue settings = BuildSettingsObject();
+			_rootObj.GetInstance().Invoke("init", nullptr, &settings, 1);
 			_rootObj.Visible(false);
 
 			_title.AutoSize(CLIK::Object{ "left" });
@@ -407,12 +382,45 @@ namespace Scaleform
 			_buttonBar.DataProvider(CLIK::Array{ _buttonBarProvider });
 
 			ProcessDelegate();
+		}
 
-			RE::GFxValue arg;
-			_view->CreateObject(&arg);
-			arg.SetMember("maxLines", 3);
+		RE::GFxValue BuildSettingsObject() const
+        {
+			RE::GFxValue settings{};
 
-			_rootObj.GetInstance().Invoke("init", nullptr, &arg, 1);
+			if (!_view) {
+				return settings;
+			}
+
+			_view->CreateObject(&settings);
+
+			settings.SetMember("useStealingTextColor", true);//Settings::UseStealingTextColor());
+
+			settings.SetMember("showStealingIcon", true);//Settings::ShowStealingIcon());
+			settings.SetMember("showReadIcon", true);//Settings::ShowReadIcon());
+
+			settings.SetMember("showEnchantmentIcon", true);//Settings::ShowEnchantmentIcon());
+			settings.SetMember("showKnownEnchantmentIcon", true);//Settings::ShowKnownEnchantmentIcon());
+			settings.SetMember("showSpecialEnchantmentIcon", true);//Settings::ShowSpecialEnchantmentIcon());
+
+			settings.SetMember("showDbmNewIcon", true);//Settings::ShowDbmNewIcon());
+			settings.SetMember("showDbmFoundIcon", true);//Settings::ShowDbmFoundIcon());
+			settings.SetMember("showDbmDisplayedIcon", true);//Settings::ShowDbmDisplayedIcon());
+
+			settings.SetMember("showCompNewIcon", true);//Settings::ShowCompNewIcon());
+			settings.SetMember("showCompFoundIcon", true);//Settings::ShowCompFoundIcon());
+
+			settings.SetMember("minLines", 0);//Settings::MinLines());
+			settings.SetMember("maxLines", 7);//Settings::MaxLines());
+
+			settings.SetMember("offsetX", 100);//Settings::WindowOffsetX());
+			settings.SetMember("offsetY", -200);//Settings::WindowOffsetY());
+			settings.SetMember("scale", 1);//Settings::WindowScale());
+
+			settings.SetMember("alphaNormal", 100);//Settings::AlphaNormal());
+			settings.SetMember("alphaEmpty", 33);//Settings::AlphaEmpty());
+
+			return settings;
 		}
 
 		void ProcessDelegate();

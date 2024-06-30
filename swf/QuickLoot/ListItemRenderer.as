@@ -16,8 +16,8 @@
 	private var _iconLabel: String = DEFAULT_ICON_LABEL;
 	private var _iconColor: Number = DEFAULT_ICON_COLOR;
 	
-	private var _iconPosX;
-	private var _iconSpacing = 3;
+	private var _iconPosX: Number;
+	private var _iconSpacing: Number = 3;
 
 	/* STAGE ELEMENTS */
 
