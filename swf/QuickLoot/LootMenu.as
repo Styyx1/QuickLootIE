@@ -66,10 +66,10 @@
 		if (typeof(settings.showCompFoundIcon) == "boolean")
 			showCompFoundIcon = settings.showCompFoundIcon;
 		
-		// TODO figure out how to change the number of rows without completely breaking the ScrollingList
-		//itemList.rowCount = maxLines;
-		//itemList.height = maxLines * 40;
-		//itemList.invalidate();
+		// The CoreList constructor sets a scale9Grid, which causes very odd
+		// behavior when changing the list size after it's created.
+		itemList["container"].scale9Grid = null;
+		itemList.rowCount = maxLines;
 		
 		movingElements = [weight, infoBar, buttonBar];
 		saveInitialElementBounds();
@@ -87,9 +87,8 @@
 		var neutralLineCount = 7;
 		var heightPerLine = 40;
 		
-		lineCount = Math.min(lineCount, neutralLineCount);
-		//lineCount = Math.min(lineCount, maxLines);
-		//lineCount = Math.max(lineCount, minLines);
+		lineCount = Math.min(lineCount, maxLines);
+		lineCount = Math.max(lineCount, minLines);
 		
 		var shiftAmount = (lineCount - neutralLineCount) * heightPerLine;
 		
