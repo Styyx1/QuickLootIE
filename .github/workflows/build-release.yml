@@ -42,9 +42,8 @@ jobs:
         id: should_run
         shell: bash
         run: |
-            CHANGED_FILES=$(git log --since="1 days ago" --name-only | grep -v '\.(md|txt)$')
-            echo "should_run=$(echo "$CHANGED_FILES" | wc -l)" >> "$GITHUB_ENV"
-          
+            CHANGED_FILES=$(git log --since="1 days ago" --name-only | grep -v ".\((md|txt)\)$")
+            echo "should_run=$(wc -l <<<"$CHANGED_FILES")" >> "$GITHUB_ENV"          
   build-plugin:
     name: Build ESP from Spriggit files
     needs: check-changes
