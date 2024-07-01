@@ -32,6 +32,10 @@ class QuickLoot.Button extends gfx.controls.Button
 		super();
 	}
 
+	public function set label(value: String)
+	{
+		textField.htmlText = value;
+	}
 
 	/* PRIVATE FUNCTIONS */
 

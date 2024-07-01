@@ -471,39 +471,44 @@ namespace Scaleform
 				return;
 			}
 
-			const bool stealing = WouldBeStealing();
-			const std::array mappings{
-				std::make_tuple("sSearch"sv, "Favorites"sv, stealing),
-				std::make_tuple(stealing ? "sSteal"sv : "sTake"sv, "Activate"sv, stealing),
-				std::make_tuple("sTakeAll"sv, "Ready Weapon"sv, stealing),
+			struct ButtonDefinition
+			{
+				const char* labelKey;
+				const char* labelFallback;
+
+				const char* stealingLabelKey;
+				const char* stealingLabelFallback;
+
+				const char* keybindEvent;
 			};
 
+			const std::array buttonDefs{
+				ButtonDefinition{ "sSearch", "Search", "sStealFrom", "Steal From", "Favorites" },
+				ButtonDefinition{ "sTake", "Take", "sSteal", "Steal", "Activate" },
+				ButtonDefinition{ "sTakeAll", "Take All", "sTakeAll", "Take All", "Ready Weapon" },
+			};
+
+			const bool stealing = WouldBeStealing();
+
 			_buttonBarProvider.ClearElements();
-			auto gmst = RE::GameSettingCollection::GetSingleton();
-			const srell::regex pattern("<.*>(.*)<.*>"s, srell::regex_constants::ECMAScript);
-			for (std::size_t i = 0; i < mappings.size(); ++i) {
-				const auto& mapping = mappings[i];
+			
+			for (std::size_t i = 0; i < buttonDefs.size(); ++i) {
+				const auto& button = buttonDefs[i];
 
-				auto setting = gmst->GetSetting(std::get<0>(mapping).data());
-				std::string label = setting ? setting->GetString() : "<undefined>"s;
-				srell::smatch matches;
-				if (srell::regex_match(label, matches, pattern)) {
-					if (matches.size() >= 2) {
-						assert(matches.size() == 2);
-						label = matches[1].str();
-					}
-				}
+				const auto labelKey = stealing ? button.stealingLabelKey : button.labelKey;
+				const auto labelFallback = stealing ? button.stealingLabelFallback : button.labelFallback;
 
-				const auto index =
-					static_cast<std::ptrdiff_t>(
-						Input::ControlMap()(std::get<1>(mapping)));
-				const auto stolen = std::get<2>(mapping);
+				const auto setting = RE::GameSettingCollection::GetSingleton()->GetSetting(labelKey);
+				const auto label = setting ? setting->GetString() : labelFallback;
+				const auto index = Input::ControlMap()(button.keybindEvent);
 
 				RE::GFxValue obj;
-				_view->CreateObject(std::addressof(obj));
-				obj.SetMember("label", { static_cast<std::string_view>(label) });
-				obj.SetMember("index", { index });
-				obj.SetMember("stolen", { stolen });
+				_view->CreateObject(&obj);
+
+				obj.SetMember("label", label);
+				obj.SetMember("index", index);
+				obj.SetMember("stolen", stealing);
+
 				_buttonBarProvider.PushBack(obj);
 			}
 			_buttonBar.InvalidateData();
