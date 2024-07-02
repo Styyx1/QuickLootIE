@@ -20,22 +20,6 @@
 	
 	// settings
 	
-	public var useStealingTextColor = true;
-	
-	public var showStealingIcon = true;
-	public var showReadIcon = true;
-	
-	public var showEnchantmentIcon = true;
-	public var showKnownEnchantmentIcon = true;
-	public var showSpecialEnchantmentIcon = true;
-	
-	public var showDbmNewIcon = true;
-	public var showDbmFoundIcon = true;
-	public var showDbmDisplayedIcon = true;
-	
-	public var showCompNewIcon = true;
-	public var showCompFoundIcon = true;
-	
 	public var minLines = 3;
 	public var maxLines = 10;
 	
@@ -51,22 +35,6 @@
 	public function init(settings: Object)
 	{
 		QuickLoot.Utils.log("Initializing LootMenu");
-		
-		loadSetting(settings, "useStealingTextColor", "boolean");
-		
-		loadSetting(settings, "showStealingIcon", "boolean");
-		loadSetting(settings, "showReadIcon", "boolean");
-		
-		loadSetting(settings, "showEnchantmentIcon", "boolean");
-		loadSetting(settings, "showKnownEnchantmentIcon", "boolean");
-		loadSetting(settings, "showSpecialEnchantmentIcon", "boolean");
-		
-		loadSetting(settings, "showDbmNewIcon", "boolean");
-		loadSetting(settings, "showDbmFoundIcon", "boolean");
-		loadSetting(settings, "showDbmDisplayedIcon", "boolean");
-		
-		loadSetting(settings, "showCompNewIcon", "boolean");
-		loadSetting(settings, "showCompFoundIcon", "boolean");
 		
 		loadSetting(settings, "minLines", "number");
 		loadSetting(settings, "maxLines", "number");
