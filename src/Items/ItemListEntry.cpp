@@ -163,10 +163,6 @@ namespace QuickLoot::Items
 
 	const std::string& ItemListEntry::GetDisplayName() const
 	{
-		if (Completionist::IsReady()) {
-			_cache.SetDisplayName(Completionist::GetItemDisplayName(GetFormID(), Completionist::DisplayNameMode::kNewDisplayName));
-		}
-
 		if (_cache.IsCached(kDisplayName)) {
 			return _cache.GetDisplayName();
 		}
@@ -195,6 +191,10 @@ namespace QuickLoot::Items
 				assert(false);
 				break;
 			}
+		}
+
+		if (Completionist::IsReady()) {
+			result = Completionist::DecorateItemDisplayName(GetFormID(), result);
 		}
 
 		return _cache.SetDisplayName(std::move(result));

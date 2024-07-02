@@ -42,8 +42,9 @@ namespace QuickLoot::Integrations
 			kIsItemTracked = 0x22,
 			kIsItemCollected = 0x23,
 			kGetItemDisplayName = 0x24,
+			kDecorateItemDisplayName = 0x25,
 		};
-
+		
 	public:
 		Completionist(Completionist const&) = delete;
 		Completionist(Completionist const&&) = delete;
@@ -159,17 +160,29 @@ namespace QuickLoot::Integrations
 			const GetItemDisplayName_Request request{ formID, mode };
 			std::string response{};
 
-			const PluginRequests::ResponseCallback<char> callback =
-				[&response](size_t count, const char* str) {
-					SKSE::log::trace("Consumer callback invoked");
-					response.assign(str, count);
-				};
-
-			if (const auto error = _client.QueryArray(kGetItemDisplayName, &request, callback)) {
+			if (const auto error = _client.QueryString(kGetItemDisplayName, &request, response)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
 			}
 
 			return response;
 		}
+
+		struct DecorateItemDisplayName_Request
+		{
+			RE::FormID formID;
+			const char* rawName;
+		};
+
+		static std::string DecorateItemDisplayName(RE::FormID formID, const std::string& rawName)
+		{
+			const DecorateItemDisplayName_Request request{ formID, rawName.c_str() };
+			std::string response{};
+
+			if (const auto error = _client.QueryString(kDecorateItemDisplayName, &request, response)) {
+				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
+			}
+
+			return response;
+		};
 	};
 }
