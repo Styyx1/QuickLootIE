@@ -101,9 +101,9 @@
 		
 		// Column values
 		
-		updateColumnValue(itemWeight, weight, 2);
 		updateColumnValue(itemValue, value, 2);
-		updateColumnValue(itemValuePerWeight, weight / value, 0);
+		updateColumnValue(itemWeight, weight, 2);
+		updateColumnValue(itemValuePerWeight, value / weight, 0);
 		
 		// Icons behind the item name
 		
