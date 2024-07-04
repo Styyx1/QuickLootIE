@@ -12,7 +12,7 @@ namespace QuickLoot::Integrations
 
 		static constexpr const char* TCC_PLUGIN_NAME = "DBM_RelicNotifications.esp";
 
-		static bool _isInitialized;
+		static inline bool _isReady;
 
 		static inline RE::BGSListForm* _new = nullptr;
 		static inline RE::BGSListForm* _found = nullptr;
@@ -42,7 +42,14 @@ namespace QuickLoot::Integrations
 			_found = dataHandler->LookupForm<RE::BGSListForm>(0x558286, TCC_PLUGIN_NAME);
 			_displayed = dataHandler->LookupForm<RE::BGSListForm>(0x558287, TCC_PLUGIN_NAME);
 
+			_isReady = _new && _found && _displayed;
+
 			logger::info("Loaded TCC form lists");
+		}
+
+		static bool IsReady()
+		{
+			return _isReady;
 		}
 
 		static bool IsItemNew(RE::FormID formID)

@@ -1014,40 +1014,30 @@ namespace QuickLoot::Items
 		}
 		}
 
-		value.SetMember("displayName", { static_cast<std::string_view>(GetDisplayName()) });
-		value.SetMember("count", { _count });
-		value.SetMember("stolen", { IsStolen() });
-		value.SetMember("value", { GetValue() });
-		value.SetMember("iconLabel", { GetItemIconLabel(GetItemType()) });
+		value.SetMember("displayName", static_cast<std::string_view>(GetDisplayName()));
+		value.SetMember("count", _count);
+		value.SetMember("value", GetValue());
+		value.SetMember("weight", std::max(GetWeight(), 0.0));
+		value.SetMember("iconLabel", GetItemIconLabel(GetItemType()));
 
-		const auto weight = GetWeight();
-		if (weight >= 0)
-			value.SetMember("weight", { GetWeight() });
+		value.SetMember("stolen", IsStolen());
+	    value.SetMember("read", Settings::ShowBookRead() && IsRead());
 
 		if (Settings::ShowEnchanted()) {
-			value.SetMember("enchanted", { IsEnchanted() });
-			value.SetMember("knownEnchanted", { IsKnownEnchanted() });
-			value.SetMember("specialEnchanted", { IsSpecialEnchanted() });
+			value.SetMember("enchanted", IsEnchanted());
+			value.SetMember("knownEnchanted", IsKnownEnchanted());
+			value.SetMember("specialEnchanted", IsSpecialEnchanted());
 		}
 
-		if (Settings::ShowDBMNew())
-			value.SetMember("dbmNew", { ItemIsDbmNew() });
-
-		if (Settings::ShowDBMFound())
-			value.SetMember("dbmFound", { ItemIsDbmFound() });
-
-		if (Settings::ShowDBMDisplayed())
-			value.SetMember("dbmDisplayed", { ItemIsDbmDisplayed() });
-
-		if (Settings::ShowBookRead())
-			value.SetMember("isRead", { IsRead() });
+		if (LOTD::IsReady()) {
+			value.SetMember("dbmNew", Settings::ShowDBMNew() && ItemIsDbmNew());
+			value.SetMember("dbmFound", Settings::ShowDBMFound() && ItemIsDbmFound());
+			value.SetMember("dbmDisplayed", Settings::ShowDBMDisplayed() && ItemIsDbmDisplayed());
+		}
 
 		if (Completionist::IsIntegrationEnabled()) {
-			if (Settings::ShowCompNeeded())
-				value.SetMember("compNew", { ItemIsCompNew() });
-
-			if (Settings::ShowCompCollected())
-				value.SetMember("compFound", { ItemIsCompFound() });
+			value.SetMember("compNew", Settings::ShowCompNeeded() && ItemIsCompNew());
+			value.SetMember("compFound", Settings::ShowCompCollected() && ItemIsCompFound());
 
 			if (const auto colorInt = Completionist::GetItemDynamicTextColor(GetFormID()); colorInt != -1)
 				value.SetMember("textColor", colorInt);
