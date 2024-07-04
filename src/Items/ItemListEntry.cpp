@@ -851,20 +851,20 @@ namespace QuickLoot::Items
 
 		    int subType = -1;
 		    std::unordered_map<BGSBipedObjectForm::BipedObjectSlot, int> partMap = {
-		        {BGSBipedObjectForm::BipedObjectSlot::kHead, 0}, // EquipType::Head
-		        {BGSBipedObjectForm::BipedObjectSlot::kHair, 1}, // EquipType::Hair
-		        {BGSBipedObjectForm::BipedObjectSlot::kLongHair, 2}, // EquipType::LongHair
-		        {BGSBipedObjectForm::BipedObjectSlot::kBody, 3}, // EquipType::Body
-		        {BGSBipedObjectForm::BipedObjectSlot::kForearms, 4}, // EquipType::Forearms
-		        {BGSBipedObjectForm::BipedObjectSlot::kHands, 5}, // EquipType::Hands
-		        {BGSBipedObjectForm::BipedObjectSlot::kShield, 6}, // EquipType::Shield
-		        {BGSBipedObjectForm::BipedObjectSlot::kCalves, 7}, // EquipType::Calves
-		        {BGSBipedObjectForm::BipedObjectSlot::kFeet, 8}, // EquipType::Feet
-		        {BGSBipedObjectForm::BipedObjectSlot::kCirclet, 9}, // EquipType::Circlet
-		        {BGSBipedObjectForm::BipedObjectSlot::kAmulet, 10}, // EquipType::Amulet
-		        {BGSBipedObjectForm::BipedObjectSlot::kEars, 11}, // EquipType::Ears
-		        {BGSBipedObjectForm::BipedObjectSlot::kRing, 12}, // EquipType::Ring
-		        {BGSBipedObjectForm::BipedObjectSlot::kTail, 13} // EquipType::Tail
+		        {BGSBipedObjectForm::BipedObjectSlot::kHead, 0},		// EquipType::Head
+		        {BGSBipedObjectForm::BipedObjectSlot::kHair, 1},		// EquipType::Hair
+		        {BGSBipedObjectForm::BipedObjectSlot::kLongHair, 2},	// EquipType::LongHair
+		        {BGSBipedObjectForm::BipedObjectSlot::kBody, 3},		// EquipType::Body
+		        {BGSBipedObjectForm::BipedObjectSlot::kForearms, 4},	// EquipType::Forearms
+		        {BGSBipedObjectForm::BipedObjectSlot::kHands, 5},		// EquipType::Hands
+		        {BGSBipedObjectForm::BipedObjectSlot::kShield, 6},	// EquipType::Shield
+		        {BGSBipedObjectForm::BipedObjectSlot::kCalves, 7},	// EquipType::Calves
+		        {BGSBipedObjectForm::BipedObjectSlot::kFeet, 8},		// EquipType::Feet
+		        {BGSBipedObjectForm::BipedObjectSlot::kCirclet, 9},	// EquipType::Circlet
+		        {BGSBipedObjectForm::BipedObjectSlot::kAmulet, 10},	// EquipType::Amulet
+		        {BGSBipedObjectForm::BipedObjectSlot::kEars, 11},		// EquipType::Ears
+		        {BGSBipedObjectForm::BipedObjectSlot::kRing, 12},		// EquipType::Ring
+		        {BGSBipedObjectForm::BipedObjectSlot::kTail, 13}		// EquipType::Tail
 		    };
 
 		    for (const auto& pair : partMap) {
@@ -1003,14 +1003,44 @@ namespace QuickLoot::Items
 		}
 		case RE::FormType::AlchemyItem:
 		{
-			RE::AlchemyItem* alchemy = skyrim_cast<RE::AlchemyItem*>(obj);
-			if (!alchemy) break;
+		    RE::AlchemyItem* alchemy = skyrim_cast<RE::AlchemyItem*>(obj);
+		    if (!alchemy) break;
 
-			// TODO: subType is very likely wrong here
+			// subType 13 (drink) is somehow assigned properly without us
+			// doing anything, so we just check the others here.
+
+			RE::ActorValue potAV = alchemy->GetAVEffect()->data.primaryAV;
+
+			int subType = 12;	// Default subType is Potion
+		    static const std::unordered_map<ActorValue, int> avSubtypes = {
+		        {ActorValue::kHealth, 0},
+		        {ActorValue::kHealRate, 1},
+		        {ActorValue::kHealRateMult, 2},
+		        {ActorValue::kMagicka, 3},
+		        {ActorValue::kMagickaRate, 4},
+		        {ActorValue::kMagickaRateMult, 5},
+		        {ActorValue::kStamina, 6},
+		        {ActorValue::kStaminaRate, 7},
+		        {ActorValue::kStaminaRateMult, 8},
+		        {ActorValue::kResistFire, 9},
+		        {ActorValue::kResistShock, 10},
+		        {ActorValue::kResistFrost, 11}
+		    };
+
+			for (const auto& skill : avSubtypes) {
+				if (potAV == skill.first) {
+					subType = skill.second;
+					break;
+				} else if (alchemy->IsFood()) {
+					subType = 14;
+				} else if (alchemy->IsPoison()) {
+					subType = 15;
+				}
+			}
+
+			value.SetMember("subType", subType);
 			value.SetMember("flags", alchemy->data.flags.underlying());
-			value.SetMember("subType", alchemy->data.flags.underlying());
-		
-			break;
+		    break;
 		}
 		}
 
