@@ -14,7 +14,7 @@
 	private var _iconLoader: MovieClipLoader;
 	private var _iconSource: String = DEFAULT_ICON_SOURCE;
 	private var _iconLabel: String = DEFAULT_ICON_LABEL;
-	private var _iconColor: Number = DEFAULT_ICON_COLOR;
+	private var _iconColor: Number = undefined;
 	
 	private var _iconPosX: Number;
 	private var _iconSpacing: Number = 3;
@@ -173,7 +173,6 @@
 	{
 		if(!iconSource) iconSource = DEFAULT_ICON_SOURCE;
 		if(!iconLabel) iconLabel = DEFAULT_ICON_LABEL;
-		if(!iconColor) iconColor = DEFAULT_ICON_COLOR;
 		
 		var iconSourceChanged = iconSource != _iconSource;
 		
@@ -195,6 +194,8 @@
 	{
 		icon.gotoAndStop(_iconLabel);
 		icon._width = itemIcon._height = ICON_SIZE;
+		
+		if(typeof(_iconColor) != "number") return;
 		
 		var colorTransform = new flash.geom.ColorTransform();
 		colorTransform.rgb = _iconColor;
