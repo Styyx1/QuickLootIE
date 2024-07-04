@@ -163,10 +163,6 @@ namespace QuickLoot::Items
 
 	const std::string& ItemListEntry::GetDisplayName() const
 	{
-		if (Completionist::IsReady()) {
-			_cache.SetDisplayName(Completionist::GetItemDisplayName(GetFormID(), Completionist::DisplayNameMode::kNewDisplayName));
-		}
-
 		if (_cache.IsCached(kDisplayName)) {
 			return _cache.GetDisplayName();
 		}
@@ -195,6 +191,10 @@ namespace QuickLoot::Items
 				assert(false);
 				break;
 			}
+		}
+
+		if (Completionist::IsReady()) {
+			result = Completionist::DecorateItemDisplayName(GetFormID(), result);
 		}
 
 		return _cache.SetDisplayName(std::move(result));
@@ -749,56 +749,49 @@ namespace QuickLoot::Items
 		return _cache.SetStolen(result);
 	}
 
-	bool ItemListEntry::ItemIsNew() const
+	bool ItemListEntry::ItemIsDbmNew() const
 	{
 		if (_cache.IsCached(kIsDbmNew)) {
 			return _cache.IsDbmNew();
 		}
 
-		bool result = LOTD::IsItemNew(GetFormID());
-		return _cache.SetDbmNew(result);
+		return _cache.SetDbmNew(LOTD::IsItemNew(GetFormID()));
 	}
 
-	bool ItemListEntry::ItemIsFound() const
+	bool ItemListEntry::ItemIsDbmFound() const
 	{
 		if (_cache.IsCached(kIsDbmFound)) {
 			return _cache.IsDbmFound();
 		}
 
-		bool result = LOTD::IsItemFound(GetFormID());
-		return _cache.SetDbmFound(result);
+		return _cache.SetDbmFound(LOTD::IsItemFound(GetFormID()));
 	}
 
-	bool ItemListEntry::ItemIsDisplayed() const
+	bool ItemListEntry::ItemIsDbmDisplayed() const
 	{
 		if (_cache.IsCached(kIsDbmDisplayed)) {
 			return _cache.IsDbmDisplayed();
 		}
 
-		bool result = LOTD::IsItemDisplayed(GetFormID());
-		return _cache.SetDbmDisplayed(result);
+		return _cache.SetDbmDisplayed(LOTD::IsItemDisplayed(GetFormID()));
 	}
 
-	bool ItemListEntry::ItemIsNeeded() const
+	bool ItemListEntry::ItemIsCompNew() const
 	{
 		if (_cache.IsCached(kIsCompNew)) {
 			return _cache.IsCompNew();
 		}
 
-		bool result = Completionist::IsItemTracked(GetFormID()) && !Completionist::IsItemCollected(GetFormID());
-
-		return _cache.SetCompNew(result);
+		return _cache.SetCompNew(Completionist::IsItemNeeded(GetFormID()));
 	}
 
-	bool ItemListEntry::ItemIsCollected() const
+	bool ItemListEntry::ItemIsCompFound() const
 	{
 		if (_cache.IsCached(kIsCompFound)) {
 			return _cache.IsCompFound();
 		}
 
-		bool result = Completionist::IsItemCollected(GetFormID());
-
-		return _cache.SetCompFound(result);
+		return _cache.SetCompFound(Completionist::IsItemCollected(GetFormID()));
 	}
 	
 	static RE::GFxValue GetKeywords(RE::GFxMovieView& view, TESForm* form)
@@ -1021,40 +1014,30 @@ namespace QuickLoot::Items
 		}
 		}
 
-		value.SetMember("displayName", { static_cast<std::string_view>(GetDisplayName()) });
-		value.SetMember("count", { _count });
-		value.SetMember("stolen", { IsStolen() });
-		value.SetMember("value", { GetValue() });
-		value.SetMember("iconLabel", { GetItemIconLabel(GetItemType()) });
+		value.SetMember("displayName", static_cast<std::string_view>(GetDisplayName()));
+		value.SetMember("count", _count);
+		value.SetMember("value", GetValue());
+		value.SetMember("weight", std::max(GetWeight(), 0.0));
+		value.SetMember("iconLabel", GetItemIconLabel(GetItemType()));
 
-		const auto weight = GetWeight();
-		if (weight >= 0)
-			value.SetMember("weight", { GetWeight() });
+		value.SetMember("stolen", IsStolen());
+	    value.SetMember("read", Settings::ShowBookRead() && IsRead());
 
 		if (Settings::ShowEnchanted()) {
-			value.SetMember("enchanted", { IsEnchanted() });
-			value.SetMember("knownEnchanted", { IsKnownEnchanted() });
-			value.SetMember("specialEnchanted", { IsSpecialEnchanted() });
+			value.SetMember("enchanted", IsEnchanted());
+			value.SetMember("knownEnchanted", IsKnownEnchanted());
+			value.SetMember("specialEnchanted", IsSpecialEnchanted());
 		}
 
-		if (Settings::ShowDBMNew())
-			value.SetMember("dbmNew", { ItemIsNew() });
-
-		if (Settings::ShowDBMFound())
-			value.SetMember("dbmFound", { ItemIsFound() });
-
-		if (Settings::ShowDBMDisplayed())
-			value.SetMember("dbmDisp", { ItemIsDisplayed() });
-
-		if (Settings::ShowBookRead())
-			value.SetMember("isRead", { IsRead() });
+		if (LOTD::IsReady()) {
+			value.SetMember("dbmNew", Settings::ShowDBMNew() && ItemIsDbmNew());
+			value.SetMember("dbmFound", Settings::ShowDBMFound() && ItemIsDbmFound());
+			value.SetMember("dbmDisplayed", Settings::ShowDBMDisplayed() && ItemIsDbmDisplayed());
+		}
 
 		if (Completionist::IsIntegrationEnabled()) {
-			if (Settings::ShowCompNeeded())
-				value.SetMember("compNew", { ItemIsNeeded() });
-
-			if (Settings::ShowCompCollected())
-				value.SetMember("compFnd", { ItemIsCollected() });
+			value.SetMember("compNew", Settings::ShowCompNeeded() && ItemIsCompNew());
+			value.SetMember("compFound", Settings::ShowCompCollected() && ItemIsCompFound());
 
 			if (const auto colorInt = Completionist::GetItemDynamicTextColor(GetFormID()); colorInt != -1)
 				value.SetMember("textColor", colorInt);

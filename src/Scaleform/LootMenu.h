@@ -394,22 +394,6 @@ namespace Scaleform
 
 			_view->CreateObject(&settings);
 
-			settings.SetMember("useStealingTextColor", true);//Settings::UseStealingTextColor());
-
-			settings.SetMember("showStealingIcon", true);//Settings::ShowStealingIcon());
-			settings.SetMember("showReadIcon", true);//Settings::ShowReadIcon());
-
-			settings.SetMember("showEnchantmentIcon", true);//Settings::ShowEnchantmentIcon());
-			settings.SetMember("showKnownEnchantmentIcon", true);//Settings::ShowKnownEnchantmentIcon());
-			settings.SetMember("showSpecialEnchantmentIcon", true);//Settings::ShowSpecialEnchantmentIcon());
-
-			settings.SetMember("showDbmNewIcon", true);//Settings::ShowDbmNewIcon());
-			settings.SetMember("showDbmFoundIcon", true);//Settings::ShowDbmFoundIcon());
-			settings.SetMember("showDbmDisplayedIcon", true);//Settings::ShowDbmDisplayedIcon());
-
-			settings.SetMember("showCompNewIcon", true);//Settings::ShowCompNewIcon());
-			settings.SetMember("showCompFoundIcon", true);//Settings::ShowCompFoundIcon());
-
 			settings.SetMember("minLines", 0);//Settings::MinLines());
 			settings.SetMember("maxLines", 7);//Settings::MaxLines());
 
@@ -519,9 +503,10 @@ namespace Scaleform
 			_infoBarProvider.ClearElements();
 			const auto idx = static_cast<std::ptrdiff_t>(_itemList.SelectedIndex());
 			if (0 <= idx && idx < std::ssize(_itemListImpl)) {
+				typedef std::function<std::string(const QuickLoot::Items::OldItem&)> functor;
 				const std::array functors{
-					std::function{ [](const QuickLoot::Items::OldItem& a_val) { return fmt::format(FMT_STRING("{:.1f}"), a_val.Weight()); } },
-					std::function{ [](const QuickLoot::Items::OldItem& a_val) { return fmt::format(FMT_STRING("{}"), a_val.Value()); } },
+					functor{ [](const QuickLoot::Items::OldItem& a_val) { return fmt::format(FMT_STRING("{:.1f}"), a_val.Weight()); } },
+					functor{ [](const QuickLoot::Items::OldItem& a_val) { return fmt::format(FMT_STRING("{}"), a_val.Value()); } },
 				};
 
 				const auto& item = _itemListImpl[static_cast<std::size_t>(idx)];

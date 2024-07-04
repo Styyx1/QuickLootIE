@@ -37,13 +37,14 @@ namespace QuickLoot::Items
 		[[nodiscard]] bool                     IsNote() const;
 		[[nodiscard]] bool                     IsQuestItem() const;
 		[[nodiscard]] bool                     IsStolen() const;
-		[[nodiscard]] bool                     ItemIsNew() const;
-		[[nodiscard]] bool                     ItemIsFound() const;
 
-		[[nodiscard]] bool                     ItemIsNeeded() const;
+		[[nodiscard]] bool                     ItemIsDbmNew() const;
+		[[nodiscard]] bool                     ItemIsDbmFound() const;
+		[[nodiscard]] bool                     ItemIsDbmDisplayed() const;
 
-		[[nodiscard]] bool                     ItemIsCollected() const;
-		[[nodiscard]] bool                     ItemIsDisplayed() const;
+		[[nodiscard]] bool                     ItemIsCompNew() const;
+		[[nodiscard]] bool                     ItemIsCompFound() const;
+
 		[[nodiscard]] RE::GFxValue             GFxValue(RE::GFxMovieView& a_view) const;
 
 	private:

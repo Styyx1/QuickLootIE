@@ -1,4 +1,4 @@
-class QuickLoot.Button extends gfx.controls.Button
+﻿class QuickLoot.Button extends gfx.controls.Button
 {
 	/* PRIVATE VARIABLES */
 
@@ -35,6 +35,7 @@ class QuickLoot.Button extends gfx.controls.Button
 	public function set label(value: String)
 	{
 		textField.htmlText = value;
+		updateAfterStateChange();
 	}
 
 	/* PRIVATE FUNCTIONS */
@@ -54,7 +55,6 @@ class QuickLoot.Button extends gfx.controls.Button
 		doUpdate();
 	}
 
-
 	// @override UIComponent
 	private function draw(): Void
 	{
@@ -62,14 +62,12 @@ class QuickLoot.Button extends gfx.controls.Button
 		doUpdate();
 	}
 
-
 	// @override gfx.controls.Button
 	private function updateAfterStateChange(): Void
 	{
 		_needsUpdate = true;
 		super.updateAfterStateChange();
 	}
-
 
 	private function doUpdate(): Void
 	{

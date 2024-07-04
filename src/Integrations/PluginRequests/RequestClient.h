@@ -217,5 +217,16 @@ namespace PluginRequests
 			constexpr std::monostate request{};
 			return QueryArrayInternal(requestType, &request, responseCallback);
 		}
+
+		template <typename TRequest>
+		ResponseType QueryString(uint32_t requestType, const TRequest* request, std::string& response)
+		{
+			const ResponseCallback<char> callback =
+				[&response](size_t count, const char* str) {
+					response.assign(str, count);
+				};
+
+			return QueryArrayInternal(requestType, request, callback);
+		}
 	};
 }

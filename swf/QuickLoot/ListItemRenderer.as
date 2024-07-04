@@ -4,20 +4,22 @@
 
 	private static var STEALING_TEXT_COLOR: Number = 0xEF9A9A;
 	private static var DEFAULT_TEXT_COLOR: Number = 0xFFFFFF;
-	private static var MAX_TEXT_LENGTH: Number = 32;
+	private static var MAX_TEXT_WIDTH: Number = 315;
 	
 	private static var DEFAULT_ICON_SOURCE = "skyui/icons_item_psychosteve.swf";
 	private static var DEFAULT_ICON_LABEL = "default_misc";
 	private static var DEFAULT_ICON_COLOR = 0xFFFFFF;
+	private static var ICON_SPACING = 3;
 	private static var ICON_SIZE = 24;
 	
 	private var _iconLoader: MovieClipLoader;
 	private var _iconSource: String = DEFAULT_ICON_SOURCE;
 	private var _iconLabel: String = DEFAULT_ICON_LABEL;
-	private var _iconColor: Number = DEFAULT_ICON_COLOR;
+	private var _iconColor: Number = undefined;
 	
-	private var _iconPosX: Number;
-	private var _iconSpacing: Number = 3;
+	private var _selectedIcons: Array = [];
+	private var _totalIconWidth: Number = 0;
+	private var _isTextTrimmed: Boolean = false;
 
 	/* STAGE ELEMENTS */
 
@@ -88,7 +90,7 @@
 		setItemIcon(data.iconSource, data.iconLabel, data.iconColor);
 		itemIcon._visible = true;
 		
-		// Item name
+		// Data
 		
 		var displayName: String = data.displayName;
 		var count: Number = data.count;
@@ -96,62 +98,112 @@
 		var weight: Number = data.weight;
 		var value: Number = data.value;
 		
-		updateItemName(displayName, data.textColor, count, stolen);
-		_iconPosX = textField._x + textField._width + _iconSpacing;
-		
 		// Column values
 		
-		updateColumnValue(itemWeight, weight, 2);
 		updateColumnValue(itemValue, value, 2);
-		updateColumnValue(itemValuePerWeight, weight / value, 0);
+		updateColumnValue(itemWeight, weight, 2);
+		updateColumnValue(itemValuePerWeight, value / weight, 0);
 		
-		// Icons behind the item name
+		// Item name and trailing icons
 		
-		updateIcon(stolenIcon, data.stolen);
-		updateIcon(readIcon, data.isRead);
-		
-		updateIcon(knownEnchantIcon, data.knownEnchanted)
-		|| updateIcon(specialEnchantIcon, data.specialEnchanted)
-		|| updateIcon(enchantIcon, data.enchanted);
-		
-		updateIcon(dbmNew, data.dbmNew)
-		|| updateIcon(dbmDisp, data.dbmDisp)
-		|| updateIcon(dbmFound, data.dbmFound);
-		
-		updateIcon(compNew, data.compNew)
-		|| updateIcon(compFound, data.compFound);
+		selectIcons(data);
+		updateItemName(displayName, data.textColor, count, stolen);
+		arrangeIcons();
 	}
 	
-	public function updateItemName(displayName: String, color: Number, count: Number, stealing: Boolean) {
+	public function updateItemName(displayName: String, color: Number, count: Number, stealing: Boolean)
+	{
 		if(!displayName) displayName = "<unnamed>";
 		if(!color) color = stealing ? STEALING_TEXT_COLOR : DEFAULT_TEXT_COLOR;
 		if(!count) count = 1;
 		
-		if(count > 1) {
-			displayName += " (" + count.toString() + ")";
-		}
-		
-		if(displayName.length > MAX_TEXT_LENGTH) {
-			displayName = displayName.substr(0, MAX_TEXT_LENGTH - 3) + "...";
-		}
-		
-		label = displayName;
+		label = trimItemName(displayName, count, textField.getTextFormat(), MAX_TEXT_WIDTH - _totalIconWidth);
 		textField.autoSize = "left";
+		textField.wordWrap = false;
 		textField.textColor = color;
 	}
 	
-	private function updateIcon(icon: MovieClip, enable: Boolean)
+	private function trimItemName(name: String, count: Number, format: TextFormat, maxWidth: Number)
+	{
+		var text = name;
+		if(count > 1) text += " (" + count + ")";
+		
+		_isTextTrimmed = false;
+		
+		var width = format.getTextExtent(text).textFieldWidth;
+		if(width <= maxWidth) return text;
+		
+		_isTextTrimmed = true;
+		
+		var chars = text.length - 1;
+		var suffix = "...";
+		if(count > 1) suffix += " (" + count + ")";
+		
+		while(chars > 0) {
+			text = text.substr(0, chars) + suffix;
+			
+			var width = format.getTextExtent(text).textFieldWidth;
+			if(width <= maxWidth) return text;
+			
+			chars--;
+			
+			// Don't add an ellipsis after whitespace or punctuation.
+			while(chars > 0 && " .!?'()".indexOf(text.charAt(chars - 1)) >= 0) {
+				chars--;
+			}
+		}
+		
+		// This should be unreachable.
+		return text;
+	}
+	
+	private function selectIcons(data: Object)
+	{
+		_selectedIcons = [];
+		_totalIconWidth = 0;
+		
+		selectIcon(stolenIcon, data.stolen);
+		selectIcon(readIcon, data.read);
+		
+		selectIcon(knownEnchantIcon, data.knownEnchanted)
+		|| selectIcon(specialEnchantIcon, data.specialEnchanted)
+		|| selectIcon(enchantIcon, data.enchanted);
+		
+		selectIcon(dbmNew, data.dbmNew)
+		|| selectIcon(dbmDisp, data.dbmDisp)
+		|| selectIcon(dbmFound, data.dbmFound);
+		
+		selectIcon(compNew, data.compNew)
+		|| selectIcon(compFound, data.compFound);
+	}
+	
+	function selectIcon(icon: MovieClip, enable: Boolean)
 	{
 		if(!enable) return false;
 		
-		icon._x = _iconPosX;
 		icon._visible = true;
-		_iconPosX += icon._width + _iconSpacing;
-		
+		_selectedIcons.push(icon);
+		_totalIconWidth += icon._width + ICON_SPACING;
 		return true;
 	}
 	
-	public function updateColumnValue(text: TextField, value: Number, precision: Number)
+	private function arrangeIcons()
+	{
+		var x = textField._x;
+		x += _isTextTrimmed
+			? MAX_TEXT_WIDTH - _totalIconWidth
+			: textField._width;
+		
+		// Using a for in loop here iterates in reverse index order for some reason.
+		for(var i = 0; i < _selectedIcons.length; i++) {
+			var icon = _selectedIcons[i];
+			
+			icon._x = x + ICON_SPACING
+			x += ICON_SPACING + icon._width;
+		}
+	}
+	
+	private function updateColumnValue(text: TextField, value: Number, precision: Number)
 	{
 		if(!value || isNaN(value) || !isFinite(value)) {
 			text.text = "-";
@@ -173,7 +225,6 @@
 	{
 		if(!iconSource) iconSource = DEFAULT_ICON_SOURCE;
 		if(!iconLabel) iconLabel = DEFAULT_ICON_LABEL;
-		if(!iconColor) iconColor = DEFAULT_ICON_COLOR;
 		
 		var iconSourceChanged = iconSource != _iconSource;
 		
@@ -195,6 +246,8 @@
 	{
 		icon.gotoAndStop(_iconLabel);
 		icon._width = itemIcon._height = ICON_SIZE;
+		
+		if(typeof(_iconColor) != "number") return;
 		
 		var colorTransform = new flash.geom.ColorTransform();
 		colorTransform.rgb = _iconColor;
