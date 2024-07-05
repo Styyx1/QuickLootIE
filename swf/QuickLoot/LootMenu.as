@@ -30,6 +30,9 @@
 	public var alphaNormal = 100;
 	public var alphaEmpty = 30;
 	
+	public var anchorFractionX = 0;
+	public var anchorFractionY = 0;
+	
 	// public functions
 	
 	public function init(settings: Object)
@@ -45,6 +48,9 @@
 		
 		loadSetting(settings, "alphaNormal", "number");
 		loadSetting(settings, "alphaEmpty", "number");
+		
+		loadSetting(settings, "anchorFractionX", "number");
+		loadSetting(settings, "anchorFractionY", "number");
 		
 		// The CoreList constructor sets a scale9Grid, which causes very odd
 		// behavior when changing the list size after it's created.
@@ -106,8 +112,8 @@
 		
 		_width = (bounds.xMax - bounds.xMin) * scale;
 		_height = (bounds.yMax - bounds.yMin) * scale;
-		_x = stageCenterX + offsetX;
-		_y = stageCenterY + offsetY;
+		_x = stageCenterX + offsetX - background._width * anchorFractionX;
+		_y = stageCenterY + offsetY - background._height * anchorFractionY;
 	}
 	
 	private function setOpacity(opacity: Number)
