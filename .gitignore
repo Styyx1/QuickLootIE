@@ -12,6 +12,7 @@ dist/
 *.ppj
 *.esp
 *.pex
+*.bat
 
 ## Flash
 swf/artifacts/
