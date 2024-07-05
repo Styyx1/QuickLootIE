@@ -89,7 +89,7 @@ namespace QuickLoot
 
 		LoadSetting(QLIEAnchorPoint,				"QLIEAnchorOptionChoice", 0);
 		LoadSetting(QLIEWindowX,					"QLIEWindowX", 100.f);
-		LoadSetting(QLIEWindowY,					"QLIEWindowY", 100.f);
+		LoadSetting(QLIEWindowY,					"QLIEWindowY", -200.f);
 		LoadSetting(QLIEWindowScale,				"QLIEWindowScale", 1.0f);
 
 		LoadSetting(QLIEMinLines,					"QLIEMinLines", 0);

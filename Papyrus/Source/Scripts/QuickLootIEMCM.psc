@@ -34,7 +34,7 @@ bool property QLIEShowCompCollected = true auto hidden
 
 ; Window Settings
 float property QLIEWindowX = 100.0 auto hidden
-float property QLIEWindowY = 100.0 auto hidden
+float property QLIEWindowY = -200.0 auto hidden
 float property QLIEWindowScale = 1.0 auto hidden
 
 int property QLIEMinLines = 0 auto hidden
@@ -801,7 +801,7 @@ Function Begin_Config_Default()
 	
 	QLIEAnchorOptionChoice = 0
 	QLIEWindowX = 100.0
-	QLIEWindowY = 100.0
+	QLIEWindowY = -200.0
 	QLIEWindowScale = 1.0
 
 	QLIEMinLines = 0
@@ -1125,13 +1125,13 @@ state window_Y
 
 	event OnSliderOpenST()
 		self.SetSliderDialogStartValue(QLIEWindowY)
-		self.SetSliderDialogDefaultValue(100.0 as Float)
-		self.SetSliderDialogRange(-960 as Float, 960 as Float)
+		self.SetSliderDialogDefaultValue(-200.0 as Float)
+		self.SetSliderDialogRange(-540 as Float, 540 as Float)
 		self.SetSliderDialogInterval(0.1 as Float)
 	endEvent
 
 	event OnDefaultST()
-		QLIEWindowY = 100.0
+		QLIEWindowY = -200.0
 		self.SetSliderOptionValueST(QLIEWindowY as Float, "{1}", false, "")
 	endEvent
 
