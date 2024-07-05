@@ -1,5 +1,8 @@
-$qlie_ModVersion{}	Mod Version:{}
-$qlie_DLLVersion{}	DLL Version:{}
+-----------------------------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+$qlie_ModVersion{}	Mod-Version:{}
+$qlie_DLLVersion{}	DLL-Version:{}
 $qlie_Author	QuickLoot IE von Miss Corruption
 
 $qlie_MainMCMPage	Haupt-Einstellungen
@@ -14,7 +17,11 @@ $qlie_NotInstalled	<font color='#6A0404'>Nicht installiert</font>
 $qlie_GeneralSettingsHeader	Allgemeine Einstellungen
 $qlie_IconSettingsHeader	Symbol-Einstellungen
 $qlie_ModInformationHeader	Mod-Informationen
-$qlie_WindowSettingsHeader	Fenster-Einstellungen (0 für Standard)
+$qlie_WindowSettingsHeader	Fenstereinstellungen
+$qlie_MenuTransparencyHeader	Menü-Transparenz
+$qlie_SortOptionsHeader	Sortieroptionen für das Loot-Menü
+$qlie_sortPresetsHeader	Sortierungspräsets
+$qlie_SortPriorityHeader	Aktuelle Sortierpriorität
 
 $qlie_LOTDCompatHeader	LOTD-Symbole
 $qlie_CompCompatHeader	Completionist-Symbole
@@ -22,96 +29,166 @@ $qlie_MiscCompatHeader	Verschiedene Kompatibilitäten
 
 $qlie_ProfileHeader	Profil-Einstellungen
 $qlie_ProfileText1	JSON - Benutzerprofil
+$qlie_ProfileText2	Standardeinstellungen laden
+$qlie_ProfileText3	Zurücksetzen
 
 $qlie_SavePreset	Profil speichern
 $qlie_LoadPreset	Profil laden
 $qlie_PapUtilError	PapyrusUtil nicht gefunden
+$qlie_SaveSortPreset	Benutzerdefinierte Voreinstellung speichern
 
-$qlie_SaveProfileTitleText	=== Profil speichert ===
-$qlie_LoadProfileTitleText	=== Profil lädt ===
+$qlie_SaveProfileTitleText	=== Profil speichern ===
+$qlie_LoadProfileTitleText	=== Profil laden ===
+$qlie_ResetProfileTitleText	=== Standardeinstellungen laden ===
 
-$qlie_SaveProfileTitleInfo	Speichern der aktuellen Einstellungen zu Daten > SKSE > Plugins > QuicklootIE > Profile > MCMConfig.json (erfordert PapyrusUtil)
-$qlie_LoadProfileTitleInfo	Laden der gespeicherten Einstellungen aus Daten > SKSE > Plugins > QuicklootIE > Profile > MCMConfig.json (erfordert PapyrusUtil)
+$qlie_SaveProfileTitleInfo	Die aktuellen Einstellungen werden in Data > SKSE > Plugins > QuicklootIE > Profiles > MCMConfig.json gespeichert (erfordert PapyrusUtil)
+$qlie_LoadProfileTitleInfo	Gespeicherte Einstellungen aus Data > SKSE > Plugins > QuicklootIE > Profiles > MCMConfig.json laden (erfordert PapyrusUtil)
+$qlie_ResetProfileTitleInfo	Setzt das MCM zurück und lädt die Standardeinstellungen
 
 $qlie_ProfileAutoLoadSuccess	QuickLoot IE: Profil erfolgreich aus Datei geladen
-$qlie_ProfileAutoLoadCorrupt	QuickLoot IE: Profil ist beschädigt, Lade Voreinstellungen
-$qlie_ProfileAutoLoadMissing	QuickLoot IE: Kein Profil gefunden, Lade Voreinstellungen
-$qlie_ProfileAutoLoadOutDate	QuickLoot IE: PapyrusUTIL ist veraltet, Lade Voreinstellungen
+$qlie_ProfileAutoLoadCorrupt	QuickLoot IE: Profil beschädigt, Standardeinstellungen werden geladen
+$qlie_ProfileAutoLoadMissing	QuickLoot IE: Kein Profil gefunden, Standardeinstellungen werden geladen
+$qlie_ProfileAutoLoadOutDate	QuickLoot IE: PapyrusUTIL veraltet, Standardeinstellungen werden geladen
 
-$qlie_ProfileSaveSuccessMenu	Konfigurationseinstellungen wurden erfolgreich in die Datei gespeichert
-$qlie_ProfileLoadSuccessMenu	Konfigurationseinstellungen wurden erfolgreich aus der Datei geladen
+$qlie_ProfileSaveSuccessMenu	Konfigurationseinstellungen erfolgreich in Datei gespeichert
+$qlie_ProfileLoadSuccessMenu	Konfigurationseinstellungen erfolgreich aus Datei geladen
 
 $qlie_ProfileLoadSuccess	QuickLoot IE: Konfigurationsprofil geladen
-$qlie_ProfileLoadCorrupt	QuickLoot IE: Profil ist beschädigt, Lade Voreinstellungen
-$qlie_ProfileLoadMissing	QuickLoot IE: Kein Profil gefunden - Lade Voreinstellungen
+$qlie_ProfileLoadCorrupt	QuickLoot IE: Profil beschädigt, Standardeinstellungen werden geladen
+$qlie_ProfileLoadMissing	QuickLoot IE: Kein Profil gefunden - Standardeinstellungen werden geladen
 $qlie_ProfileLoadMissingMenu	Kein Profil gefunden
-$qlie_ProfileLoadDamaged{}	Die Konfigurationsdatei scheint beschädigt zu sein oder erfüllt nicht die Anforderungen\n{}
+$qlie_ProfileLoadDamaged{}	Die Konfigurationsdatei scheint beschädigt zu sein oder entspricht nicht den Anforderungen\n{}
 
 $qlie_ConfirmY	Ok
 $qlie_ConfirmN	Abbrechen
-$qlie_SaveSortPreset	Bezeichnung des Präzis eintragen...
-$qlie_PresetSaveSuccessMenu	Präset erfolgreich gespeichert...
+$qlie_SaveSortPreset	Name der Voreinstellung eingeben...
+$qlie_PresetSaveSuccessMenu	Voreinstellung erfolgreich gespeichert...
 
-$qlie_sort_options_state_text	Wähle eine Sortierreihenfolge aus:
-$qlie_sort_options_state_info	Wähle eine Sortierreihenfolge und verwende die untenstehenden Optionen, um die Priorität der Gegenstandsliste im Loot-Menü zu manipulieren.
+$qlie_sort_options_state_text	Sortieroption auswählen
+$qlie_sort_options_state_info	Wähle eine Sortieroption und verwende die untenstehenden Optionen, um die Sortierpriorität des Loot-Menüs zu ändern.
 
-$qlie_sort_options_insert_none_text	Wähle eine Sortierreihenfolge aus...
+$qlie_sort_options_insert_none_text	Sortieroption auswählen...
 $qlie_sort_options_insert_text{}	Option: {}
 $qlie_sort_options_insert_info	Fügt die ausgewählte Option an der markierten Position oder am Ende der Liste ein, wenn keine Markierung vorhanden ist.
 
-$qlie_sort_presets_state_text	Wähle einen Sortierpräzis aus:
-$qlie_sort_presets_state_info	Lädt einen definierten Präzis aus der DLL
+$qlie_sort_presets_state_text	Sortier-Voreinstellung auswählen
+$qlie_sort_presets_state_info	Lädt eine definierte Voreinstellung aus der DLL
 
-$qlie_sort_presets_state_save_text	Speichere den Präzis:
+$qlie_sort_presets_state_save_text	Voreinstellung speichern
 $qlie_sort_presets_state_save_info	Speichert die aktuelle Liste in einer benutzerdefinierten Datei
 
 $qlie_sort_options_reset_text	Sortierprioritätsliste zurücksetzen
-$qlie_sort_options_reset_info	Setzt die Sortierprioritätsliste auf die Standardeinstellungen zurück
+$qlie_sort_options_reset_info	Setzt die Sortierprioritätsliste auf Standard zurück
 
-$qlie_close_in_combat_text	Schließen beim Kampf
-$qlie_close_in_combat_info	Verhindert das Öffnen des Loot-Menüs während des Kampfes. \nStandard: Deaktiviert
+$qlie_close_in_combat_text	Im Kampf schließen
+$qlie_close_in_combat_info	Verhindert, dass sich das Loot-Menü im Kampf öffnet. \nStandard: Deaktiviert
 
 $qlie_close_when_empty_text	Schließen, wenn der Behälter leer ist
-$qlie_close_when_empty_info	Schließt automatisch das Loot-Menü, wenn der Behälter leer ist \nStandard: Aktiviert
+$qlie_close_when_empty_info	Schließt das Loot-Menü automatisch, wenn der Behälter leer ist \nStandard: Aktiviert
 
-$qlie_dispel_invis_text	Beende Unsichtbarkeit, wenn verwendet
-$qlie_dispel_invis_info	Entfernt automatisch alle Unsichtbarkeits-Effekte vom Spieler beim Gebrauch \nStandard: Aktiviert
+$qlie_dispel_invis_text	Unsichtbarkeit beim Benutzen brechen
+$qlie_dispel_invis_info	Entfernt automatisch alle Unsichtbarkeitseffekte vom Spieler bei Benutzung \nStandard: Aktiviert
 
 $qlie_open_when_container_unlocked_text	Öffnen, wenn der Behälter entsperrt ist
-$qlie_open_when_container_unlocked_info	Öffnet automatisch das Loot-Menü, wenn ein Behälter entsperrt wird \nStandard: Aktiviert
+$qlie_open_when_container_unlocked_info	Öffnet das Loot-Menü automatisch, wenn ein Behälter entsperrt wird \nStandard: Aktiviert
 
-$qlie_disable_for_animals_text	Deaktivieren von QuickLoot für Tiere
-$qlie_disable_for_animals_info	Deaktiviert das Loot-Menü, wenn Tiere angevisiert sind, für die Kompatibilität mit Jagdmods \nStandard: Deaktiviert
+$qlie_disable_for_animals_text	Unterstützung für Jagd-Mods
+$qlie_disable_for_animals_info	Deaktiviert das Loot-Menü bei Tieren für Kompatibilität mit Jagd-Mods \nStandard: Deaktiviert
 
-$qlie_show_comp_needed_icon_text	'Braucht'-Symbol zeigen
-$qlie_show_comp_needed_icon_info	Zeigt ein Completionist-Symbol an, das darauf hinweist, dass das Item verfolgt wird und noch gesammelt werden muss \nStandard: Aktiviert
+$qlie_show_comp_needed_icon_text	'Benötigt'-Symbol zeigen
+$qlie_show_comp_needed_icon_info	Zeigt ein Completionist-Symbol an, das anzeigt, dass der Gegenstand verfolgt wird und noch gesammelt werden muss \nStandard: Aktiviert
 
 $qlie_show_comp_collected_icon_text	'Gesammelt'-Symbol zeigen
-$qlie_show_comp_collected_icon_info	Zeigt ein Completionist-Symbol an, das darauf hinweist, dass das Item verfolgt wird und bereits gesammelt wurde \nStandard: Aktiviert
+$qlie_show_comp_collected_icon_info	Zeigt ein Completionist-Symbol an, das anzeigt, dass der Gegenstand verfolgt wird und bereits gesammelt wurde \nStandard: Aktiviert
 
 $qlie_show_lotd_new_icon_text	'Neu'-Symbol zeigen
-$qlie_show_lotd_new_icon_info	Zeigt ein Symbol an, das darauf hinweist, dass das Item sammelbar ist und für das Museum benötigt wird \nStandard: Aktiviert
+$qlie_show_lotd_new_icon_info	Zeigt ein Symbol an, das anzeigt, dass der Gegenstand sammelbar ist und für das Museum benötigt wird \nStandard: Aktiviert
 
 $qlie_show_lotd_found_icon_text	'Gefunden'-Symbol zeigen
-$qlie_show_lotd_found_icon_info	Zeigt ein Symbol an, das darauf hinweist, dass das Item sammelbar ist und bereits gefunden, aber noch nicht im Museum gezeigt wurde \nStandard: Aktiviert
+$qlie_show_lotd_found_icon_info	Zeigt ein Symbol an, das anzeigt, dass der Gegenstand sammelbar ist und bereits gefunden wurde, aber noch nicht im Museum ausgestellt ist \nStandard: Aktiviert
 
 $qlie_show_lotd_disp_icon_text	'Ausgestellt'-Symbol zeigen
-$qlie_show_lotd_disp_icon_info	Zeigt ein Symbol an, das darauf hinweist, dass das Item sammelbar ist und derzeit im Museum ausgestellt wird \nStandard: Aktiviert
+$qlie_show_lotd_disp_icon_info	Zeigt ein Symbol an, das anzeigt, dass der Gegenstand sammelbar ist und derzeit im Museum ausgestellt ist \nStandard: Aktiviert
 
 $qlie_window_X_text	Fenster X
-$qlie_window_X_info	Legt die horizontale Bildschirmposition des Loot-Menüs fest \nStandard: 0
+$qlie_window_X_info	Setzt die horizontale Bildschirmposition des Loot-Menüs \nStandard: 100.0
 
 $qlie_window_Y_text	Fenster Y
-$qlie_window_Y_info	Legt die vertikale Bildschirmposition des Loot-Menüs fest \nStandard: 0
-
-$qlie_window_W_text	Fenster W
-$qlie_window_W_info	Legt die Breite des Loot-Menüs fest \nStandard: 0
-
-$qlie_window_H_text	Fenster H
-$qlie_window_H_info	Legt die Höhe des Loot-Menüs fest \nStandard: 0
+$qlie_window_Y_info	Setzt die vertikale Bildschirmposition des Loot-Menüs \nStandard: 100.0
 
 $qlie_show_book_read_icon_text	'Buch gelesen'-Symbol zeigen
-$qlie_show_book_read_icon_info	Zeigt ein Symbol an, das darauf hinweist, dass das Buch bereits gelesen wurde \nStandard: Aktiviert
+$qlie_show_book_read_icon_info	Zeigt ein Symbol an, das anzeigt, dass das Buch bereits gelesen wurde \nStandard: Aktiviert
 
 $qlie_show_enchanted_icon_text	'Verzaubert'-Symbol zeigen
-$qlie_show_enchanted_icon_info	Zeigt ein Symbol an, das darauf hinweist, dass das Item eine Verzauberung enthält, die dem Spieler derzeit unbekannt ist \nStandard: Aktiviert
+$qlie_show_enchanted_icon_info	Zeigt ein Symbol an, das anzeigt, dass der Gegenstand eine Verzauberung besitzt, die dir noch nicht bekannt ist \nStandard: Aktiviert
+
+$qlie_anchor_options_state_text	Loot-Menü-Anker
+$qlie_anchor_options_state_info	Setzt den Ankerpunkt des Loot-Menüs \nStandard: Oben links
+
+$qlie_anchorOption_0	Oben links
+$qlie_anchorOption_1	Mitte links
+$qlie_anchorOption_2	Unten links
+$qlie_anchorOption_3	Oben Mitte
+$qlie_anchorOption_4	Mitte
+$qlie_anchorOption_5	Unten Mitte
+$qlie_anchorOption_6	Oben rechts
+$qlie_anchorOption_7	Mitte rechts
+$qlie_anchorOption_8	Unten rechts
+
+$qlie_window_scale_text	Fensterskalierung
+$qlie_window_scale_info	Setzt die Gesamtskalierung des Loot-Menüs \nStandard: 1.0
+
+$qlie_window_minLines_text	Mindestanzahl der anzuzeigenden Zeilen
+$qlie_window_minLines_info	Setzt die Mindestanzahl der anzuzeigenden Zeilen im Loot-Menü. Wenn dieser Wert höher eingestellt ist als 'Maximale Zeilen', wird diese Einstellung aktualisiert, um übereinzustimmen. \nStandard: 0
+
+$qlie_window_maxLines_text	Maximale Anzahl der anzuzeigenden Zeilen
+$qlie
+
+_window_maxLines_info	Setzt die maximale Anzahl der anzuzeigenden Zeilen im Loot-Menü. Wenn dieser Wert niedriger eingestellt ist als 'Minimale Zeilen', wird diese Einstellung aktualisiert, um übereinzustimmen. \nStandard: 7
+
+$qlie_show_knownenchanted_icon_text	Zeige bekannte Verzauberung-Symbol
+$qlie_show_knownenchanted_icon_info	Zeigt ein Symbol an, das anzeigt, dass der Gegenstand eine dem Spieler bekannte Verzauberung besitzt \nStandard: Aktiviert
+
+$qlie_show_specialenchanted_icon_text	Zeige besondere Verzauberung-Symbol
+$qlie_show_specialenchanted_icon_info	Zeigt ein Symbol an, das anzeigt, dass der Gegenstand eine besondere Verzauberung besitzt \nStandard: Aktiviert
+
+$qlie_show_stealing_icon_text	Zeige gestohlen-Symbol
+$qlie_show_stealing_icon_info	Zeigt ein Symbol an, das anzeigt, dass das Aufnehmen des Gegenstands Diebstahl wäre \nStandard: Aktiviert
+
+$qlie_window_transparency_normal_text	Normale Transparenz
+$qlie_window_transparency_normal_info	Setzt die normale Fenstertransparenz, wenn der Behälter nicht leer ist \n Standard: 1.0
+
+$qlie_window_transparency_empty_text	Transparenz, wenn leer
+$qlie_window_transparency_empty_info	Setzt die Fenstertransparenz, wenn der Behälter leer ist \n Standard: 0.3
+
+$qlie_confirm_sort_option_removal{}	Bist du sicher, dass du die Sortierpriorität für {} entfernen möchtest?
+$qlie_sort_option_highlight_text	Klicken, um die Sortierpriorität für diese Option zu markieren oder zu entfernen
+$qlie_marked_sort_option_display{}	<font color='#13a81c'>{}</font>
+$qlie_sort_option_click	Was möchtest du tun?
+$qlie_sort_option_mark	Position markieren
+$qlie_sort_option_unmark	Position demarkieren
+$qlie_sort_option_remove	Priorität entfernen
+$qlie_sort_option_insert	Option einfügen
+
+$qlie_sortOption_Gold	Gold
+$qlie_sortOption_Gems	Edelsteine
+$qlie_sortOption_SoulGems	Seelensteine
+$qlie_sortOption_Lockpicks	Dietriche
+$qlie_sortOption_Ingots	Barren
+$qlie_sortOption_Ores	Erze
+$qlie_sortOption_Potions	Tränke
+$qlie_sortOption_FoodDrinks	Essen & Trinken
+$qlie_sortOption_Books	Bücher
+$qlie_sortOption_Notes	Notizen
+$qlie_sortOption_Scrolls	Schriftrollen
+$qlie_sortOption_ArrowsBolts	Pfeile & Bolzen
+$qlie_sortOption_Jewelry	Schmuck
+$qlie_sortOption_Weapons	Waffen
+$qlie_sortOption_Armors	Rüstungen
+$qlie_sortOption_Clothes	Kleidung
+$qlie_sortOption_Weightless	Gewichtslose Gegenstände
+$qlie_sortOption_ByWeight	Nach Gewicht sortieren
+$qlie_sortOption_ByValue	Nach Wert sortieren
+$qlie_sortOption_ByName	Nach Namen sortieren
+$qlie_sortOption_LOTDNeeded	LOTD benötigt
+$qlie_sortOption_CompletionistNeeded	Completionist benötigt
