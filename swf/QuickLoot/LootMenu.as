@@ -1,5 +1,10 @@
 ﻿class QuickLoot.LootMenu extends gfx.core.UIComponent
 {
+	private static var HEIGHT_PER_LINE = 40;
+	private static var NEUTRAL_LINE_COUNT = 7;
+	private static var NEUTRAL_WIDTH = 546;
+	private static var NEUTRAL_HEIGHT = 371;
+	
 	// stage elements
 	
 	private var itemList: QuickLoot.ScrollingList;
@@ -93,14 +98,10 @@
 	
 	private function resizeContainer(lineCount: Number)
 	{
-		// How many lines the stage placement accounts for.
-		var neutralLineCount = 7;
-		var heightPerLine = 40;
-		
 		lineCount = Math.min(lineCount, maxLines);
 		lineCount = Math.max(lineCount, minLines);
 		
-		var shiftAmount = (lineCount - neutralLineCount) * heightPerLine;
+		var shiftAmount = (lineCount - NEUTRAL_LINE_COUNT) * HEIGHT_PER_LINE;
 		
 		//QuickLoot.Utils.log("Resizing to " + lineCount + " lines (shift by " + shiftAmount + ")");
 		
@@ -115,11 +116,15 @@
 	private function updateScale()
 	{
 		var bounds = getBounds(this);
+		var deltaWidth = background._width - background._originalW;
+		var deltaHeight = background._height - background._originalH;
+		var anchorX = (NEUTRAL_WIDTH + deltaWidth) * anchorFractionX;
+		var anchorY = (NEUTRAL_HEIGHT + deltaHeight) * anchorFractionY;
 		
 		_width = (bounds.xMax - bounds.xMin) * scale;
 		_height = (bounds.yMax - bounds.yMin) * scale;
-		_x = stageCenterX + offsetX - background._width * anchorFractionX;
-		_y = stageCenterY + offsetY - background._height * anchorFractionY;
+		_x = stageCenterX + offsetX - anchorX * scale;
+		_y = stageCenterY + offsetY - anchorY * scale;
 	}
 	
 	private function updateScrollArrows()
