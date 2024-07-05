@@ -8,6 +8,9 @@
 	private var infoBar: QuickLoot.InfoBar;
 	private var buttonBar: QuickLoot.ButtonBar;
 	
+	private var arrowUp: MovieClip;
+	private var arrowDown: MovieClip;
+	
 	private var background: MovieClip;
 	
 	// private variables
@@ -37,7 +40,7 @@
 	
 	public function init(settings: Object)
 	{
-		QuickLoot.Utils.log("Initializing LootMenu");
+		//QuickLoot.Utils.log("Initializing LootMenu");
 		
 		loadSetting(settings, "minLines", "number");
 		loadSetting(settings, "maxLines", "number");
@@ -56,8 +59,10 @@
 		// behavior when changing the list size after it's created.
 		itemList["container"].scale9Grid = null;
 		itemList.rowCount = maxLines;
+		var self = this;
+		itemList.addEventListener("scrollPositionChanged", function() { self.updateScrollArrows(); });
 		
-		movingElements = [weight, infoBar, buttonBar];
+		movingElements = [weight, infoBar, buttonBar, arrowDown];
 		nonTransparentElements = [buttonBar];
 		
 		saveInitialElementBounds();
@@ -72,6 +77,7 @@
 		resizeContainer(lineCount);
 		setOpacity(isEmpty ? alphaEmpty : alphaNormal);
 		updateScale();
+		updateScrollArrows();
 	}
 	
 	// private functions
@@ -114,6 +120,12 @@
 		_height = (bounds.yMax - bounds.yMin) * scale;
 		_x = stageCenterX + offsetX - background._width * anchorFractionX;
 		_y = stageCenterY + offsetY - background._height * anchorFractionY;
+	}
+	
+	private function updateScrollArrows()
+	{
+		arrowUp._visible = itemList.canScrollUp();
+		arrowDown._visible = itemList.canScrollDown();
 	}
 	
 	private function setOpacity(opacity: Number)
