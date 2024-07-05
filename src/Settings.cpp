@@ -75,23 +75,44 @@ namespace QuickLoot
 		return QLIEShowCompCollected;
 	}
 
-	float Settings::WindowX()
+	AnchorPoint Settings::GetAnchorPoint()
+	{
+		return static_cast<AnchorPoint>(QLIEAnchorPoint);
+	}
+
+	float Settings::GetWindowX()
 	{
 		return QLIEWindowX;
 	}
 
-	float Settings::WindowY()
+	float Settings::GetWindowY()
 	{
 		return QLIEWindowY;
 	}
 
-	float Settings::WindowW()
+	float Settings::GetWindowScale()
 	{
-		return QLIEWindowW;
+		return QLIEWindowScale;
 	}
 
-	float Settings::WindowH()
+	int32_t Settings::GetMinLines()
 	{
-		return QLIEWindowH;
+		return QLIEMinLines;
 	}
+
+	int32_t Settings::GetMaxLines()
+	{
+		return QLIEMaxLines;
+	}
+
+	float Settings::GetNormalWindowTransparency()
+	{
+		return QLIETransparency_Normal;
+	}
+
+	float Settings::GetEmptyWindowTransparency()
+	{
+		return QLIETransparency_Empty;
+	}
+	
 }
