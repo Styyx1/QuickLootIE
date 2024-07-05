@@ -87,10 +87,16 @@ namespace QuickLoot
 		LoadSetting(QLIEShowCompNeeded,				"QLIEShowCompNeeded", false);
 		LoadSetting(QLIEShowCompCollected,			"QLIEShowCompCollected", false);
 
-		LoadSetting(QLIEWindowX,					"QLIEWindowX", 0.f);
-		LoadSetting(QLIEWindowY,					"QLIEWindowY", 0.f);
-		LoadSetting(QLIEWindowW,					"QLIEWindowW", 0.f);
-		LoadSetting(QLIEWindowH,					"QLIEWindowH", 0.f);
+		LoadSetting(QLIEAnchorPoint,				"QLIEAnchorOptionChoice", 0);
+		LoadSetting(QLIEWindowX,					"QLIEWindowX", 100.f);
+		LoadSetting(QLIEWindowY,					"QLIEWindowY", 100.f);
+		LoadSetting(QLIEWindowScale,				"QLIEWindowScale", 1.0f);
+
+		LoadSetting(QLIEMinLines,					"QLIEMinLines", 0);
+		LoadSetting(QLIEMaxLines,					"QLIEMaxLines", 7);	
+		
+		LoadSetting(QLIETransparency_Normal,		"QLIETransparency_Normal", 1.0f);
+		LoadSetting(QLIETransparency_Empty,			"QLIETransparency_Empty", 0.3f);
 
 		LoadSetting(QLIESortPriorityStrings,		"user_selected_sort_options", {});
 	}

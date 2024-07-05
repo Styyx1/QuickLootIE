@@ -8,6 +8,9 @@
 	private var infoBar: QuickLoot.InfoBar;
 	private var buttonBar: QuickLoot.ButtonBar;
 	
+	private var arrowUp: MovieClip;
+	private var arrowDown: MovieClip;
+	
 	private var background: MovieClip;
 	
 	// private variables
@@ -30,11 +33,14 @@
 	public var alphaNormal = 100;
 	public var alphaEmpty = 30;
 	
+	public var anchorFractionX = 0;
+	public var anchorFractionY = 0;
+	
 	// public functions
 	
 	public function init(settings: Object)
 	{
-		QuickLoot.Utils.log("Initializing LootMenu");
+		//QuickLoot.Utils.log("Initializing LootMenu");
 		
 		loadSetting(settings, "minLines", "number");
 		loadSetting(settings, "maxLines", "number");
@@ -46,12 +52,17 @@
 		loadSetting(settings, "alphaNormal", "number");
 		loadSetting(settings, "alphaEmpty", "number");
 		
+		loadSetting(settings, "anchorFractionX", "number");
+		loadSetting(settings, "anchorFractionY", "number");
+		
 		// The CoreList constructor sets a scale9Grid, which causes very odd
 		// behavior when changing the list size after it's created.
 		itemList["container"].scale9Grid = null;
 		itemList.rowCount = maxLines;
+		var self = this;
+		itemList.addEventListener("scrollPositionChanged", function() { self.updateScrollArrows(); });
 		
-		movingElements = [weight, infoBar, buttonBar];
+		movingElements = [weight, infoBar, buttonBar, arrowDown];
 		nonTransparentElements = [buttonBar];
 		
 		saveInitialElementBounds();
@@ -66,6 +77,7 @@
 		resizeContainer(lineCount);
 		setOpacity(isEmpty ? alphaEmpty : alphaNormal);
 		updateScale();
+		updateScrollArrows();
 	}
 	
 	// private functions
@@ -106,8 +118,14 @@
 		
 		_width = (bounds.xMax - bounds.xMin) * scale;
 		_height = (bounds.yMax - bounds.yMin) * scale;
-		_x = stageCenterX + offsetX;
-		_y = stageCenterY + offsetY;
+		_x = stageCenterX + offsetX - background._width * anchorFractionX;
+		_y = stageCenterY + offsetY - background._height * anchorFractionY;
+	}
+	
+	private function updateScrollArrows()
+	{
+		arrowUp._visible = itemList.canScrollUp();
+		arrowDown._visible = itemList.canScrollDown();
 	}
 	
 	private function setOpacity(opacity: Number)

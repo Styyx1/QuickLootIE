@@ -1,6 +1,19 @@
 #pragma once
 namespace QuickLoot
 {
+	enum AnchorPoint
+	{
+		kTopLeft,
+		kCenterLeft,
+		kBottomLeft,
+		kTopCenter,
+		kCenter,
+		kBottomCenter,
+		kTopRight,
+		kCenterRight,
+		kBottomRight,
+	};
+
 	class Settings
 	{
 	public:
@@ -24,10 +37,17 @@ namespace QuickLoot
 
 		static bool ShowCompNeeded();
 		static bool ShowCompCollected();
-		static float WindowX();
-		static float WindowY();
-		static float WindowW();
-		static float WindowH();
+		
+		static AnchorPoint GetAnchorPoint();
+		static float GetWindowX();
+		static float GetWindowY();
+		static float GetWindowScale();
+
+		static int32_t GetMinLines();
+		static int32_t GetMaxLines();
+
+		static float GetNormalWindowTransparency();
+		static float GetEmptyWindowTransparency();
 
 		static std::shared_ptr<std::vector<std::string>> GetUserDefinedSortPriority();
 

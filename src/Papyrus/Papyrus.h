@@ -22,10 +22,16 @@ namespace QuickLoot {
 	inline bool QLIEShowCompNeeded;
 	inline bool QLIEShowCompCollected;
 
+	inline int32_t QLIEAnchorPoint;
 	inline float QLIEWindowX;
 	inline float QLIEWindowY;
-	inline float QLIEWindowW;
-	inline float QLIEWindowH;
+	inline float QLIEWindowScale;
+
+	inline int32_t QLIEMinLines;
+	inline int32_t QLIEMaxLines;
+
+	inline float QLIETransparency_Normal;
+	inline float QLIETransparency_Empty;
 
 	inline std::vector<std::string> QLIESortPriorityStrings;
 
@@ -147,18 +153,52 @@ constexpr std::array<const char*, 3> SortingPresets = {
 	//Add more as you see fit.
 };
 
-constexpr std::array<const char*, 5> SortingPresets_Default = {
-	"Potions",
-	"Armor",
-	"Jewelry",
-	"Weapons",
-	"Gold",
+constexpr std::array<const char*, 22> SortingPresets_Default = {
+	"$qlie_sortOption_Gold",
+	"$qlie_sortOption_Gems",
+	"$qlie_sortOption_SoulGems",
+	"$qlie_sortOption_Lockpicks",
+	"$qlie_sortOption_Ingots",
+	"$qlie_sortOption_Ores",
+	"$qlie_sortOption_Potions",
+	"$qlie_sortOption_FoodDrinks",
+	"$qlie_sortOption_Books",
+	"$qlie_sortOption_Notes",
+	"$qlie_sortOption_Scrolls",
+	"$qlie_sortOption_ArrowsBolts",
+	"$qlie_sortOption_Jewelry",
+	"$qlie_sortOption_Weapons",
+	"$qlie_sortOption_Armors",
+	"$qlie_sortOption_Clothes",
+	"$qlie_sortOption_Weightless",
+	"$qlie_sortOption_ByWeight",
+	"$qlie_sortOption_ByValue",
+	"$qlie_sortOption_ByName",
+	"$qlie_sortOption_LOTDNeeded",
+	"$qlie_sortOption_CompletionistNeeded",
 };
 
-constexpr std::array<const char*, 5> SortingPresets_Goblin = {
-	"Gold",
-	"Jewelry",
-	"Potions",
-	"Armor",
-	"Weapons",
+constexpr std::array<const char*, 22> SortingPresets_Goblin = {
+	"$qlie_sortOption_Gold",
+	"$qlie_sortOption_Gems",
+	"$qlie_sortOption_SoulGems",
+	"$qlie_sortOption_Lockpicks",
+	"$qlie_sortOption_Ingots",
+	"$qlie_sortOption_Ores",
+	"$qlie_sortOption_Potions",
+	"$qlie_sortOption_FoodDrinks",
+	"$qlie_sortOption_Books",
+	"$qlie_sortOption_Notes",
+	"$qlie_sortOption_Scrolls",
+	"$qlie_sortOption_ArrowsBolts",
+	"$qlie_sortOption_Jewelry",
+	"$qlie_sortOption_Weapons",
+	"$qlie_sortOption_Armors",
+	"$qlie_sortOption_Clothes",
+	"$qlie_sortOption_Weightless",
+	"$qlie_sortOption_ByWeight",
+	"$qlie_sortOption_ByValue",
+	"$qlie_sortOption_ByName",
+	"$qlie_sortOption_LOTD Needed",
+	"$qlie_sortOption_CompletionistNeeded",
 };
