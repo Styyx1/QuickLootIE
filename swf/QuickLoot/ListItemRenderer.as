@@ -247,10 +247,10 @@
 		icon.gotoAndStop(_iconLabel);
 		icon._width = itemIcon._height = ICON_SIZE;
 		
-		if(typeof(_iconColor) != "number") return;
-		
 		var colorTransform = new flash.geom.ColorTransform();
-		colorTransform.rgb = _iconColor;
+		if(typeof(_iconColor) == "number") {
+			colorTransform.rgb = _iconColor;
+		}
 		
 		var transform = new flash.geom.Transform(MovieClip(icon));
 		transform.colorTransform = colorTransform;
