@@ -103,9 +103,18 @@
 		
 		var shiftAmount = (lineCount - NEUTRAL_LINE_COUNT) * HEIGHT_PER_LINE;
 		
-		//QuickLoot.Utils.log("Resizing to " + lineCount + " lines (shift by " + shiftAmount + ")");
-		
 		background._height = background._originalH + shiftAmount;
+		
+		// Flash and Scaleform both have a bug where the transform origin of a MovieClip isn't
+		// calculated correctly when 9-slice scaling is used. That causes the background clip to
+		// shift around if its local bounds extend into negative coordinates.
+		
+		var bgBounds = background.getBounds(background);
+		var yMin = bgBounds.yMin, yMax = bgBounds.yMax;
+		var originFraction = -yMin / background._originalH;
+		var originalOriginOffset = -yMin; // = background._originalH * originFraction;
+		var currentOriginOffset = background._height * originFraction;
+		background._y = currentOriginOffset - originalOriginOffset;
 		
 		for(var i in movingElements) {
 			var element = movingElements[i];
