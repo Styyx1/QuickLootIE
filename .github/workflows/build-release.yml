@@ -247,6 +247,7 @@ jobs:
           cp -a "swf/bin/." "${{ github.workspace }}/to-pack/Interface"
           cp -a "SKSE/." "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp -a "Scripts/." "${{ github.workspace }}/to-pack/Scripts"
+          cp -a "LICENSE" "${{ github.workspace }}/to-pack/QLIE-LICENSE.md"
 
       - name: Zip Release Files
         uses: vimtor/action-zip@v1.2
