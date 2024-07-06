@@ -122,19 +122,19 @@ jobs:
       - name: Checkout Papyrus Sources
         if: steps.cache-ss.outputs.cache-hit != 'true'
         run: |
-          declare -a repos=("SRC" "SRC_SKYUI" "SRC_PAPUTIL")
-          cd .github/Papyrus
-          for repo in "${repos[@]}"; do
-            mkdir "$repo"
-            cd "$repo"
+          $repos = @("SRC", "SRC_SKYUI", "SRC_PAPUTIL")
+          Set-Location .github/Papyrus
+          foreach ($repo in $repos) {
+            New-Item -ItemType Directory -Name $repo
+            Set-Location $repo
             git init
             git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
-            git sparse-checkout set --no-cone "$repo"
+            git sparse-checkout set --no-cone $repo
             git fetch --depth=1 origin main
             git checkout main
-            rm -rf .git
-            cd ..
-          done
+            Remove-Item .git -Recurse -Force
+            Set-Location ..
+          }
 
       - name: Checkout TESV Flags File
         if: steps.cache-ss.outputs.cache-hit != 'true'
