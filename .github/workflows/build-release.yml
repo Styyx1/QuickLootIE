@@ -122,6 +122,7 @@ jobs:
       - name: Checkout Papyrus Sources
         if: steps.cache-ss.outputs.cache-hit != 'true'
         run: |
+          mkdir .github/Papyrus
           $repos = @("SRC", "SRC_SKYUI", "SRC_PAPUTIL")
           Set-Location .github/Papyrus
           foreach ($repo in $repos) {
@@ -173,10 +174,15 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+      - name: Cache CMake dependency source code
+        uses: actions/cache@v4
+        env:
+          cache-name: cmake-build-cache
         with:
-          key: ${{ runner.os }}-build
+          path: ${{github.workspace}}/build
+          key: ${{ env.cache-name }}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+          restore-keys: |
+            ${{ env.cache-name }}-
         
       - name: Setup VCPKG
         uses: lukka/run-vcpkg@v11
@@ -191,7 +197,7 @@ jobs:
       
       - name: Compile SKSE plugin
         run: |
-          cmake --preset ALL -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake --preset ALL
           cmake --build build --config Debug
 
       - name: Upload SKSE Plugin Artifact
