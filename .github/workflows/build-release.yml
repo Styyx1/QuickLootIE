@@ -85,6 +85,7 @@ jobs:
             .github/spriggit/Spriggit.CLI deserialize --InputPath "Papyrus/Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootIE.esp"
           else
             .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "${{ github.workspace }}/Papyrus/Source/Scripts" -R -q
+          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
