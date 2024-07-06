@@ -19,7 +19,7 @@ This would have taken longer if not outright impossible without them!_
 * An entirely overhauled MCM with new settings
 	* Courtesy of Faen90 
 	* Including a toggle to disable QuickLoot for animals to ensure compatibility with Hunting Overhauls
-		* Courtey of [CPPCooper](https://github.com/Eloquence4/QuickLootEE/pull/3) 
+		* Courtesy of [CPPCooper](https://github.com/Eloquence4/QuickLootEE/pull/3) 
 * A new, customizable sorting system
 	* Users can choose what should be sorted at the top of the LootMenu (i.e. Gold)
 	* Courtesy of AtomCrafty
