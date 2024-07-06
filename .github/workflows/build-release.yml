@@ -173,13 +173,11 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Cache cmake build 
-        uses: actions/cache@v4
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1.2
         with:
-          path: |
-            build
-          key: ${{ runner.os }}-cmake-build
-      
+          key: ${{ runner.os }}-build
+        
       - name: Setup VCPKG
         uses: lukka/run-vcpkg@v11
         with:
@@ -190,12 +188,11 @@ jobs:
         with:
           cmakeVersion: "~3.24.0"
           ninjaVersion: "~1.11.1"
-
-      - name: Run Cmake & VCPKG
-        uses: lukka/run-cmake@v10
-        with:
-          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          workflowPreset: 'ALL'
+      
+      - name: Compile SKSE plugin
+        run: |
+          cmake --preset ALL
+          cmake --build build --config Debug -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
       - name: Upload SKSE Plugin Artifact
         uses: actions/upload-artifact@v4
