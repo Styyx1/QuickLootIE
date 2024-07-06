@@ -189,7 +189,6 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgJsonGlob: 'vcpkg.json'
-          runVcpkgInstall: true
 
       - name: Setup CMake
         uses: lukka/get-cmake@latest
