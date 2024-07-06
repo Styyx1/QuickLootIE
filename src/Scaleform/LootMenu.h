@@ -394,17 +394,67 @@ namespace Scaleform
 
 			_view->CreateObject(&settings);
 
-			settings.SetMember("minLines", 0);//Settings::MinLines());
-			settings.SetMember("maxLines", 7);//Settings::MaxLines());
+			settings.SetMember("minLines", Settings::GetMinLines());
+			settings.SetMember("maxLines", Settings::GetMaxLines());
 
-			settings.SetMember("offsetX", 100);//Settings::WindowOffsetX());
-			settings.SetMember("offsetY", -200);//Settings::WindowOffsetY());
-			settings.SetMember("scale", 1);//Settings::WindowScale());
+			settings.SetMember("offsetX", Settings::GetWindowX());
+			settings.SetMember("offsetY", Settings::GetWindowY());
+			settings.SetMember("scale", Settings::GetWindowScale());
 
-			settings.SetMember("alphaNormal", 100);//Settings::AlphaNormal());
-			settings.SetMember("alphaEmpty", 33);//Settings::AlphaEmpty());
+			settings.SetMember("alphaNormal", Settings::GetNormalWindowTransparency());
+			settings.SetMember("alphaEmpty", Settings::GetEmptyWindowTransparency());
+
+			double anchorFractionX = 0;
+			double anchorFractionY = 0;
+			ResolveAnchorPoint(Settings::GetAnchorPoint(), anchorFractionX, anchorFractionY);
+
+			settings.SetMember("anchorFractionX", anchorFractionX);
+			settings.SetMember("anchorFractionY", anchorFractionY);
 
 			return settings;
+		}
+
+		static void ResolveAnchorPoint(QuickLoot::AnchorPoint anchor, double& fractionX, double& fractionY)
+		{
+			switch (anchor) {
+			case QuickLoot::kTopLeft:
+			case QuickLoot::kCenterLeft:
+			case QuickLoot::kBottomLeft:
+				fractionX = 0.0;
+				break;
+
+			case QuickLoot::kTopCenter:
+			case QuickLoot::kCenter:
+			case QuickLoot::kBottomCenter:
+				fractionX = 0.5;
+				break;
+
+			case QuickLoot::kTopRight:
+			case QuickLoot::kCenterRight:
+			case QuickLoot::kBottomRight:
+				fractionX = 1.0;
+				break;
+			}
+
+			switch (anchor) {
+			case QuickLoot::kTopLeft:
+			case QuickLoot::kTopCenter:
+			case QuickLoot::kTopRight:
+				fractionY = 0.0;
+				break;
+
+			case QuickLoot::kCenterLeft:
+			case QuickLoot::kCenter:
+			case QuickLoot::kCenterRight:
+				fractionY = 0.5;
+				break;
+
+			case QuickLoot::kBottomLeft:
+			case QuickLoot::kBottomCenter:
+			case QuickLoot::kBottomRight:
+				fractionY = 1.0;
+				break;
+			}
 		}
 
 		void ProcessDelegate();

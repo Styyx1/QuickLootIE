@@ -23,8 +23,8 @@ namespace QuickLoot {
 	inline bool QLIEShowCompCollected;
 
 	inline int32_t QLIEAnchorPoint;
-	inline float QLIEWindowX;
-	inline float QLIEWindowY;
+	inline int32_t QLIEWindowX;
+	inline int32_t QLIEWindowY;
 	inline float QLIEWindowScale;
 
 	inline int32_t QLIEMinLines;

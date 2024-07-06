@@ -39,8 +39,8 @@ namespace QuickLoot
 		static bool ShowCompCollected();
 		
 		static AnchorPoint GetAnchorPoint();
-		static float GetWindowX();
-		static float GetWindowY();
+		static int32_t GetWindowX();
+		static int32_t GetWindowY();
 		static float GetWindowScale();
 
 		static int32_t GetMinLines();

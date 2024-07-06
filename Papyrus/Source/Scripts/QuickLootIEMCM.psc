@@ -33,8 +33,8 @@ bool property QLIEShowCompNeeded = true auto hidden
 bool property QLIEShowCompCollected = true auto hidden
 
 ; Window Settings
-float property QLIEWindowX = 100.0 auto hidden
-float property QLIEWindowY = 100.0 auto hidden
+int property QLIEWindowX = 100 auto hidden
+int property QLIEWindowY = -200 auto hidden
 float property QLIEWindowScale = 1.0 auto hidden
 
 int property QLIEMinLines = 0 auto hidden
@@ -501,8 +501,8 @@ function BuildWindPage()
 	SetCursorPosition(0)
 	AddHeaderOption("$qlie_WindowSettingsHeader", 0)
 	AddMenuOptionST("anchor_options_state", 				"$qlie_anchor_options_state_text",  Anchor_Options[QLIEAnchorOptionChoice], 0)
-	AddSliderOptionST("window_X", 							"$qlie_window_X_text", QLIEWindowX, "{1}", 0)
-	AddSliderOptionST("window_Y", 							"$qlie_window_Y_text", QLIEWindowY, "{1}", 0)
+	AddSliderOptionST("window_X", 							"$qlie_window_X_text", QLIEWindowX, "{0}", 0)
+	AddSliderOptionST("window_Y", 							"$qlie_window_Y_text", QLIEWindowY, "{0}", 0)
 
 	AddEmptyOption()	
 	AddHeaderOption("$qlie_MenuTransparencyHeader", 0)	
@@ -691,8 +691,8 @@ Function Begin_Config_Load()
 			QLIEShowCompCollected = comp_installed && (jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEShowCompCollected", QLIEShowCompCollected as Int))			
 			
 			QLIEAnchorOptionChoice = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEAnchorOptionChoice", QLIEAnchorOptionChoice)
-			QLIEWindowX = jsonutil.GetPathFloatValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowX", QLIEWindowX)
-			QLIEWindowY = jsonutil.GetPathFloatValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowY", QLIEWindowY)
+			QLIEWindowX = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowX", QLIEWindowX)
+			QLIEWindowY = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowY", QLIEWindowY)
 			QLIEWindowScale = jsonutil.GetPathFloatValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowScale", QLIEWindowScale)
 			
 			QLIEMinLines = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEMinLines", QLIEMinLines)
@@ -754,8 +754,8 @@ function AutoLoadConfig()
 		endIf
 		
 		QLIEAnchorOptionChoice = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEAnchorOptionChoice", QLIEAnchorOptionChoice)
-		QLIEWindowX = jsonutil.GetPathFloatValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowX", QLIEWindowX)
-		QLIEWindowY = jsonutil.GetPathFloatValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowY", QLIEWindowY)
+		QLIEWindowX = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowX", QLIEWindowX)
+		QLIEWindowY = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowY", QLIEWindowY)
 		QLIEWindowScale = jsonutil.GetPathFloatValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEWindowScale", QLIEWindowScale)
 
 		QLIEMinLines = jsonutil.GetPathIntValue("../QuickLootIE/Profiles/MCMConfig", ".!QLIEMinLines", QLIEMinLines)
@@ -800,8 +800,8 @@ Function Begin_Config_Default()
 	QLIEShowCompCollected = true
 	
 	QLIEAnchorOptionChoice = 0
-	QLIEWindowX = 100.0
-	QLIEWindowY = 100.0
+	QLIEWindowX = 100
+	QLIEWindowY = -200
 	QLIEWindowScale = 1.0
 
 	QLIEMinLines = 0
@@ -1092,20 +1092,20 @@ endState
 
 state window_X
 	event OnSliderAcceptST(Float value)
-		QLIEWindowX = value
-		self.SetSliderOptionValueST(value, "{1}", false, "")
+		QLIEWindowX = value as Int
+		self.SetSliderOptionValueST(value, "{0}", false, "")
     endEvent
 
 	event OnSliderOpenST()
-		self.SetSliderDialogStartValue(QLIEWindowX)
-		self.SetSliderDialogDefaultValue(100.0 as Float)
+		self.SetSliderDialogStartValue(QLIEWindowX as Float)
+		self.SetSliderDialogDefaultValue(100 as Float)
 		self.SetSliderDialogRange(-960 as Float, 960 as Float)
-		self.SetSliderDialogInterval(0.1 as Float)
+		self.SetSliderDialogInterval(1 as Float)
 	endEvent
 
 	event OnDefaultST()
-		QLIEWindowX = 100.0
-		self.SetSliderOptionValueST(QLIEWindowX as Float, "{1}", false, "")
+		QLIEWindowX = 100
+		self.SetSliderOptionValueST(QLIEWindowX as Float, "{0}", false, "")
 	endEvent
 
 	event OnHighlightST()
@@ -1119,20 +1119,20 @@ endState
 
 state window_Y
 	event OnSliderAcceptST(Float value)
-		QLIEWindowY = value
-		self.SetSliderOptionValueST(value, "{1}", false, "")
+		QLIEWindowY = value as Int
+		self.SetSliderOptionValueST(value, "{0}", false, "")
     endEvent
 
 	event OnSliderOpenST()
-		self.SetSliderDialogStartValue(QLIEWindowY)
-		self.SetSliderDialogDefaultValue(100.0 as Float)
-		self.SetSliderDialogRange(-960 as Float, 960 as Float)
-		self.SetSliderDialogInterval(0.1 as Float)
+		self.SetSliderDialogStartValue(QLIEWindowY as Float)
+		self.SetSliderDialogDefaultValue(-200 as Float)
+		self.SetSliderDialogRange(-540 as Float, 540 as Float)
+		self.SetSliderDialogInterval(1 as Float)
 	endEvent
 
 	event OnDefaultST()
-		QLIEWindowY = 100.0
-		self.SetSliderOptionValueST(QLIEWindowY as Float, "{1}", false, "")
+		QLIEWindowY = -200
+		self.SetSliderOptionValueST(QLIEWindowY as Float, "{0}", false, "")
 	endEvent
 
 	event OnHighlightST()
