@@ -148,10 +148,10 @@ jobs:
           git sparse-checkout set --no-cone 'TESV_Papyrus_Flags.flg'
           git fetch --depth=1 origin master
           git checkout master
-          rm -rf .git
+          Remove-Item .git -Recurse -Force
           mv TESV_Papyrus_Flags.flg ../TESV_Papyrus_Flags.flg
-          cd ..
-          rm -r temp
+          Set-Location ..
+          Remove-Item .temp -Recurse -Force
 
       - name: Run Caprica
         run: .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "${{ github.workspace }}/Papyrus/Source/Scripts" -R -q
