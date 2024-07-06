@@ -80,12 +80,12 @@ namespace QuickLoot
 		return static_cast<AnchorPoint>(QLIEAnchorPoint);
 	}
 
-	float Settings::GetWindowX()
+	int32_t Settings::GetWindowX()
 	{
 		return QLIEWindowX;
 	}
 
-	float Settings::GetWindowY()
+	int32_t Settings::GetWindowY()
 	{
 		return QLIEWindowY;
 	}

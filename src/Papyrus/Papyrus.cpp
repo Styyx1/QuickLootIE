@@ -88,8 +88,8 @@ namespace QuickLoot
 		LoadSetting(QLIEShowCompCollected,			"QLIEShowCompCollected", false);
 
 		LoadSetting(QLIEAnchorPoint,				"QLIEAnchorOptionChoice", 0);
-		LoadSetting(QLIEWindowX,					"QLIEWindowX", 100.f);
-		LoadSetting(QLIEWindowY,					"QLIEWindowY", -200.f);
+		LoadSetting(QLIEWindowX,					"QLIEWindowX", 100);
+		LoadSetting(QLIEWindowY,					"QLIEWindowY", -200);
 		LoadSetting(QLIEWindowScale,				"QLIEWindowScale", 1.0f);
 
 		LoadSetting(QLIEMinLines,					"QLIEMinLines", 0);
