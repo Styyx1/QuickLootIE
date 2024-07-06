@@ -151,7 +151,7 @@ jobs:
           Remove-Item .git -Recurse -Force
           mv TESV_Papyrus_Flags.flg ../TESV_Papyrus_Flags.flg
           Set-Location ..
-          Remove-Item .temp -Recurse -Force
+          Remove-Item temp -Recurse -Force
 
       - name: Run Caprica
         run: .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "${{ github.workspace }}/Papyrus/Source/Scripts" -R -q
