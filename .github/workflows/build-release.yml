@@ -66,6 +66,8 @@ jobs:
 
       - name: Fetch Spriggit
         if: steps.cache-spriggit.outputs.cache-hit != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           gh release download -O .github/spriggit.zip -p 'SpriggitLinuxCLI.zip' -R Mutagen-Modding/Spriggit ${{ inputs.spriggit_tool_version }}
           7z x .github/spriggit.zip -o.github/spriggit
@@ -111,6 +113,8 @@ jobs:
 
       - name: Fetch Caprica 0.3.0
         if: steps.cache-com.outputs.cache-hit != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           gh release download -O .github/Caprica.7z -p '*.7z' -R Orvid/Caprica v0.3.0
           7z x .github/Caprica.7z -o.github/Caprica
@@ -169,20 +173,17 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Cache vcpkg Packages
-        id: cache-vcpkg
+      - name: Cache cmake build 
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/vcpkg
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json', '**/vcpkg/versions/baseline.json') }}
-          restore-keys: |
-            ${{ runner.os }}-vcpkg-
-
-      - name: Setup vcpkg
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+          path: |
+            build
+          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
+      
+      - name: Setup VCPKG
         uses: lukka/run-vcpkg@v11
         with:
-          vcpkgJsonGlob: 'vcpkg.json'
+          vcpkgJsonGlob: 'vcpkg.json' 
 
       - name: Setup CMake
         uses: lukka/get-cmake@latest
@@ -190,18 +191,23 @@ jobs:
           cmakeVersion: "~3.24.0"
           ninjaVersion: "~1.11.1"
 
-      - name: Configure and Build with CMake
-        run: |
-          cmake --preset ALL
-          cmake --build build --config Debug --parallel
+      - name: Run Cmake & VCPKG
+        uses: lukka/run-cmake@v10
+        with:
+          cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
+          configurePreset: 'ALL'
+          configurePresetAdditionalArgs: '-DCMAKE_BUILD_TYPE=Debug'
+          buildPreset: 'ALL'
+          buildPresetAdditionalArgs: '--config Debug --parallel'
+    
 
       - name: Upload SKSE Plugin Artifact
         uses: actions/upload-artifact@v4
         with:
           name: skse-plugin
           path: |
-            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.dll
-            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.pdb
+            ${{ github.workspace }}/build/Debug/QuickLootIE.dll
+            ${{ github.workspace }}/build/Debug/QuickLootIE.pdb
 
   package-mod:
     name: Package all necessary files
