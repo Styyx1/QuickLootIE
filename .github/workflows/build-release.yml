@@ -70,12 +70,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: Papyrus/Source/Scripts
-
-      - name: Create Pack Folder
-        if: matrix.build_plugin == 'true'
-        run: mkdir -p ${{ github.workspace }}/to-pack
 
       - name: Cache Spriggit
         if: matrix.build_plugin == 'true'
@@ -96,14 +90,8 @@ jobs:
 
       - name: Run Spriggit
         if: matrix.build_plugin == 'true'
-        run: .github/spriggit/Spriggit.CLI deserialize --InputPath "Papyrus/Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootIE.esp"
+        run: .github/spriggit/Spriggit.CLI deserialize --InputPath "${{ github.workspace }}/Papyrus/Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootIE.esp"
 
-      - name: Upload Plugin Artifact
-        if: matrix.build_plugin == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: plugin
-          path: ${{ github.workspace }}/to-pack/QuickLootIE.esp
 
       - name: Cache Script Sources
         if: matrix.compile_scripts == 'true'
