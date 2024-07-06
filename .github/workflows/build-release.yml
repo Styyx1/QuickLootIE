@@ -117,7 +117,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           gh release download -O .github/Caprica.7z -p '*.7z' -R Orvid/Caprica v0.3.0
-          7z x .github/Caprica.7z -o.github/Caprica
+          7z x .github/Caprica.7z "-o.github\Caprica"
 
       - name: Checkout Papyrus Sources
         if: steps.cache-ss.outputs.cache-hit != 'true'
@@ -191,8 +191,8 @@ jobs:
       
       - name: Compile SKSE plugin
         run: |
-          cmake --preset ALL
-          cmake --build build --config Debug -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake --preset ALL -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+          cmake --build build --config Debug
 
       - name: Upload SKSE Plugin Artifact
         uses: actions/upload-artifact@v4
