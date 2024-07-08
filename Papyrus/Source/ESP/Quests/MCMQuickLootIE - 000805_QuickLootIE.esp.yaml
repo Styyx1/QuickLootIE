@@ -2,19 +2,16 @@ FormKey: 000805:QuickLootIE.esp
 EditorID: MCMQuickLootIE
 VirtualMachineAdapter:
   Scripts:
+  - Name: QuickLootIEMaintenance
   - Name: QuickLootIEMCM
     Properties:
     - MutagenObjectType: ScriptObjectProperty
       Name: QLIEMaintenance
       Object: 000805:QuickLootIE.esp
-    - MutagenObjectType: ScriptStringListProperty
-      Name: Pages
-      Data:
-      - Main Settings
     - MutagenObjectType: ScriptStringProperty
-      Name: ModName
-      Data: QuickLoot IE
-  - Name: QuickLootIEMaintenance
+      Name: modname
+      Data: Quickloot IE
+  - Name: QuickLootIENative
   FileName: ''
   Aliases:
   - Property:
