@@ -2,67 +2,19 @@ FormKey: 000805:QuickLootIE.esp
 EditorID: MCMQuickLootIE
 VirtualMachineAdapter:
   Scripts:
-  - Name: QuickLootIEMaintenance
   - Name: QuickLootIEMCM
     Properties:
     - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEWindowW
-      Object: 00080E:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEWindowH
-      Object: 00080D:QuickLootIE.esp
-    - MutagenObjectType: ScriptStringProperty
-      Name: ModName
-      Data: QuickLoot IE
+      Name: QLIEMaintenance
+      Object: 000805:QuickLootIE.esp
     - MutagenObjectType: ScriptStringListProperty
       Name: Pages
       Data:
       - Main Settings
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEIconShowDBMFound
-      Object: 000802:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEIconShowBookRead
-      Object: 000804:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEIconShowDBMNew
-      Object: 000801:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEIconShowEnchanted
-      Object: 000800:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEShowCompNeeded
-      Object: 000810:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEWindowY
-      Object: 00080C:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEIconShowDBMDisplayed
-      Object: 000803:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIECloseInCombat
-      Object: 000806:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEDispelInvisibility
-      Object: 000808:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEDisableForAnimals
-      Object: 00080A:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEShowCompCollected
-      Object: 000811:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEWindowX
-      Object: 00080B:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIECloseWhenEmpty
-      Object: 000807:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEOpenWhenContainerUnlocked
-      Object: 000809:QuickLootIE.esp
-    - MutagenObjectType: ScriptObjectProperty
-      Name: QLIEMaintenance
-      Object: 000805:QuickLootIE.esp
+    - MutagenObjectType: ScriptStringProperty
+      Name: ModName
+      Data: QuickLoot IE
+  - Name: QuickLootIEMaintenance
   FileName: ''
   Aliases:
   - Property:
