@@ -80,10 +80,12 @@ bool comp_installed
 ;-- Events -----------------------------------------
 ;---------------------------------------------------
 
-event OnConfigInit()	
+event OnConfigInit()
 	if (!AutoLoaded)
 		AutoLoadConfig()
 	endIf
+	
+	SetFrameworkQuest(self as quest)
 endEvent
 
 ;---------------------------------------------------
@@ -771,7 +773,6 @@ function AutoLoadConfig()
 		Notification("$qlie_ProfileLoadMissing")
 	endIf
 	AutoLoaded = True
-	UpdateVariables()
 endFunction
 
 ;---------------------------------------------------

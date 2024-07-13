@@ -29,17 +29,6 @@ bool bUpdated
 ;---------------------------------------------------
 
 event OnInit()
-	RegisterForSingleUpdate(1)
-endEvent
-
-;---------------------------------------------------
-;-- Events -----------------------------------------
-;---------------------------------------------------
-
-event OnUpdate()
-	
-	SetFrameworkQuest(self as quest)
-	
 	if (!bFirstTimeSetupFinished)
 		DoVersioning()
 		return

@@ -74,11 +74,11 @@ namespace QuickLoot {
 				return nullptr;
 			}
 
-			if (auto* var = MCMScript->GetProperty(a_prop); var != nullptr) {
+			if (auto* var = MCMScript->GetProperty(a_prop)) {
 				return var;
 			}
 
-			logger::info("QuickLoot Papyrus: Unable To Get Property - [{}]", a_prop);
+			logger::warn("Unable to get property [{}]", a_prop);
 			return nullptr;
 		}
 
@@ -114,33 +114,45 @@ namespace QuickLoot {
 
 		template <typename T>
 		static void LoadSetting(T& variable, const std::string& propertyName, const T& defaultValue) {
-			variable = defaultValue;
+			const auto* prop = GetProperty(propertyName);
+
+			if (!prop) {
+				variable = defaultValue;
+				logger::trace("{}: not found", propertyName);
+				return;
+			}
 
 			if constexpr (std::is_same_v<T, bool>) {
-				if (const auto* prop = GetProperty(propertyName)) {
-					variable = prop->GetBool();
-				}
+				variable = prop->GetBool();
+				logger::trace("{}: {}", propertyName, variable);
+				return;
 			}
-			else if constexpr (std::is_same_v<T, std::string>) {
-				if (const auto* prop = GetProperty(propertyName)) {
-					variable = prop->GetString();
-				}
+
+			if constexpr (std::is_same_v<T, std::string>) {
+				variable = prop->GetString();
+				logger::trace("{}: {}", propertyName, variable);
+				return;
 			}
-			else if constexpr (std::is_same_v<T, int32_t>) {
-				if (const auto* prop = GetProperty(propertyName)) {
-					variable = prop->GetSInt();
-				}
+
+			if constexpr (std::is_same_v<T, int32_t>) {
+				variable = prop->GetSInt();
+				logger::trace("{}: {}", propertyName, variable);
+				return;
 			}
-			else if constexpr (std::is_same_v<T, float>) {
-				if (const auto* prop = GetProperty(propertyName)) {
-					variable = prop->GetFloat();
-				}
+
+			if constexpr (std::is_same_v<T, float>) {
+				variable = prop->GetFloat();
+				logger::info("{}: {}", propertyName, variable);
+				return;
 			}
-			else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
-				if (const auto* prop = GetProperty(propertyName)) {
-					variable = ConvertScriptArrayToVector(prop->GetArray());
-				}
+
+		    if constexpr (std::is_same_v<T, std::vector<std::string>>) {
+				variable = ConvertScriptArrayToVector(prop->GetArray());
+				logger::info("{}: {} strings", propertyName, variable.size());
+				return;
 			}
+
+		    logger::info("{}: unsupported type {}", propertyName, typeid(T).name());
 		}
 	};
 }
