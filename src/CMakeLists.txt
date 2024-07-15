@@ -50,6 +50,7 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/ViewHandler.h"
 	"${SOURCE_DIR}/LOTD/LOTD.cpp"
 	"${SOURCE_DIR}/LOTD/LOTD.h"
+	"${SOURCE_DIR}/Integrations/QuickLootInterfaceImpl.cpp"
 )
 
 source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})

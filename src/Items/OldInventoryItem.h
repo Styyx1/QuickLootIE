@@ -1,9 +1,13 @@
 #pragma once
 
 #include "Items/OldItem.h"
+#include "Integrations/QuickLootInterfaceImpl.h"
 
 namespace QuickLoot::Items
 {
+	using TakedSource = QuickLootIE::QuickLootIEInterface::TakedSource;
+	using TakedItem = QuickLootIE::QuickLootIEInterface::TakedItem;
+
 	class OldInventoryItem final :
 		public OldItem
 	{
@@ -55,7 +59,8 @@ namespace QuickLoot::Items
 				[&](std::int32_t a_num, RE::ExtraDataList* a_extraList) {
 					remove(a_num, a_extraList, RE::ITEM_REMOVE_REASON::kRemove);
 				};
-			if (Stolen()) {
+			auto isStolen = Stolen();
+			if (isStolen) {
 				action =
 					[&](std::int32_t a_num, RE::ExtraDataList* a_extraList) {
 						remove(a_num, a_extraList, RE::ITEM_REMOVE_REASON::kSteal);
@@ -70,6 +75,10 @@ namespace QuickLoot::Items
 			if (leftover > 0) {
 				action(static_cast<std::int32_t>(leftover), nullptr);
 			}
+
+			std::vector<TakedItem> takedItems;
+			takedItems.push_back({ object, static_cast<std::int32_t>(a_count) });
+			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaked(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakedEvent(&a_dst, TakedSource::CONTAINER, takedItems, container.get(), container->GetOwner(), isStolen));
 		}
 
 	private:

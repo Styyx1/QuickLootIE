@@ -8,6 +8,7 @@
 #include "Integrations/LOTD.h"
 #include "Integrations/Completionist.h"
 #include "Papyrus/Papyrus.h"
+#include "Integrations/QuickLootInterfaceImpl.h"
 
 
 namespace
@@ -135,6 +136,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	if (!message->RegisterListener(MessageHandler)) {
 		return false;
 	}
+	QuickLoot::QuickLootInterfaceImpl::GetSingleton()->Init(message);
 	
 	Hooks::Install();
 	QuickLoot::Papyrus::Init();

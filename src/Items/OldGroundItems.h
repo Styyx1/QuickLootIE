@@ -1,9 +1,13 @@
 #pragma once
 
 #include "Items/OldItem.h"
+#include "Integrations/QuickLootInterfaceImpl.h"
 
 namespace QuickLoot::Items
 {
+	using DoTakedSource = QuickLootIE::QuickLootIEInterface::TakedSource;
+	using DoTakedItem = QuickLootIE::QuickLootIEInterface::TakedItem;
+
 	class OldGroundItems final :
 		public OldItem
 	{
@@ -34,18 +38,20 @@ namespace QuickLoot::Items
 				return;
 			}
 
+			std::vector<DoTakedItem> doTakedItems;
 			for (auto& handle : _items) {
 				auto item = handle.get();
 				if (item) {
 					const auto xCount = std::clamp<std::ptrdiff_t>(item->extraList.GetCount(), 1, toRemove);
 					a_dst.PickUpObject(item.get(), static_cast<std::int32_t>(xCount), false, true);
 					toRemove -= xCount;
-
+					doTakedItems.push_back({ item.get(), static_cast<std::int32_t>(xCount) });
 					if (toRemove <= 0) {
 						break;
 					}
 				}
 			}
+			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaked(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakedEvent(&a_dst, DoTakedSource::GROUNG, doTakedItems));
 		}
 
 	private:
