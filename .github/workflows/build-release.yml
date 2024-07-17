@@ -4,13 +4,13 @@ on:
   schedule:
     - cron: '0 0 * * *'
   push:
-    branches: [ "master" ]
+    branches:
+      - "master"
     paths-ignore:
-    - |
-        '.github/**'
-        '*.yaml'
-        '*.txt'
-        '*.md'
+      - '.github/**'
+      - '*.yaml'
+      - '*.txt'
+      - '*.md'
   workflow_dispatch:
     inputs:
       version:
@@ -32,66 +32,52 @@ on:
 jobs:
   check-changes:
     name: Check for recent changes
-    if: ${{ github.event_name != 'workflow_dispatch' }}
     runs-on: ubuntu-latest
-    outputs: 
+    outputs:
       should_run: ${{ steps.should_run.outputs.should_run }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Check for changes in the last 24 hours
-        id: should_run
-        shell: bash
-        run: |
-            CHANGED_FILES=$(git log --since="1 days ago" --name-only | grep -v ".\((md|txt)\)$")
-            echo "should_run=$(wc -l <<<"$CHANGED_FILES")" >> "$GITHUB_ENV"          
-  build-plugin:
-    name: Build ESP from Spriggit files
-    needs: check-changes
-    if: ${{ needs.check-changes.outputs.should_run >= 1 || (github.event_name == 'workflow_dispatch' && always()) }}
-    permissions: write-all
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output Inputs
-        run: |
-          echo "GitHub Event Inputs: ${{ toJSON(github.event.inputs) }}"
-          echo "Inputs: ${{ toJSON(inputs) }}"
-  
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy to Pack Folder
-        shell: bash
-        run: mkdir ${{ github.workspace }}/to-pack
+      - name: Check for changes in the last 24 hours
+        id: should_run
+        run: |
+          CHANGED_FILES=$(git log --since="1 days ago" --name-only --format=format: | grep -Ev '\.(md|txt)$' | wc -l)
+          echo "should_run=${CHANGED_FILES}" >> "$GITHUB_ENV"
+
+  build-plugin:
+    name: Build ESP from Spriggit files
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch' && always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create Pack Folder
+        run: mkdir -p ${{ github.workspace }}/to-pack
 
       - name: Cache Spriggit
         id: cache-spriggit
         uses: actions/cache@v4
         with:
-          path: |
-            .github/spriggit
-          key: ${{ runner.os }}-spriggit
-      
-      - name: Fetch spriggit
+          path: .github/spriggit
+          key: ${{ runner.os }}-spriggit-${{ inputs.spriggit_tool_version }}
+
+      - name: Fetch Spriggit
         if: steps.cache-spriggit.outputs.cache-hit != 'true'
-        shell: bash
-        run: gh release download -O .github/spriggit.zip -p 'SpriggitLinuxCLI.zip' -R Mutagen-Modding/Spriggit ${{ inputs.spriggit_tool_version }}
         env:
-          GH_TOKEN: ${{ github.token }}
-          
-      - name: Extract Spriggit Zip
-        if: steps.cache-spriggit.outputs.cache-hit != 'true'
-        shell: bash
-        run: 7z x .github/spriggit.zip -o.github/spriggit
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          gh release download -O .github/spriggit.zip -p 'SpriggitLinuxCLI.zip' -R Mutagen-Modding/Spriggit ${{ inputs.spriggit_tool_version }}
+          7z x .github/spriggit.zip -o.github/spriggit
+          chmod +x .github/spriggit/Spriggit.CLI
 
-      - name: Fix spriggit permission
-        shell: bash
-        run: chmod +x .github/spriggit/Spriggit.CLI
-
-      - name: Run spriggit
-        shell: bash
+      - name: Run Spriggit
         run: .github/spriggit/Spriggit.CLI deserialize --InputPath "Papyrus/Source/ESP" --OutputPath "${{ github.workspace }}/to-pack/QuickLootIE.esp"
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload Plugin Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: plugin
           path: ${{ github.workspace }}/to-pack/QuickLootIE.esp
@@ -99,10 +85,11 @@ jobs:
   compile-scripts:
     name: Compile Papyrus scripts
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.should_run >= 1 || (github.event_name == 'workflow_dispatch' && always()) }}
+    if: ${{ needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch' && always() }}
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           sparse-checkout: Papyrus/Source/Scripts
 
@@ -114,6 +101,7 @@ jobs:
             .github/Papyrus/SRC
             .github/Papyrus/SRC_SKYUI
             .github/Papyrus/SRC_PAPUTIL
+            .github/Papyrus/SRC/TESV_Papyrus_Flags.flg
           key: script-sources-clean
 
       - name: Cache Compiler
@@ -125,61 +113,32 @@ jobs:
 
       - name: Fetch Caprica 0.3.0
         if: steps.cache-com.outputs.cache-hit != 'true'
-        shell: bash
-        run: gh release download -O .github/Caprica.7z -p '*.7z' -R Orvid/Caprica v0.3.0
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract Caprica EXE file
-        if: steps.cache-com.outputs.cache-hit != 'true'
-        shell: bash
-        run: 7z x .github/Caprica.7z -o.github/Caprica
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          gh release download -O .github/Caprica.7z -p '*.7z' -R Orvid/Caprica v0.3.0
+          7z x .github/Caprica.7z "-o.github\Caprica"
 
       - name: Checkout Papyrus Sources
         if: steps.cache-ss.outputs.cache-hit != 'true'
-        shell: bash
         run: |
-          cd .github
-          mkdir -p Papyrus/SRC
-          cd Papyrus/SRC
-          git init
-          git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
-          git sparse-checkout set --no-cone 'SRC'
-          git fetch --depth=1 origin main
-          git checkout main
-          rm -rf .git
-      
-      - name: Checkout SkyUI Sources
-        if: steps.cache-ss.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          cd .github/Papyrus
-          mkdir SRC_SKYUI
-          cd SRC_SKYUI
-          git init
-          git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
-          git sparse-checkout set --no-cone 'SRC_SKYUI'
-          git fetch --depth=1 origin main
-          git checkout main
-          rm -rf .git
+          mkdir .github/Papyrus
+          $repos = @("SRC", "SRC_SKYUI", "SRC_PAPUTIL")
+          Set-Location .github/Papyrus
+          foreach ($repo in $repos) {
+            New-Item -ItemType Directory -Name $repo
+            Set-Location $repo
+            git init
+            git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
+            git sparse-checkout set --no-cone $repo
+            git fetch --depth=1 origin main
+            git checkout main
+            Remove-Item .git -Recurse -Force
+            Set-Location ..
+          }
 
-      - name: Checkout PapyrusUtil Sources
-        if: steps.cache-ss.outputs.cache-hit != 'true'
-        shell: bash
-        run: |
-          cd .github/Papyrus
-          mkdir SRC_PAPUTIL
-          cd SRC_PAPUTIL
-          git init
-          git remote add origin https://github.com/IHateMyKite/PAPYRUS.git
-          git sparse-checkout set --no-cone 'SRC_PAPUTIL'
-          git fetch --depth=1 origin main
-          git checkout main
-          rm -rf .git
-        
       - name: Checkout TESV Flags File
         if: steps.cache-ss.outputs.cache-hit != 'true'
-        shell: bash
         run: |
           cd .github/Papyrus/SRC
           mkdir temp
@@ -189,17 +148,16 @@ jobs:
           git sparse-checkout set --no-cone 'TESV_Papyrus_Flags.flg'
           git fetch --depth=1 origin master
           git checkout master
-          rm -rf .git
+          Remove-Item .git -Recurse -Force
           mv TESV_Papyrus_Flags.flg ../TESV_Papyrus_Flags.flg
-          cd ..
-          rm -r temp
+          Set-Location ..
+          Remove-Item temp -Recurse -Force
 
       - name: Run Caprica
-        shell: bash
-        run: |
-          .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "${{ github.workspace }}/Papyrus/Source/Scripts" -R -q
-        
-      - uses: actions/upload-artifact@v4
+        run: .github/Caprica/Caprica.exe --game skyrim --import ".github/Papyrus/SRC;.github/Papyrus/SRC_SKYUI;.github/Papyrus/SRC_PAPUTIL;" --output "Scripts" --flags=".github/Papyrus/SRC/TESV_Papyrus_Flags.flg" "${{ github.workspace }}/Papyrus/Source/Scripts" -R -q
+
+      - name: Upload Compiled Scripts Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: compiled-scripts
           path: Scripts
@@ -207,36 +165,28 @@ jobs:
   compile-skse:
     name: Build SKSE plugin
     needs: check-changes
-    if: ${{ needs.check-changes.outputs.should_run >= 1 || (github.event_name == 'workflow_dispatch' && always()) }}
+    if: ${{ needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch' && always() }}
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
-      - name: Cache vcpkg packages
-        id: cache-vcpkg
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/vcpkg
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
-          restore-keys: |
-            ${{ runner.os }}-vcpkg-
-
       - name: Cache CMake build
-        id: cache-cmake
         uses: actions/cache@v4
+        env:
+          cache-name: cmake-build-cache
         with:
-          path: build/
-          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
+          path: |
+            ${{github.workspace}}/build
+          key: ${{ env.cache-name }}-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
           restore-keys: |
-            ${{ runner.os }}-cmake-
+            ${{ env.cache-name }}-
 
-      - name: Setup vcpkg
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      - name: Setup VCPKG
         uses: lukka/run-vcpkg@v11
-        id: runvcpkg
         with:
           vcpkgJsonGlob: 'vcpkg.json'
 
@@ -245,59 +195,47 @@ jobs:
         with:
           cmakeVersion: "~3.24.0"
           ninjaVersion: "~1.11.1"
-
-      - name: Configure CMake
-        if: steps.cache-cmake.outputs.cache-hit != 'true'
-        run: |
-            cmake --preset ALL
-
-      - name: Build with CMake
-        run: cmake --build build --config Debug --parallel
-
-      - name: Copy artifacts to pack folder
-        shell: bash
-        run: |
-          mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
-          mv build/Debug/QuickLootIE.dll "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.dll"
-          mv build/Debug/QuickLootIE.pdb "${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.pdb"
       
-      - name: Upload SKSE plugin artifact
+      - name: Compile SKSE plugin
+        run: |
+          cmake --preset ALL
+          cmake --build build --config Debug
+
+      - name: Upload SKSE Plugin Artifact
         uses: actions/upload-artifact@v4
         with:
           name: skse-plugin
           path: |
-            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.dll
-            ${{ github.workspace }}/to-pack/SKSE/Plugins/QuickLootIE.pdb
+            ${{ github.workspace }}/build/Debug/QuickLootIE.dll
+            ${{ github.workspace }}/build/Debug/QuickLootIE.pdb
 
   package-mod:
     name: Package all necessary files
     runs-on: ubuntu-latest
     needs: [build-plugin, compile-scripts, compile-skse]
-    if: ${{ needs.check-changes.outputs.should_run >= 1 || (github.event_name == 'workflow_dispatch' && always()) }}
-    permissions: write-all
+    if: ${{ needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch' && always() }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      - name: Download plugin
+
+      - name: Download Plugin Artifact
         uses: actions/download-artifact@v4
         with:
           name: plugin
-      
-      - name: Download compiled scripts
+
+      - name: Download Compiled Scripts Artifact
         uses: actions/download-artifact@v4
-        with: 
+        with:
           name: compiled-scripts
           path: Scripts
-      
-      - name: Download SKSE plugin
+
+      - name: Download SKSE Plugin Artifact
         uses: actions/download-artifact@v4
-        with: 
+        with:
           name: skse-plugin
           path: SKSE
 
-      - name: Create packing structure
-        shell: bash
+      - name: Create Packing Structure
         run: |
           mkdir -p "${{ github.workspace }}/to-pack/Source/Scripts"
           mkdir -p "${{ github.workspace }}/to-pack/SKSE/Plugins"
@@ -309,50 +247,49 @@ jobs:
           cp -a "swf/bin/." "${{ github.workspace }}/to-pack/Interface"
           cp -a "SKSE/." "${{ github.workspace }}/to-pack/SKSE/Plugins"
           cp -a "Scripts/." "${{ github.workspace }}/to-pack/Scripts"
-          
-      
-      - name: Zip release files
+          cp -a "LICENSE" "${{ github.workspace }}/to-pack/QLIE-LICENSE.md"
+
+      - name: Zip Release Files
         uses: vimtor/action-zip@v1.2
         with:
           files: to-pack/.
-          dest: QuickLootIE-${{inputs.version || 'nightly'}}.zip
-      
-      - name: Upload Output
+          dest: QuickLootIE-${{ inputs.version || 'nightly' }}.zip
+
+      - name: Upload Release Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: QuickLootIE-${{inputs.version || 'nightly'}}
-          path: QuickLootIE-${{inputs.version || 'nightly'}}.zip
+          name: QuickLootIE-${{ inputs.version || 'nightly' }}
+          path: QuickLootIE-${{ inputs.version || 'nightly' }}.zip
 
-      - name: Remove temporary artifacts
+      - name: Remove Temporary Artifacts
         uses: geekyeggo/delete-artifact@v4
         with:
           name: |
-              plugin
-              skse-plugin
-              compiled-scripts
+            plugin
+            skse-plugin
+            compiled-scripts
 
   share-release:
     name: Share release
-    permissions: write-all
-    needs: [package-mod]
-    if: ${{ inputs.publish-release == true && (needs.check-changes.outputs.should_run >= 1 || (github.event_name == 'workflow_dispatch' && always())) }}
+    needs: package-mod
+    if: ${{ inputs.publish-release == true && (needs.check-changes.outputs.should_run >= 1 || github.event_name == 'workflow_dispatch' && always()) }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
-  
-      - name: Download release artifact
+
+      - name: Download Release Artifact
         uses: actions/download-artifact@v4
         with:
-          name: QuickLootIE-${{inputs.version || 'nightly'}}
+          name: QuickLootIE-${{ inputs.version || 'nightly' }}
 
-      - name: Delete existing release
+      - name: Delete Existing Release
         uses: dev-drprasad/delete-tag-and-release@v1.0
         with:
-          tag_name: ${{inputs.version || 'nightly'}}
+          tag_name: ${{ inputs.version || 'nightly' }}
           github_token: ${{ github.token }}
           delete_release: true
-      
+
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1.13.0
@@ -360,18 +297,18 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           allowUpdates: true
-          name: ${{inputs.version || 'nightly'}}
+          name: ${{ inputs.version || 'nightly' }}
           draft: false
-          body: '${{inputs.release-body}}'
-          tag: ${{inputs.version || 'nightly'}}
+          body: ${{ inputs.release-body }}
+          tag: ${{ inputs.version || 'nightly' }}
           prerelease: true
           makeLatest: false
           removeArtifacts: true
           replacesArtifacts: true
           artifactErrorsFailBuild: true
-          artifacts: QuickLootIE-${{inputs.version || 'nightly'}}.zip
+          artifacts: QuickLootIE-${{ inputs.version || 'nightly' }}.zip
 
-      - name: Remove temporary artifacts
+      - name: Remove Temporary Artifacts
         uses: geekyeggo/delete-artifact@v2
         with:
-          name: QuickLootIE-${{inputs.version || 'nightly'}}
+          name: QuickLootIE-${{ inputs.version || 'nightly' }}
