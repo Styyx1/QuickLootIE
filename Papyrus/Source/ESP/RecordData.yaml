@@ -1,11 +1,11 @@
 SpriggitSource:
   PackageName: Spriggit.Yaml.Skyrim
-  Version: 0.24.0
+  Version: 0.25.0
 ModKey: QuickLootIE.esp
 GameRelease: SkyrimSE
 ModHeader:
   Flags:
-  - Light
+  - Small
   Author: Miss Corruption
   MasterReferences:
   - Master: Skyrim.esm
