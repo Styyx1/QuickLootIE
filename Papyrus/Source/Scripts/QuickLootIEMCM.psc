@@ -80,7 +80,7 @@ bool comp_installed
 ;-- Events -----------------------------------------
 ;---------------------------------------------------
 
-event OnConfigInit()	
+event OnConfigInit()
 	if (!AutoLoaded)
 		AutoLoadConfig()
 	endIf

@@ -12,7 +12,7 @@ auto ScriptObject::FromForm(RE::TESForm* a_form, const std::string& a_scriptName
 	auto papyrusVM = RE::BSScript::Internal::VirtualMachine::GetSingleton();
 	if (!papyrusVM) 
 	{
-		logger::error("ScriptObject: Unable To Obtain Papyrus VM.");
+		logger::error("ScriptObject: Unable to obtain Papyrus VM.");
 	}
 
 	auto typeID = static_cast<RE::VMTypeID>(a_form->GetFormType());

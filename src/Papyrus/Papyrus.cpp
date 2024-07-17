@@ -5,8 +5,8 @@ namespace QuickLoot
 {
 	void Papyrus::Init()
 	{
-		RE::UI::GetSingleton()->AddEventSink(static_cast<RE::BSTEventSink<RE::MenuOpenCloseEvent>*>(GetSingleton()));
-		SKSE::GetPapyrusInterface()->Register(Papyrus::RegisterFunctions);
+		RE::UI::GetSingleton()->AddEventSink(GetSingleton());
+		SKSE::GetPapyrusInterface()->Register(RegisterFunctions);
 	}
 
 	//---------------------------------------------------
@@ -36,6 +36,7 @@ namespace QuickLoot
 	{
 		if (!a_event->opening && a_event->menuName == RE::JournalMenu::MENU_NAME)
 		{
+			logger::info("Updating variables after menu close");
 			UpdateVariables(nullptr);
 		};
 
@@ -50,18 +51,18 @@ namespace QuickLoot
 	{
 		if (!a_quest)
 		{
-			logger::info("No Quest Passed To Registration Function");
+			logger::info("No quest passed to registration function");
 			return;
 		};
 
 		MCMScript = ScriptObject::FromForm(a_quest, "QuickLootIEMCM");
 		if (!MCMScript)
 		{
-			logger::info("Unable To Locate MCM Script on Form");
+			logger::info("Unable to locate MCM script on form");
 			return;
 		};
 
-		logger::info("MCM Pointer Set Successfully");
+		logger::info("MCM pointer set successfully");
 		UpdateVariables(nullptr);
 	};
 
