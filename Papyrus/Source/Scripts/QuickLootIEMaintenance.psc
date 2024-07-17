@@ -37,7 +37,6 @@ endEvent
 ;---------------------------------------------------
 
 event OnUpdate()
-	
 	SetFrameworkQuest(self as quest)
 	
 	if (!bFirstTimeSetupFinished)
