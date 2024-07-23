@@ -7,8 +7,8 @@
 #include "Scaleform/LootMenu.h"
 #include "Integrations/LOTD.h"
 #include "Integrations/Completionist.h"
-#include "Papyrus/Papyrus.h"
 #include "Integrations/QuickLootInterfaceImpl.h"
+#include "Papyrus/Papyrus.h"
 
 
 namespace

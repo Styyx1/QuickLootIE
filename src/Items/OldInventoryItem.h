@@ -5,8 +5,7 @@
 
 namespace QuickLoot::Items
 {
-	using TakedSource = QuickLootIE::QuickLootIEInterface::TakedSource;
-	using TakedItem = QuickLootIE::QuickLootIEInterface::TakedItem;
+	using Element = QuickLootIE::QuickLootIEInterface::Element;
 
 	class OldInventoryItem final :
 		public OldItem
@@ -76,9 +75,9 @@ namespace QuickLoot::Items
 				action(static_cast<std::int32_t>(leftover), nullptr);
 			}
 
-			std::vector<TakedItem> takedItems;
-			takedItems.push_back({ object, static_cast<std::int32_t>(a_count) });
-			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaked(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakedEvent(&a_dst, TakedSource::CONTAINER, takedItems, container.get(), container->GetOwner(), isStolen));
+			std::vector<Element> elements;
+			elements.push_back({ object, static_cast<std::int32_t>(a_count) });
+			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaken(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakenEvent(&a_dst, elements, container.get(), container->GetOwner(), isStolen));
 		}
 
 	private:

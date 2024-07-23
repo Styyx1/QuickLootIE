@@ -5,8 +5,7 @@
 
 namespace QuickLoot::Items
 {
-	using DoTakedSource = QuickLootIE::QuickLootIEInterface::TakedSource;
-	using DoTakedItem = QuickLootIE::QuickLootIEInterface::TakedItem;
+	using Element = QuickLootIE::QuickLootIEInterface::Element;
 
 	class OldGroundItems final :
 		public OldItem
@@ -38,20 +37,20 @@ namespace QuickLoot::Items
 				return;
 			}
 
-			std::vector<DoTakedItem> doTakedItems;
+			std::vector<Element> elements;
 			for (auto& handle : _items) {
 				auto item = handle.get();
 				if (item) {
 					const auto xCount = std::clamp<std::ptrdiff_t>(item->extraList.GetCount(), 1, toRemove);
 					a_dst.PickUpObject(item.get(), static_cast<std::int32_t>(xCount), false, true);
 					toRemove -= xCount;
-					doTakedItems.push_back({ item.get(), static_cast<std::int32_t>(xCount) });
+					elements.push_back({ item.get(), static_cast<std::int32_t>(xCount) });
 					if (toRemove <= 0) {
 						break;
 					}
 				}
 			}
-			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaked(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakedEvent(&a_dst, DoTakedSource::GROUNG, doTakedItems));
+			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaken(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakenEvent(&a_dst, elements));
 		}
 
 	private:

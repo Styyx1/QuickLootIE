@@ -6,12 +6,6 @@
 
 namespace QuickLoot
 {
-	enum RequestType : uint32_t
-	{
-		kVersion = 'XVER',
-		kQuery = 'XQRY',
-		kQueryArray = 'XARR',
-	};
 
 	class QuickLootInterfaceImpl : public QuickLootIE::QuickLootIEInterface
 	{
@@ -20,9 +14,7 @@ namespace QuickLoot
 		~QuickLootInterfaceImpl();
 
 		/* Interface implementation */
-		bool registerOnTakedHandler(OnTakedHandler handler) override;
-		uint16_t getMajorVersion() override;
-		uint16_t getMinorVersion() override;
+		bool registerOnTakenHandler(OnTakenHandler handler) override;
 		/* \Interface implementation */
 
 		

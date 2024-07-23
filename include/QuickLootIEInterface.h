@@ -4,38 +4,31 @@
 	Header File for QuickLootIE integration
 */
 
-namespace QuickLootIE
+namespace QuickLoot
 {
 	class QuickLootIEInterface
 	{
 	public:
-		enum TakedSource
-		{
-			GROUNG = 1,
-			CONTAINER = 2
-		};
-		struct TakedItem
+		struct Element
 		{
 			RE::TESForm* object;
 			std::int32_t count;
 		};
-		struct TakedEvent
+		struct TakenEvent
 		{
 			RE::Actor* actor;
-			TakedSource source;
-			std::vector<TakedItem> items;
+			Element* elements;
+			std::size_t elementsCount;
 			RE::TESObjectREFR* container;
 			RE::TESForm* containerOwner;
 			bool isStealAlarm;
 		};
-		typedef void (*OnTakedHandler)(TakedEvent evt);
+		typedef void (*OnTakenHandler)(TakenEvent evt);
 
 		/*
 		* Public methods
 		*/
-		virtual uint16_t getMajorVersion() = 0;
-		virtual uint16_t getMinorVersion() = 0;
-		virtual bool registerOnTakedHandler(OnTakedHandler handler) = 0;
+		virtual bool registerOnTakenHandler(OnTakenHandler handler) = 0;
 	};
 
 	enum MessageType : std::uint32_t
