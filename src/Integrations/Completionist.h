@@ -182,6 +182,9 @@ namespace QuickLoot::Integrations
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
 			}
 
+			if (response.empty())
+				return rawName;
+
 			return response;
 		};
 	};

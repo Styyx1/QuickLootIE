@@ -42,9 +42,12 @@ namespace QuickLoot::Integrations
 			_found = dataHandler->LookupForm<RE::BGSListForm>(0x558286, TCC_PLUGIN_NAME);
 			_displayed = dataHandler->LookupForm<RE::BGSListForm>(0x558287, TCC_PLUGIN_NAME);
 
-			_isReady = _new && _found && _displayed;
-
-			logger::info("Loaded TCC form lists");
+			if (_new && _found && _displayed) {
+				_isReady = true;
+				logger::info("Loaded TCC form lists");
+			} else {
+				logger::info("Failed to load TCC form lists");
+			}
 		}
 
 		static bool IsReady()
