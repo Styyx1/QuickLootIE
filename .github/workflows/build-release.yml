@@ -201,17 +201,13 @@ jobs:
           cmake --preset ALL
           cmake --build build --config RelWithDebInfo
 
-      - name: Move SKSE plugin
-        run: |
-          mkdir SKSE
-          mv ${{ github.workspace }}/build/Debug/QuickLootIE.dll SKSE/QuickLootIE.dll
-          mv ${{ github.workspace }}/build/Debug/QuickLootIE.pdb SKSE/QuickLootIE.pdb
-
       - name: Upload SKSE Plugin Artifact
         uses: actions/upload-artifact@v4
         with:
           name: skse-plugin
-          path: SKSE
+          path: |
+           ${{ github.workspace }}/build/RelWithDebInfo/QuickLootIE.dll
+           ${{ github.workspace }}/build/RelWithDebInfo/QuickLootIE.pdb
 
   package-mod:
     name: Package all necessary files
