@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Items/OldItem.h"
-#include "Integrations/QuickLootInterfaceImpl.h"
+#include "Integrations/PluginServer.h"
 
 namespace QuickLoot::Items
 {
-	using Element = QuickLootIE::QuickLootIEInterface::Element;
+	using Element = QuickLoot::Integrations::TakenHandler::Element;
 
 	class OldInventoryItem final :
 		public OldItem
@@ -77,7 +77,7 @@ namespace QuickLoot::Items
 
 			std::vector<Element> elements;
 			elements.push_back({ object, static_cast<std::int32_t>(a_count) });
-			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaken(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakenEvent(&a_dst, elements, container.get(), container->GetOwner(), isStolen));
+			QuickLoot::Integrations::PluginServer::HandleOnTaken(QuickLoot::Integrations::PluginServer::CreateOnTakenEvent(&a_dst, &elements, container.get(), container->GetOwner(), isStolen));
 		}
 
 	private:

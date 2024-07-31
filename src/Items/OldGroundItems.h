@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Items/OldItem.h"
-#include "Integrations/QuickLootInterfaceImpl.h"
+#include "Integrations/PluginServer.h"
 
 namespace QuickLoot::Items
 {
-	using Element = QuickLootIE::QuickLootIEInterface::Element;
+	using Element = QuickLoot::Integrations::TakenHandler::Element;
 
 	class OldGroundItems final :
 		public OldItem
@@ -50,7 +50,7 @@ namespace QuickLoot::Items
 					}
 				}
 			}
-			QuickLoot::QuickLootInterfaceImpl::GetSingleton()->handleOnTaken(QuickLoot::QuickLootInterfaceImpl::GetSingleton()->createOnTakenEvent(&a_dst, elements));
+			QuickLoot::Integrations::PluginServer::HandleOnTaken(QuickLoot::Integrations::PluginServer::CreateOnTakenEvent(&a_dst, &elements));
 		}
 
 	private:
