@@ -5,6 +5,7 @@
 #include "CLIK/GFx/Controls/ScrollingList.h"
 #include "CLIK/TextField.h"
 #include "ContainerChangedHandler.h"
+#include "Integrations/PluginServer.h"
 #include "Items/OldGroundItems.h"
 #include "Items/OldInventoryItem.h"
 #include "Items/OldItem.h"
@@ -46,6 +47,7 @@ namespace Scaleform
 				_lastSelectedIndex = static_cast<ptrdiff_t>(idx);
 				_itemList.SelectedIndex(idx);
 				UpdateInfoBar();
+				OnSelectedIndexChanged();
 			}
 		}
 
@@ -58,6 +60,7 @@ namespace Scaleform
 				inst.Invoke("modSelectedPage", args);
 			assert(success);
 			UpdateInfoBar();
+			OnSelectedIndexChanged();
 		}
 
 		void SetContainer(RE::ObjectRefHandle a_ref)
@@ -95,9 +98,11 @@ namespace Scaleform
 
 			const auto stealing = WouldBeStealing();
 			auto inv = src->GetInventory(CanDisplay);
+			std::vector<QuickLoot::Integrations::LootMenuHandler::Element> elements;
 			for (auto& [obj, data] : inv) {
 				auto& [count, entry] = data;
 				if (count > 0 && entry) {
+					elements.push_back({ entry->GetObject(), static_cast<std::int32_t>(count), _src.get() ? _src.get().get() : nullptr });
 					_itemListImpl.push_back(std::make_unique<QuickLoot::Items::OldInventoryItem>(count, stealing, std::move(entry), _src));
 				}
 			}
@@ -106,6 +111,12 @@ namespace Scaleform
 			for (auto& [obj, data] : dropped) {
 				auto& [count, items] = data;
 				if (count > 0 && !items.empty()) {
+					for (auto& handle : items) {
+						auto item = handle.get();
+						if (item) {
+							elements.push_back({ item.get(), item->extraList.GetCount(), nullptr });
+						}
+					}
 					_itemListImpl.push_back(std::make_unique<QuickLoot::Items::OldGroundItems>(count, stealing, std::move(items)));
 				}
 			}
@@ -133,6 +144,9 @@ namespace Scaleform
 				UpdateInfoBar();
 
 				_rootObj.Visible(true);
+				OnSelectedIndexChanged();
+
+				QuickLoot::Integrations::PluginServer::HandleOnLootMenuInvalidate(_dst, _src, &elements);
 			}
 		}
 
@@ -227,6 +241,18 @@ namespace Scaleform
 		LootMenu& operator=(LootMenu&&) = default;
 
 		static stl::owner<RE::IMenu*> Creator() { return new LootMenu(); }
+
+		void OnSelectedIndexChanged()
+		{
+			const auto idx = static_cast<std::ptrdiff_t>(_itemList.SelectedIndex());
+			if (0 <= idx && idx < std::ssize(_itemListImpl)) {
+				auto dst = _dst.get();
+				const auto& item = _itemListImpl[static_cast<std::size_t>(idx)];
+				if (item && dst) {
+					item->OnSelected(*dst);
+				}
+			}
+		}
 
 		// IMenu
 		void PostCreate() override { OnOpen(); }
@@ -336,7 +362,10 @@ namespace Scaleform
 			InjectUtilsClass();
 		}
 
-		void OnClose() { return; }
+		void OnClose() {
+			QuickLoot::Integrations::PluginServer::HandleOnLootMenuClose(_dst);
+			return; 
+		}
 
 		void OnOpen()
 		{
@@ -382,6 +411,8 @@ namespace Scaleform
 			_buttonBar.DataProvider(CLIK::Array{ _buttonBarProvider });
 
 			ProcessDelegate();
+
+			QuickLoot::Integrations::PluginServer::HandleOnLootMenuOpen(_dst, _src);
 		}
 
 		RE::GFxValue BuildSettingsObject() const

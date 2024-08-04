@@ -21,14 +21,64 @@ namespace QuickLoot::Integrations
 			Element* elements;
 			std::size_t elementsCount;
 			RE::TESObjectREFR* container;
-			RE::TESForm* containerOwner;
-			bool isStealAlarm;
 		};
-		typedef void (*OnTakenHandler)(TakenEvent evt);
+		typedef void (*OnTakenHandler)(TakenEvent* evt);
 
 		struct Request
 		{
 			OnTakenHandler handler;
+		};
+	};
+
+	namespace SelectHandler
+	{
+		struct Element
+		{
+			RE::TESForm* object;
+			std::int32_t count;
+		};
+		struct SelectEvent
+		{
+			RE::Actor* actor;
+			Element* elements;
+			std::size_t elementsCount;
+			RE::TESObjectREFR* container;
+		};
+		typedef void (*OnSelectHandler)(SelectEvent* evt);
+
+		struct Request
+		{
+			OnSelectHandler handler;
+		};
+	};
+
+	namespace LootMenuHandler
+	{
+		struct Element
+		{
+			RE::TESForm* object;
+			std::int32_t count;
+			RE::TESObjectREFR* container;
+		};
+		enum Status
+		{
+			OPEN,
+			CLOSE,
+			INVALIDATE,
+		};
+		struct LootMenuEvent
+		{
+			Status status;
+			RE::Actor* actor;
+			RE::TESObjectREFR* container;
+			Element* elements;
+			std::size_t elementsCount;
+		};
+		typedef void (*OnLootMenuHandler)(LootMenuEvent* evt);
+
+		struct Request
+		{
+			OnLootMenuHandler handler;
 		};
 	};
 
@@ -61,7 +111,9 @@ namespace QuickLoot::Integrations
 		// The client and server must agree on these signatures.
 		enum RequestType : uint32_t
 		{
-			kRegisterTakenHandler = 0x100
+			kRegisterTakenHandler = 0x100,
+			kRegisterSelectHandler = 0x101,
+			kRegisterLootMenuHandler = 0x102,
 		};
 
 	public:
@@ -87,6 +139,32 @@ namespace QuickLoot::Integrations
 			const TakenHandler::Request request{ handler };
 
 			if (const auto error = _client.Query(kRegisterTakenHandler, &request, &response)) {
+				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
+				return false;
+			}
+
+			return true;
+		}
+
+		static bool RegisterSelectHandler(SelectHandler::OnSelectHandler handler)
+		{
+			bool response = false;
+			const SelectHandler::Request request{ handler };
+
+			if (const auto error = _client.Query(kRegisterSelectHandler, &request, &response)) {
+				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
+				return false;
+			}
+
+			return true;
+		}
+
+		static bool RegisterLootMenuHandler(LootMenuHandler::OnLootMenuHandler handler)
+		{
+			bool response = false;
+			const LootMenuHandler::Request request{ handler };
+
+			if (const auto error = _client.Query(kRegisterLootMenuHandler, &request, &response)) {
 				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
 				return false;
 			}

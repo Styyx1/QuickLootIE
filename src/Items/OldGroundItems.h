@@ -50,7 +50,20 @@ namespace QuickLoot::Items
 					}
 				}
 			}
-			QuickLoot::Integrations::PluginServer::HandleOnTaken(QuickLoot::Integrations::PluginServer::CreateOnTakenEvent(&a_dst, &elements));
+			QuickLoot::Integrations::PluginServer::HandleOnTaken(&a_dst, &elements);
+		}
+
+		void DoSelect(RE::Actor& a_dst) override
+		{
+			std::vector<QuickLoot::Integrations::SelectHandler::Element> elements;
+			for (auto& handle : _items) {
+				auto item = handle.get();
+				if (item) {
+					elements.push_back({ item.get(), static_cast<std::int32_t>(Count()) });
+				}
+			}
+
+			QuickLoot::Integrations::PluginServer::HandleOnSelect(&a_dst, &elements);
 		}
 
 	private:

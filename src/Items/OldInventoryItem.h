@@ -5,7 +5,6 @@
 
 namespace QuickLoot::Items
 {
-	using Element = QuickLoot::Integrations::TakenHandler::Element;
 
 	class OldInventoryItem final :
 		public OldItem
@@ -58,8 +57,7 @@ namespace QuickLoot::Items
 				[&](std::int32_t a_num, RE::ExtraDataList* a_extraList) {
 					remove(a_num, a_extraList, RE::ITEM_REMOVE_REASON::kRemove);
 				};
-			auto isStolen = Stolen();
-			if (isStolen) {
+			if (Stolen()) {
 				action =
 					[&](std::int32_t a_num, RE::ExtraDataList* a_extraList) {
 						remove(a_num, a_extraList, RE::ITEM_REMOVE_REASON::kSteal);
@@ -75,9 +73,16 @@ namespace QuickLoot::Items
 				action(static_cast<std::int32_t>(leftover), nullptr);
 			}
 
-			std::vector<Element> elements;
-			elements.push_back({ object, static_cast<std::int32_t>(a_count) });
-			QuickLoot::Integrations::PluginServer::HandleOnTaken(QuickLoot::Integrations::PluginServer::CreateOnTakenEvent(&a_dst, &elements, container.get(), container->GetOwner(), isStolen));
+			QuickLoot::Integrations::PluginServer::HandleOnTaken(&a_dst, object, static_cast<std::int32_t>(a_count), container.get());
+		}
+
+		void DoSelect(RE::Actor& a_dst) override
+		{
+			auto container = _container.get();
+			if (!container) {
+				return;
+			}
+			QuickLoot::Integrations::PluginServer::HandleOnSelect(&a_dst, _entry->GetObject(), static_cast<std::int32_t>(Count()), container.get());
 		}
 
 	private:
