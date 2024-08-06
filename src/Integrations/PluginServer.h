@@ -11,53 +11,40 @@ namespace QuickLoot::Integrations
 	public:
 		static void Init(const SKSE::MessagingInterface* messagingInterface);
 
-		static bool RegisterOnTakenHandler(TakenHandler::OnTakenHandler handler);
-		static bool RegisterOnSelectHandler(SelectHandler::OnSelectHandler handler);
-		static bool RegisterOnLootMenuHandler(LootMenuHandler::OnLootMenuHandler handler);
-
-		static bool HandleOnTaken(TakenHandler::TakenEvent* evt);
-		static bool HandleOnTaken(
-			RE::Actor* actor, 
-			std::vector<TakenHandler::Element>* elements,
-			RE::TESObjectREFR* container = nullptr
-		);
-		static bool HandleOnTaken(
-			RE::Actor* actor,
-			RE::TESForm* object,
-			std::int32_t count,
-			RE::TESObjectREFR* container = nullptr
-		);
+		static void HandleOnTake(RE::Actor* actor, std::vector<Element>* elements, RE::TESObjectREFR* container = nullptr);
+		static void HandleOnTake(RE::Actor* actor, RE::TESForm* object, std::ptrdiff_t count, RE::TESObjectREFR* container = nullptr);
 		
-		static bool HandleOnSelect(SelectHandler::SelectEvent* evt);
-		static bool HandleOnSelect(
-			RE::Actor* actor,
-			std::vector<SelectHandler::Element>* elements,
-			RE::TESObjectREFR* container = nullptr
-		);
-		static bool HandleOnSelect(
-			RE::Actor* actor,
-			RE::TESForm* element,
-			std::int32_t count,
-			RE::TESObjectREFR* container = nullptr
-		);
+		static void HandleOnSelect(RE::Actor* actor, std::vector<Element>* elements, RE::TESObjectREFR* container = nullptr);
+		static void HandleOnSelect(RE::Actor* actor, RE::TESForm* object, std::ptrdiff_t count, RE::ObjectRefHandle container);
 
-		static bool HandleOnLootMenu(LootMenuHandler::LootMenuEvent* evt);
-
-		static bool HandleOnLootMenuClose(RE::Actor* actor);
-		static bool HandleOnLootMenuClose(RE::ActorHandle actorHandle);
-
-		static bool HandleOnLootMenuOpen(RE::Actor* actor, RE::TESObjectREFR* container);
-		static bool HandleOnLootMenuOpen(RE::ActorHandle actorHandle, RE::ObjectRefHandle containerHandle);
-
-		static bool HandleOnLootMenuInvalidate(RE::Actor* actor, RE::TESObjectREFR* container, std::vector<LootMenuHandler::Element>* elements);
-		static bool HandleOnLootMenuInvalidate(RE::ActorHandle actorHandle, RE::ObjectRefHandle containerHandle, std::vector<LootMenuHandler::Element>* elements);
+		static void HandleOnInvalidateLootMenu(std::vector<Element>* elements, RE::ObjectRefHandle container);
+		static void HandleOnOpenLootMenu(RE::ObjectRefHandle containerHandle);
+		static void HandleOnCloseLootMenu();
+		static OpeningLootMenuHandler::HandleResult HandleOnOpeningLootMenu(RE::TESObjectREFRPtr containerHandle);
 
 		static inline PluginRequests::RequestServer GetRequestServer() { return _server; };
 
 	protected:
 		static inline PluginRequests::RequestServer _server{};
-		static inline std::list<TakenHandler::OnTakenHandler> _onTakenHandlers{};
-		static inline std::list<SelectHandler::OnSelectHandler> _onSelectHandler{};
-		static inline std::list<LootMenuHandler::OnLootMenuHandler> _onLootMenuHandlers{};
+		static inline std::list<TakeHandler::OnTakeHandler> _onTakeHandlers{};
+		static inline std::list<SelectHandler::OnSelectHandler> _onSelectHandlers{};
+		static inline std::list<InvalidateLootMenuHandler::OnInvalidateLootMenuHandler> _onInvalidateLootMenuHandlers{};
+		static inline std::list<OpenLootMenuHandler::OnOpenLootMenuHandler> _onOpenLootMenuHandlers{};
+		static inline std::list<OpeningLootMenuHandler::OnOpeningLootMenuHandler> _onOpeningLootMenuHandlers{};
+		static inline std::list<CloseLootMenuHandler::OnCloseLootMenuHandler> _onCloseLootMenuHandlers{};
+
+		static bool RegisterOnTakeHandler(TakeHandler::OnTakeHandler handler);
+		static bool RegisterOnSelectHandler(SelectHandler::OnSelectHandler handler);
+		static bool RegisterInvalidateLootMenuHandler(InvalidateLootMenuHandler::OnInvalidateLootMenuHandler handler);
+		static bool RegisterOpenLootMenuHandler(OpenLootMenuHandler::OnOpenLootMenuHandler handler);
+		static bool RegisterOpeningLootMenuHandler(OpeningLootMenuHandler::OnOpeningLootMenuHandler handler);
+		static bool RegisterCloseLootMenuHandler(CloseLootMenuHandler::OnCloseLootMenuHandler handler);
+
+		static void HandleOnTake(TakeHandler::TakeEvent* evt);
+		static void HandleOnSelect(SelectHandler::SelectEvent* evt);
+		static void HandleOnInvalidateLootMenu(InvalidateLootMenuHandler::InvalidateLootMenuEvent* evt);
+		static void HandleOnOpenLootMenu(OpenLootMenuHandler::OpenLootMenuEvent* evt);
+		static void HandleOnOpeningLootMenu(OpeningLootMenuHandler::OpeningLootMenuEvent* evt);
+		static void HandleOnCloseLootMenu(CloseLootMenuHandler::CloseLootMenuEvent* evt);
 	};
 }

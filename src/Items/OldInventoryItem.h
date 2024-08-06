@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Items/OldItem.h"
-#include "Integrations/PluginServer.h"
 
 namespace QuickLoot::Items
 {
@@ -73,16 +72,16 @@ namespace QuickLoot::Items
 				action(static_cast<std::int32_t>(leftover), nullptr);
 			}
 
-			QuickLoot::Integrations::PluginServer::HandleOnTaken(&a_dst, object, static_cast<std::int32_t>(a_count), container.get());
+			QuickLoot::Integrations::PluginServer::HandleOnTake(&a_dst, object, a_count, container.get());
 		}
 
 		void DoSelect(RE::Actor& a_dst) override
 		{
-			auto container = _container.get();
-			if (!container) {
-				return;
-			}
-			QuickLoot::Integrations::PluginServer::HandleOnSelect(&a_dst, _entry->GetObject(), static_cast<std::int32_t>(Count()), container.get());
+			QuickLoot::Integrations::PluginServer::HandleOnSelect(&a_dst, _entry->GetObject(), Count(), _container);
+		}
+
+		void FillElementsVector(std::vector<QuickLoot::Integrations::Element>* elements) override {
+			elements->push_back(QuickLoot::Integrations::Element(_entry->GetObject(), Count(), _container));
 		}
 
 	private:

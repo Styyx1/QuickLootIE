@@ -24,6 +24,7 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/Input/InputDisablers.h"
 	"${SOURCE_DIR}/Input/InputListeners.cpp"
 	"${SOURCE_DIR}/Input/InputListeners.h"
+	"${SOURCE_DIR}/Integrations/PluginServer.cpp"
 	"${SOURCE_DIR}/Items/GFxItem.cpp"
 	"${SOURCE_DIR}/Items/GFxItem.h"
 	"${SOURCE_DIR}/Items/GFxItemCache.hpp"
@@ -50,7 +51,6 @@ set(SOURCE_FILES
 	"${SOURCE_DIR}/ViewHandler.h"
 	"${SOURCE_DIR}/LOTD/LOTD.cpp"
 	"${SOURCE_DIR}/LOTD/LOTD.h"
-	"${SOURCE_DIR}/Integrations/PluginServer.cpp"
 )
 
 source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})

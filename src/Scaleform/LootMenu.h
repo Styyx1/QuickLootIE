@@ -98,11 +98,9 @@ namespace Scaleform
 
 			const auto stealing = WouldBeStealing();
 			auto inv = src->GetInventory(CanDisplay);
-			std::vector<QuickLoot::Integrations::LootMenuHandler::Element> elements;
 			for (auto& [obj, data] : inv) {
 				auto& [count, entry] = data;
 				if (count > 0 && entry) {
-					elements.push_back({ entry->GetObject(), static_cast<std::int32_t>(count), _src.get() ? _src.get().get() : nullptr });
 					_itemListImpl.push_back(std::make_unique<QuickLoot::Items::OldInventoryItem>(count, stealing, std::move(entry), _src));
 				}
 			}
@@ -111,12 +109,6 @@ namespace Scaleform
 			for (auto& [obj, data] : dropped) {
 				auto& [count, items] = data;
 				if (count > 0 && !items.empty()) {
-					for (auto& handle : items) {
-						auto item = handle.get();
-						if (item) {
-							elements.push_back({ item.get(), item->extraList.GetCount(), nullptr });
-						}
-					}
 					_itemListImpl.push_back(std::make_unique<QuickLoot::Items::OldGroundItems>(count, stealing, std::move(items)));
 				}
 			}
@@ -125,9 +117,11 @@ namespace Scaleform
 				Close();
 			} else {
 				Sort();
+				std::vector<QuickLoot::Integrations::Element> elements;
 				_itemListProvider.ClearElements();
 				for (const auto& elem : _itemListImpl) {
 					_itemListProvider.PushBack(elem->GFxValue(*_view));
+					elem->FillElementsVector(&elements);
 				}
 				_itemList.InvalidateData();
 				_rootObj.GetInstance().Invoke("refresh");
@@ -146,7 +140,7 @@ namespace Scaleform
 				_rootObj.Visible(true);
 				OnSelectedIndexChanged();
 
-				QuickLoot::Integrations::PluginServer::HandleOnLootMenuInvalidate(_dst, _src, &elements);
+				QuickLoot::Integrations::PluginServer::HandleOnInvalidateLootMenu(&elements, _src);
 			}
 		}
 
@@ -363,7 +357,7 @@ namespace Scaleform
 		}
 
 		void OnClose() {
-			QuickLoot::Integrations::PluginServer::HandleOnLootMenuClose(_dst);
+			QuickLoot::Integrations::PluginServer::HandleOnCloseLootMenu();
 			return; 
 		}
 
@@ -412,7 +406,7 @@ namespace Scaleform
 
 			ProcessDelegate();
 
-			QuickLoot::Integrations::PluginServer::HandleOnLootMenuOpen(_dst, _src);
+			QuickLoot::Integrations::PluginServer::HandleOnOpenLootMenu(_src);
 		}
 
 		RE::GFxValue BuildSettingsObject() const

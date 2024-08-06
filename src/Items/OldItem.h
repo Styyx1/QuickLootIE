@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Integrations/PluginServer.h"
 #include "Items/ItemListEntry.h"
 
 namespace QuickLoot::Items
@@ -32,6 +33,8 @@ namespace QuickLoot::Items
 		void Take(RE::Actor& a_dst) { DoTake(a_dst, 1); }
 		void TakeAll(RE::Actor& a_dst) { DoTake(a_dst, Count()); }
 		void OnSelected(RE::Actor& a_dst) { DoSelect(a_dst); }
+
+		virtual void FillElementsVector(std::vector<QuickLoot::Integrations::Element>* elements) = 0;
 
 		[[nodiscard]] double EnchantmentCharge() const { return _item.GetEnchantmentCharge(); }
 

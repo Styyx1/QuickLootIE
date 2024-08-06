@@ -1,12 +1,9 @@
 #pragma once
 
 #include "Items/OldItem.h"
-#include "Integrations/PluginServer.h"
 
 namespace QuickLoot::Items
 {
-	using Element = QuickLoot::Integrations::TakenHandler::Element;
-
 	class OldGroundItems final :
 		public OldItem
 	{
@@ -37,33 +34,37 @@ namespace QuickLoot::Items
 				return;
 			}
 
-			std::vector<Element> elements;
+			std::vector<QuickLoot::Integrations::Element> elements;
 			for (auto& handle : _items) {
 				auto item = handle.get();
 				if (item) {
 					const auto xCount = std::clamp<std::ptrdiff_t>(item->extraList.GetCount(), 1, toRemove);
 					a_dst.PickUpObject(item.get(), static_cast<std::int32_t>(xCount), false, true);
 					toRemove -= xCount;
-					elements.push_back({ item.get(), static_cast<std::int32_t>(xCount) });
+					elements.push_back(QuickLoot::Integrations::Element(item, xCount));
 					if (toRemove <= 0) {
 						break;
 					}
 				}
 			}
-			QuickLoot::Integrations::PluginServer::HandleOnTaken(&a_dst, &elements);
+			QuickLoot::Integrations::PluginServer::HandleOnTake(&a_dst, &elements);
 		}
 
 		void DoSelect(RE::Actor& a_dst) override
 		{
-			std::vector<QuickLoot::Integrations::SelectHandler::Element> elements;
+			std::vector<QuickLoot::Integrations::Element> elements;
+			FillElementsVector(&elements);
+			QuickLoot::Integrations::PluginServer::HandleOnSelect(&a_dst, &elements);
+		}
+
+		void FillElementsVector(std::vector<QuickLoot::Integrations::Element>* elements) override
+		{
 			for (auto& handle : _items) {
 				auto item = handle.get();
 				if (item) {
-					elements.push_back({ item.get(), static_cast<std::int32_t>(Count()) });
+					elements->push_back(QuickLoot::Integrations::Element(item, Count()));
 				}
 			}
-
-			QuickLoot::Integrations::PluginServer::HandleOnSelect(&a_dst, &elements);
 		}
 
 	private:

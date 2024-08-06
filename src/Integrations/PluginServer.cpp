@@ -6,20 +6,23 @@ namespace QuickLoot::Integrations
 	{
 		_server.Init(QuickLootAPI::API_MAJOR_VERSION, QuickLootAPI::API_MINOR_VERSION);
 
-		_server.RegisterHandler<TakenHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterTakenHandler, "kRegisterTakenHandler", [](const char*, const TakenHandler::Request* request, bool* response) {
-			PluginServer::RegisterOnTakenHandler(request->handler);
-			*response = true;
-			return true;
+		_server.RegisterHandler<TakeHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterTakeHandler, "kRegisterTakeHandler", [](const char*, const TakeHandler::Request* request, bool* response) {
+			return *response = PluginServer::RegisterOnTakeHandler(request->handler);
 		});
 		_server.RegisterHandler<SelectHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterSelectHandler, "kRegisterSelectHandler", [](const char*, const SelectHandler::Request* request, bool* response) {
-			PluginServer::RegisterOnSelectHandler(request->handler);
-			*response = true;
-			return true;
+			return *response = PluginServer::RegisterOnSelectHandler(request->handler);
 		});
-		_server.RegisterHandler<LootMenuHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterLootMenuHandler, "kRegisterLootMenuHandler", [](const char*, const LootMenuHandler::Request* request, bool* response) {
-			PluginServer::RegisterOnLootMenuHandler(request->handler);
-			*response = true;
-			return true;
+		_server.RegisterHandler<InvalidateLootMenuHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterInvalidateLootMenuHandler, "kRegisterInvalidateLootMenuHandler", [](const char*, const InvalidateLootMenuHandler::Request* request, bool* response) {
+			return *response = PluginServer::RegisterInvalidateLootMenuHandler(request->handler);
+		});
+		_server.RegisterHandler<OpenLootMenuHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterOpenLootMenuHandler, "kRegisterOpenLootMenuHandler", [](const char*, const OpenLootMenuHandler::Request* request, bool* response) {
+			return *response = PluginServer::RegisterOpenLootMenuHandler(request->handler);
+		});
+		_server.RegisterHandler<OpeningLootMenuHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterOpeningLootMenuHandler, "kRegisterOpeningLootMenuHandler", [](const char*, const OpeningLootMenuHandler::Request* request, bool* response) {
+			return *response = PluginServer::RegisterOpeningLootMenuHandler(request->handler);
+		});
+		_server.RegisterHandler<CloseLootMenuHandler::Request, bool>(QuickLootAPI::RequestType::kRegisterCloseLootMenuHandler, "kRegisterCloseLootMenuHandler", [](const char*, const CloseLootMenuHandler::Request* request, bool* response) {
+			return *response = PluginServer::RegisterCloseLootMenuHandler(request->handler);
 		});
 
 		if (!messagingInterface->RegisterListener(nullptr, [](SKSE::MessagingInterface::Message* a_msg) { PluginServer::GetRequestServer().Handle(a_msg); })) {
@@ -27,141 +30,153 @@ namespace QuickLoot::Integrations
 		}
 	}
 
-	bool PluginServer::RegisterOnTakenHandler(TakenHandler::OnTakenHandler handler)
+	inline bool PluginServer::RegisterOnTakeHandler(TakeHandler::OnTakeHandler handler)
 	{
-		_onTakenHandlers.push_back(handler);
+		_onTakeHandlers.push_back(handler);
+		return true;
+	}
+	inline bool PluginServer::RegisterOnSelectHandler(SelectHandler::OnSelectHandler handler)
+	{
+		_onSelectHandlers.push_back(handler);
+		return true;
+	}
+	inline bool PluginServer::RegisterInvalidateLootMenuHandler(InvalidateLootMenuHandler::OnInvalidateLootMenuHandler handler)
+	{
+		_onInvalidateLootMenuHandlers.push_back(handler);
+		return true;
+	}
+	inline bool PluginServer::RegisterOpenLootMenuHandler(OpenLootMenuHandler::OnOpenLootMenuHandler handler)
+	{
+		_onOpenLootMenuHandlers.push_back(handler);
+		return true;
+	}
+	inline bool PluginServer::RegisterOpeningLootMenuHandler(OpeningLootMenuHandler::OnOpeningLootMenuHandler handler)
+	{
+		_onOpeningLootMenuHandlers.push_back(handler);
+		return true;
+	}
+	inline bool PluginServer::RegisterCloseLootMenuHandler(CloseLootMenuHandler::OnCloseLootMenuHandler handler)
+	{
+		_onCloseLootMenuHandlers.push_back(handler);
 		return true;
 	}
 
-	bool PluginServer::RegisterOnSelectHandler(SelectHandler::OnSelectHandler handler)
+	inline void PluginServer::HandleOnTake(TakeHandler::TakeEvent* evt)
 	{
-		_onSelectHandler.push_back(handler);
-		return true;
-	}
-
-	bool PluginServer::RegisterOnLootMenuHandler(LootMenuHandler::OnLootMenuHandler handler)
-	{
-		_onLootMenuHandlers.push_back(handler);
-		return true;
-	}
-
-
-	bool PluginServer::HandleOnTaken(TakenHandler::TakenEvent* evt)
-	{
-		for (TakenHandler::OnTakenHandler const& handler : _onTakenHandlers) {
+		for (auto const& handler : _onTakeHandlers) {
 			handler(evt);
 		}
-		return true;
 	}
 
-	bool PluginServer::HandleOnTaken(RE::Actor* actor, std::vector<TakenHandler::Element>* elements, RE::TESObjectREFR* container)
+	void PluginServer::HandleOnTake(RE::Actor* actor, std::vector<Element>* elements, RE::TESObjectREFR* container)
 	{
-		TakenHandler::TakenEvent evt = TakenHandler::TakenEvent();
+		TakeHandler::TakeEvent evt{};
 		evt.actor = actor;
+		evt.container = container;
 		evt.elements = elements->data();
 		evt.elementsCount = elements->size();
-		evt.container = container;
 
-		return HandleOnTaken(&evt);
+		HandleOnTake(&evt);
 	}
 
-	bool PluginServer::HandleOnTaken(RE::Actor* actor, RE::TESForm* object, std::int32_t count, RE::TESObjectREFR* container)
+	void PluginServer::HandleOnTake(RE::Actor* actor, RE::TESForm* object, std::ptrdiff_t count, RE::TESObjectREFR* container)
 	{
-		TakenHandler::Element elements[1] = { { object, count } };
-		TakenHandler::TakenEvent evt = TakenHandler::TakenEvent();
+		Element elements[1] = { Element(object, count, container) };
+		TakeHandler::TakeEvent evt{};
 		evt.actor = actor;
+		evt.container = container;
 		evt.elements = elements;
 		evt.elementsCount = 1;
-		evt.container = container;
 
-		return HandleOnTaken(&evt);
+		HandleOnTake(&evt);
 	}
-	bool PluginServer::HandleOnSelect(SelectHandler::SelectEvent* evt)
+
+	inline void PluginServer::HandleOnSelect(SelectHandler::SelectEvent* evt)
 	{
-		for (SelectHandler::OnSelectHandler const& handler : _onSelectHandler) {
+		for (auto const& handler : _onSelectHandlers) {
 			handler(evt);
 		}
-		return true;
 	}
-	bool PluginServer::HandleOnSelect(RE::Actor* actor, std::vector<SelectHandler::Element>* elements, RE::TESObjectREFR* container)
+	void PluginServer::HandleOnSelect(RE::Actor* actor, std::vector<Element>* elements, RE::TESObjectREFR* container)
 	{
-		SelectHandler::SelectEvent evt = SelectHandler::SelectEvent();
+		SelectHandler::SelectEvent evt{};
 		evt.actor = actor;
+		evt.container = container;
 		evt.elements = elements->data();
 		evt.elementsCount = elements->size();
-		evt.container = container;
 
-		return HandleOnSelect(&evt);
+		HandleOnSelect(&evt);
 	}
-	bool PluginServer::HandleOnSelect(RE::Actor* actor, RE::TESForm* element, std::int32_t count, RE::TESObjectREFR* container)
+	void PluginServer::HandleOnSelect(RE::Actor* actor, RE::TESForm* object, std::ptrdiff_t count, RE::ObjectRefHandle container)
 	{
-		SelectHandler::Element elements[1] = { element, count };
-		SelectHandler::SelectEvent evt = SelectHandler::SelectEvent();
+		Element elements[1] = { Element(object, count, container) };
+		SelectHandler::SelectEvent evt{};
 		evt.actor = actor;
+		evt.container = container.get() ? container.get().get() : nullptr;
 		evt.elements = elements;
 		evt.elementsCount = 1;
-		evt.container = container;
 
-		return HandleOnSelect(&evt);
+		HandleOnSelect(&evt);
 	}
-	bool PluginServer::HandleOnLootMenu(LootMenuHandler::LootMenuEvent* evt)
+
+	inline void PluginServer::HandleOnInvalidateLootMenu(InvalidateLootMenuHandler::InvalidateLootMenuEvent* evt)
 	{
-		for (LootMenuHandler::OnLootMenuHandler const& handler : _onLootMenuHandlers) {
+		for (auto const& handler : _onInvalidateLootMenuHandlers) {
 			handler(evt);
 		}
-		return true;
 	}
-	bool PluginServer::HandleOnLootMenuClose(RE::Actor* actor)
+	void PluginServer::HandleOnInvalidateLootMenu(std::vector<Element>* elements, RE::ObjectRefHandle container)
 	{
-		LootMenuHandler::LootMenuEvent evt = LootMenuHandler::LootMenuEvent();
-
-		evt.status = LootMenuHandler::Status::CLOSE;
-		evt.actor = actor;
-		evt.container = nullptr;
-		evt.elements = nullptr;
-		evt.elementsCount = 0;
-
-		return HandleOnLootMenu(&evt);
-	}
-	bool PluginServer::HandleOnLootMenuClose(RE::ActorHandle actorHandle)
-	{
-		RE::Actor* actor = actorHandle.get() ? actorHandle.get().get() : nullptr;
-		return HandleOnLootMenuClose(actor);
-	}
-	bool PluginServer::HandleOnLootMenuOpen(RE::Actor* actor, RE::TESObjectREFR* container)
-	{
-		LootMenuHandler::LootMenuEvent evt = LootMenuHandler::LootMenuEvent();
-
-		evt.status = LootMenuHandler::Status::OPEN;
-		evt.actor = actor;
-		evt.container = container;
-		evt.elements = nullptr;
-		evt.elementsCount = 0;
-
-		return HandleOnLootMenu(&evt);
-	}
-	bool PluginServer::HandleOnLootMenuOpen(RE::ActorHandle actorHandle, RE::ObjectRefHandle containerHandle)
-	{
-		RE::Actor* actor = actorHandle.get() ? actorHandle.get().get() : nullptr;
-		RE::TESObjectREFR* container = containerHandle.get() ? containerHandle.get().get() : nullptr;
-		return HandleOnLootMenuOpen(actor, container);
-	}
-	bool PluginServer::HandleOnLootMenuInvalidate(RE::Actor* actor, RE::TESObjectREFR* container, std::vector<LootMenuHandler::Element>* elements)
-	{
-		LootMenuHandler::LootMenuEvent evt = LootMenuHandler::LootMenuEvent();
-
-		evt.status = LootMenuHandler::Status::INVALIDATE;
-		evt.actor = actor;
-		evt.container = container;
+		InvalidateLootMenuHandler::InvalidateLootMenuEvent evt{};
+		evt.container = container.get() ? container.get().get() : nullptr;
 		evt.elements = elements->data();
 		evt.elementsCount = elements->size();
 
-		return HandleOnLootMenu(&evt);
+		HandleOnInvalidateLootMenu(&evt);
 	}
-	bool PluginServer::HandleOnLootMenuInvalidate(RE::ActorHandle actorHandle, RE::ObjectRefHandle containerHandle, std::vector<LootMenuHandler::Element>* elements)
+
+	inline void PluginServer::HandleOnOpenLootMenu(OpenLootMenuHandler::OpenLootMenuEvent* evt)
 	{
-		RE::Actor* actor = actorHandle.get() ? actorHandle.get().get() : nullptr;
-		RE::TESObjectREFR* container = containerHandle.get() ? containerHandle.get().get() : nullptr;
-		return HandleOnLootMenuInvalidate(actor, container, elements);
+		for (auto const& handler : _onOpenLootMenuHandlers) {
+			handler(evt);
+		}
+	}
+	void PluginServer::HandleOnOpenLootMenu(RE::ObjectRefHandle containerHandle)
+	{
+		OpenLootMenuHandler::OpenLootMenuEvent evt{};
+		evt.container = containerHandle.get() ? containerHandle.get().get() : nullptr;
+
+		HandleOnOpenLootMenu(&evt);
+	}
+
+	inline void PluginServer::HandleOnOpeningLootMenu(OpeningLootMenuHandler::OpeningLootMenuEvent* evt)
+	{
+		for (auto const& handler : _onOpeningLootMenuHandlers) {
+			handler(evt);
+			if (evt->result == OpeningLootMenuHandler::kContinue) {
+				continue;
+			}
+			return;
+		}
+	}
+	OpeningLootMenuHandler::HandleResult PluginServer::HandleOnOpeningLootMenu(RE::TESObjectREFRPtr containerHandle)
+	{
+		OpeningLootMenuHandler::OpeningLootMenuEvent evt{};
+		evt.container = containerHandle.get();
+		HandleOnOpeningLootMenu(&evt);
+		return evt.result;
+	}
+
+	inline void PluginServer::HandleOnCloseLootMenu(CloseLootMenuHandler::CloseLootMenuEvent* evt)
+	{
+		for (auto const& handler : _onCloseLootMenuHandlers) {
+			handler(evt);
+		}
+	}
+	void PluginServer::HandleOnCloseLootMenu()
+	{
+		CloseLootMenuHandler::CloseLootMenuEvent evt{};
+
+		HandleOnCloseLootMenu(&evt);
 	}
 }
