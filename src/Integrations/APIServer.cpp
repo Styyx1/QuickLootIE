@@ -1,4 +1,4 @@
-#include "PluginServer.h"
+#include "APIServer.h"
 
 namespace QuickLoot::Integrations
 {

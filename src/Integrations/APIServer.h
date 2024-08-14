@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <QuickLootIntegrations.h>
+#include <QuickLootAPI.h>
 
 #include "PluginRequests/RequestServer.h"
 

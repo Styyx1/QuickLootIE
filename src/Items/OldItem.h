@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Integrations/PluginServer.h"
+#include "Integrations/APIServer.h"
 #include "Items/ItemListEntry.h"
 
 namespace QuickLoot::Items

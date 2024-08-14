@@ -7,7 +7,7 @@
 #include "Scaleform/LootMenu.h"
 #include "Integrations/LOTD.h"
 #include "Integrations/Completionist.h"
-#include "Integrations/PluginServer.h"
+#include "Integrations/APIServer.h"
 #include "Papyrus/Papyrus.h"
 
 
