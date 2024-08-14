@@ -22,7 +22,7 @@ namespace QuickLoot::Integrations
 		static void HandleOnCloseLootMenu();
 		static OpeningLootMenuHandler::HandleResult HandleOnOpeningLootMenu(RE::TESObjectREFRPtr containerHandle);
 
-		static inline PluginRequests::RequestServer GetRequestServer() { return _server; };
+		static inline const PluginRequests::RequestServer& GetRequestServer() { return _server; };
 
 	protected:
 		static inline PluginRequests::RequestServer _server{};
