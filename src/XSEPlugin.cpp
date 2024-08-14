@@ -7,7 +7,7 @@
 #include "Scaleform/LootMenu.h"
 #include "Integrations/LOTD.h"
 #include "Integrations/Completionist.h"
-#include "Integrations/PluginServer.h"
+#include "Integrations/APIServer.h"
 #include "Papyrus/Papyrus.h"
 
 
@@ -128,14 +128,14 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 {
 	InitializeLog();
 	logger::info("Loaded plugin {} {}", Plugin::NAME, Plugin::VERSION.string());
-	SKSE::Init(a_skse);
+    Init(a_skse);
 	SKSE::AllocTrampoline(1 << 6);
 
 	auto message = SKSE::GetMessagingInterface();
 	if (!message->RegisterListener(MessageHandler)) {
 		return false;
 	}
-	QuickLoot::Integrations::PluginServer::Init(message);
+	QuickLoot::API::APIServer::Init(message);
 	
 	Hooks::Install();
 	QuickLoot::Papyrus::Init();

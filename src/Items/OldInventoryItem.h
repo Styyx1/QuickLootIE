@@ -72,16 +72,17 @@ namespace QuickLoot::Items
 				action(static_cast<std::int32_t>(leftover), nullptr);
 			}
 
-			QuickLoot::Integrations::PluginServer::HandleOnTake(&a_dst, object, a_count, container.get());
+			API::APIServer::DispatchTakeItemEvent(&a_dst, object, a_count, container.get());
 		}
 
 		void DoSelect(RE::Actor& a_dst) override
 		{
-			QuickLoot::Integrations::PluginServer::HandleOnSelect(&a_dst, _entry->GetObject(), Count(), _container);
+			API::APIServer::DispatchSelectItemEvent(&a_dst, _entry->GetObject(), Count(), _container);
 		}
 
-		void FillElementsVector(std::vector<QuickLoot::Integrations::Element>* elements) override {
-			elements->push_back(QuickLoot::Integrations::Element(_entry->GetObject(), Count(), _container));
+		void FillElementsVector(std::vector<Element>* elements) override
+		{
+			elements->push_back(Element(_entry->GetObject(), Count(), _container));
 		}
 
 	private:

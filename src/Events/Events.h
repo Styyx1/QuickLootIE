@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Integrations/PluginServer.h"
+#include "Integrations/APIServer.h"
 
 #ifdef GetObject
 #	undef GetObject
@@ -128,7 +128,7 @@ namespace Events
 			if (!a_ref->HasContainer()) {
 				return false;
 			}
-			return QuickLoot::Integrations::PluginServer::HandleOnOpeningLootMenu(a_ref) == QuickLoot::Integrations::OpeningLootMenuHandler::kContinue;
+			return QuickLoot::API::APIServer::DispatchOpeningLootMenuEvent(a_ref) == QuickLoot::Events::HandleResult::kContinue;
 		}
 
 		RE::ObjectRefHandle _cachedRef;
