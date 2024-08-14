@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Integrations/APIServer.h"
+
 #ifdef GetObject
 #	undef GetObject
 #endif
@@ -123,7 +125,10 @@ namespace Events
 					return false;
 				}
 			}
-			return a_ref->HasContainer();
+			if (!a_ref->HasContainer()) {
+				return false;
+			}
+			return QuickLoot::API::APIServer::DispatchOpeningLootMenuEvent(a_ref) == QuickLoot::Events::HandleResult::kContinue;
 		}
 
 		RE::ObjectRefHandle _cachedRef;

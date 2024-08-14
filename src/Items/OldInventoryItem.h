@@ -4,6 +4,7 @@
 
 namespace QuickLoot::Items
 {
+
 	class OldInventoryItem final :
 		public OldItem
 	{
@@ -70,6 +71,18 @@ namespace QuickLoot::Items
 			if (leftover > 0) {
 				action(static_cast<std::int32_t>(leftover), nullptr);
 			}
+
+			API::APIServer::DispatchTakeItemEvent(&a_dst, object, a_count, container.get());
+		}
+
+		void DoSelect(RE::Actor& a_dst) override
+		{
+			API::APIServer::DispatchSelectItemEvent(&a_dst, _entry->GetObject(), Count(), _container);
+		}
+
+		void FillElementsVector(std::vector<Element>* elements) override
+		{
+			elements->push_back(Element(_entry->GetObject(), Count(), _container));
 		}
 
 	private:
