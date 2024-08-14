@@ -117,7 +117,7 @@ namespace Scaleform
 				Close();
 			} else {
 				Sort();
-				std::vector<QuickLoot::Integrations::Element> elements;
+				std::vector<QuickLoot::Element> elements;
 				_itemListProvider.ClearElements();
 				for (const auto& elem : _itemListImpl) {
 					_itemListProvider.PushBack(elem->GFxValue(*_view));
@@ -140,7 +140,7 @@ namespace Scaleform
 				_rootObj.Visible(true);
 				OnSelectedIndexChanged();
 
-				QuickLoot::Integrations::PluginServer::HandleOnInvalidateLootMenu(&elements, _src);
+				QuickLoot::API::APIServer::DispatchInvalidateLootMenuEvent(elements, _src);
 			}
 		}
 
@@ -357,7 +357,7 @@ namespace Scaleform
 		}
 
 		void OnClose() {
-			QuickLoot::Integrations::PluginServer::HandleOnCloseLootMenu();
+			QuickLoot::API::APIServer::DispatchCloseLootMenuEvent(_src);
 			return; 
 		}
 
@@ -406,7 +406,7 @@ namespace Scaleform
 
 			ProcessDelegate();
 
-			QuickLoot::Integrations::PluginServer::HandleOnOpenLootMenu(_src);
+			QuickLoot::API::APIServer::DispatchOpenLootMenuEvent(_src);
 		}
 
 		RE::GFxValue BuildSettingsObject() const

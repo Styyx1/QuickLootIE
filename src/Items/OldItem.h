@@ -34,7 +34,7 @@ namespace QuickLoot::Items
 		void TakeAll(RE::Actor& a_dst) { DoTake(a_dst, Count()); }
 		void OnSelected(RE::Actor& a_dst) { DoSelect(a_dst); }
 
-		virtual void FillElementsVector(std::vector<QuickLoot::Integrations::Element>* elements) = 0;
+		virtual void FillElementsVector(std::vector<Element>* elements) = 0;
 
 		[[nodiscard]] double EnchantmentCharge() const { return _item.GetEnchantmentCharge(); }
 

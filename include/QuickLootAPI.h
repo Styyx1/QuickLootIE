@@ -6,9 +6,8 @@
 	Header File for QuickLoot integration
 */
 
-namespace QuickLoot::Integrations
+namespace QuickLoot
 {
-
 	struct Element
 	{
 		RE::TESForm* object = nullptr;
@@ -16,91 +15,52 @@ namespace QuickLoot::Integrations
 		RE::TESObjectREFR* container = nullptr;
 
 		Element(RE::TESForm* object, std::int32_t count, RE::TESObjectREFR* container) :
-			object(object), count(count), container(container){};
+			object(object), count(count), container(container) {}
 
 		Element(RE::TESForm* object, std::ptrdiff_t count, RE::TESObjectREFR* container) :
-			object(object), count(static_cast<std::int32_t>(count)), container(container){};
+			object(object), count(static_cast<std::int32_t>(count)), container(container) {}
 
 		Element(RE::TESForm* object, std::ptrdiff_t count, RE::ObjectRefHandle container) :
-			object(object), count(static_cast<std::int32_t>(count)), container(container.get() ? container.get().get() : nullptr){};
+			object(object), count(static_cast<std::int32_t>(count)), container(container.get().get()) {}
 
 		Element(RE::TESObjectREFRPtr object, std::ptrdiff_t count, RE::TESObjectREFR* container) :
-			object(object.get()), count(static_cast<std::int32_t>(count)), container(container){};
+			object(object.get()), count(static_cast<std::int32_t>(count)), container(container) {}
 
 		Element(RE::TESObjectREFRPtr object, std::ptrdiff_t count) :
-			object(object.get()), count(static_cast<std::int32_t>(count)){};
+			object(object.get()), count(static_cast<std::int32_t>(count)) {}
 	};
 
-	namespace TakeHandler
+	namespace Events
 	{
-		struct TakeEvent
-		{
-			RE::Actor* actor;
-			RE::TESObjectREFR* container = nullptr;
-			Element* elements;
-			std::size_t elementsCount;
-		};
-		typedef void (*OnTakeHandler)(TakeEvent* evt);
-
-		struct Request
-		{
-			OnTakeHandler handler;
-		};
-	};
-
-	namespace SelectHandler
-	{
-		struct SelectEvent
-		{
-			RE::Actor* actor;
-			RE::TESObjectREFR* container = nullptr;
-			Element* elements;
-			std::size_t elementsCount;
-		};
-		typedef void (*OnSelectHandler)(SelectEvent* evt);
-
-		struct Request
-		{
-			OnSelectHandler handler;
-		};
-	};
-
-	namespace InvalidateLootMenuHandler
-	{
-		struct InvalidateLootMenuEvent
-		{
-			RE::TESObjectREFR* container = nullptr;
-			Element* elements;
-			std::size_t elementsCount;
-		};
-		typedef void (*OnInvalidateLootMenuHandler)(InvalidateLootMenuEvent* evt);
-
-		struct Request
-		{
-			OnInvalidateLootMenuHandler handler;
-		};
-	};
-
-	namespace OpenLootMenuHandler
-	{
-		struct OpenLootMenuEvent
-		{
-			RE::TESObjectREFR* container;
-		};
-		typedef void (*OnOpenLootMenuHandler)(OpenLootMenuEvent* evt);
-
-		struct Request
-		{
-			OnOpenLootMenuHandler handler;
-		};
-	};
-
-	namespace OpeningLootMenuHandler
-	{
-		enum HandleResult : uint8_t
+		enum class HandleResult : uint8_t
 		{
 			kContinue = 0,
 			kStop = 1
+		};
+
+		struct TakingItemEvent
+		{
+			RE::Actor* actor;
+			RE::TESObjectREFR* container;
+			const Element* elements;
+			std::size_t elementsCount;
+			HandleResult result = HandleResult::kContinue;
+		};
+
+		struct TakeItemEvent
+		{
+			RE::Actor* actor;
+			RE::TESObjectREFR* container;
+			const Element* elements;
+			std::size_t elementsCount;
+		};
+
+		struct SelectItemEvent
+		{
+			RE::Actor* actor;
+			RE::TESObjectREFR* container;
+			const Element* elements;
+			std::size_t elementsCount;
 		};
 
 		struct OpeningLootMenuEvent
@@ -108,36 +68,69 @@ namespace QuickLoot::Integrations
 			RE::TESObjectREFR* container;
 			HandleResult result = HandleResult::kContinue;
 		};
-		typedef void (*OnOpeningLootMenuHandler)(OpeningLootMenuEvent* evt);
 
-		struct Request
+		struct OpenLootMenuEvent
 		{
-			OnOpeningLootMenuHandler handler;
+			RE::TESObjectREFR* container;
 		};
-	};
 
-	namespace CloseLootMenuHandler
-	{
 		struct CloseLootMenuEvent
 		{
+			RE::TESObjectREFR* container;
 		};
-		typedef void (*OnCloseLootMenuHandler)(CloseLootMenuEvent* evt);
 
-		struct Request
+		struct InvalidateLootMenuEvent
 		{
-			OnCloseLootMenuHandler handler;
+			RE::TESObjectREFR* container;
+			const Element* elements;
+			std::size_t elementsCount;
 		};
-	};
 
-	class PluginServer;
+		template <typename TEvent>
+		using EventHandler = void (*)(TEvent* e);
+
+		template <typename TEvent>
+		struct HandlerRegistrationRequest
+		{
+			EventHandler<TEvent> handler;
+		};
+
+		using TakingItemHandler = EventHandler<TakingItemEvent>;
+		using TakeItemHandler = EventHandler<TakeItemEvent>;
+		using SelectItemHandler = EventHandler<SelectItemEvent>;
+		using OpeningLootMenuHandler = EventHandler<OpeningLootMenuEvent>;
+		using OpenLootMenuHandler = EventHandler<OpenLootMenuEvent>;
+		using CloseLootMenuHandler = EventHandler<CloseLootMenuEvent>;
+		using InvalidateLootMenuHandler = EventHandler<InvalidateLootMenuEvent>;
+	}
+
+	using namespace Events;
 
 	class QuickLootAPI
 	{
-		friend class PluginServer;
+		static inline PluginRequests::RequestClient _client{};
 
-	private:
-		QuickLootAPI() = default;
-		~QuickLootAPI() = default;
+		template <typename THandler>
+		static bool RegisterInternal(const char* func, uint32_t requestType, THandler handler)
+		{
+			bool response = false;
+			const HandlerRegistrationRequest request{ handler };
+
+			if (const auto error = _client.Query(requestType, &request, &response)) {
+				logger::error("Query failed for {}: {}", func, _client.GetErrorString(error));
+				return false;
+			}
+
+			return response;
+		}
+
+	public:
+		QuickLootAPI() = delete;
+		~QuickLootAPI() = delete;
+		QuickLootAPI(QuickLootAPI const&) = delete;
+		QuickLootAPI(QuickLootAPI const&&) = delete;
+		QuickLootAPI operator=(QuickLootAPI&) = delete;
+		QuickLootAPI operator=(QuickLootAPI&&) = delete;
 
 		// For a client request to be processed, both of the following must be true:
 		//
@@ -151,26 +144,19 @@ namespace QuickLoot::Integrations
 		static constexpr uint16_t API_MAJOR_VERSION = 1;
 		static constexpr uint16_t API_MINOR_VERSION = 0;
 
-		static inline PluginRequests::RequestClient _client{};
-
 		// This is the list of request types.
 		// Each of them is associated with a signature.
 		// The client and server must agree on these signatures.
 		enum RequestType : uint32_t
 		{
-			kRegisterTakeHandler = 0x100,
-			kRegisterSelectHandler = 0x101,
-			kRegisterInvalidateLootMenuHandler = 0x102,
-			kRegisterOpenLootMenuHandler = 0x103,
-			kRegisterCloseLootMenuHandler = 0x104,
-			kRegisterOpeningLootMenuHandler = 0x105,
+			kRegisterTakingItemHandler = 0x100,
+			kRegisterTakeItemHandler = 0x101,
+			kRegisterSelectItemHandler = 0x102,
+			kRegisterOpeningLootMenuHandler = 0x103,
+			kRegisterOpenLootMenuHandler = 0x104,
+			kRegisterCloseLootMenuHandler = 0x105,
+			kRegisterInvalidateLootMenuHandler = 0x106,
 		};
-
-	public:
-		QuickLootAPI(QuickLootAPI const&) = delete;
-		QuickLootAPI(QuickLootAPI const&&) = delete;
-		QuickLootAPI operator=(QuickLootAPI&) = delete;
-		QuickLootAPI operator=(QuickLootAPI&&) = delete;
 
 		// The client initialization must happen at (or after) kPostLoad
 		static void Init()
@@ -183,82 +169,39 @@ namespace QuickLoot::Integrations
 			return _client.IsReady();
 		}
 
-		static bool RegisterTakeHandler(TakeHandler::OnTakeHandler handler)
+		static bool RegisterTakingItemHandler(TakingItemHandler handler)
 		{
-			bool response = false;
-			const TakeHandler::Request request{ handler };
-
-			if (const auto error = _client.Query(kRegisterTakeHandler, &request, &response)) {
-				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
-				return false;
-			}
-
-			return true;
+			return RegisterInternal(__func__, kRegisterTakingItemHandler, handler);
 		}
 
-		static bool RegisterSelectHandler(SelectHandler::OnSelectHandler handler)
+		static bool RegisterTakeItemHandler(TakeItemHandler handler)
 		{
-			bool response = false;
-			const SelectHandler::Request request{ handler };
-
-			if (const auto error = _client.Query(kRegisterSelectHandler, &request, &response)) {
-				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
-				return false;
-			}
-
-			return true;
+			return RegisterInternal(__func__, kRegisterTakeItemHandler, handler);
 		}
 
-		static bool RegisterInvalidateLootMenuHandler(InvalidateLootMenuHandler::OnInvalidateLootMenuHandler handler)
+		static bool RegisterSelectItemHandler(SelectItemHandler handler)
 		{
-			bool response = false;
-			const InvalidateLootMenuHandler::Request request{ handler };
-
-			if (const auto error = _client.Query(kRegisterInvalidateLootMenuHandler, &request, &response)) {
-				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
-				return false;
-			}
-
-			return true;
+			return RegisterInternal(__func__, kRegisterSelectItemHandler, handler);
 		}
 
-		static bool RegisterOpenLootMenuHandler(OpenLootMenuHandler::OnOpenLootMenuHandler handler)
+		static bool RegisterOpeningLootMenuHandler(OpeningLootMenuHandler handler)
 		{
-			bool response = false;
-			const OpenLootMenuHandler::Request request{ handler };
-
-			if (const auto error = _client.Query(kRegisterOpenLootMenuHandler, &request, &response)) {
-				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
-				return false;
-			}
-
-			return true;
+			return RegisterInternal(__func__, kRegisterOpeningLootMenuHandler, handler);
 		}
 
-		static bool RegisterOpeningLootMenuHandler(OpeningLootMenuHandler::OnOpeningLootMenuHandler handler)
+		static bool RegisterOpenLootMenuHandler(OpenLootMenuHandler handler)
 		{
-			bool response = false;
-			const OpeningLootMenuHandler::Request request{ handler };
-
-			if (const auto error = _client.Query(kRegisterOpeningLootMenuHandler, &request, &response)) {
-				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
-				return false;
-			}
-
-			return true;
+			return RegisterInternal(__func__, kRegisterOpenLootMenuHandler, handler);
 		}
 
-		static bool RegisterCloseLootMenuHandler(CloseLootMenuHandler::OnCloseLootMenuHandler handler)
+		static bool RegisterCloseLootMenuHandler(CloseLootMenuHandler handler)
 		{
-			bool response = false;
-			const CloseLootMenuHandler::Request request{ handler };
+			return RegisterInternal(__func__, kRegisterCloseLootMenuHandler, handler);
+		}
 
-			if (const auto error = _client.Query(kRegisterCloseLootMenuHandler, &request, &response)) {
-				logger::error("Query failed for {}: {}", __func__, _client.GetErrorString(error));
-				return false;
-			}
-
-			return true;
+		static bool RegisterInvalidateLootMenuHandler(InvalidateLootMenuHandler handler)
+		{
+			return RegisterInternal(__func__, kRegisterInvalidateLootMenuHandler, handler);
 		}
 	};
 }
