@@ -639,7 +639,7 @@ namespace Scaleform
 		}
 
 		static constexpr std::string_view FILE_NAME{ "LootMenuIE" };
-		static constexpr std::string_view MENU_NAME{ "LootMenuIE" };
+		static constexpr std::string_view MENU_NAME{ "LootMenu" };
 		static constexpr std::int8_t SORT_PRIORITY{ 3 };
 
 		RE::GPtr<RE::GFxMovieView> _view;
