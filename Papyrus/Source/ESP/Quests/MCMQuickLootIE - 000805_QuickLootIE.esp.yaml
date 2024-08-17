@@ -11,7 +11,6 @@ VirtualMachineAdapter:
     - MutagenObjectType: ScriptObjectProperty
       Name: QLIEMaintenance
       Object: 000805:QuickLootIE.esp
-  - Name: QuickLootIENative
   FileName: ''
   Aliases:
   - Property:
