@@ -97,8 +97,8 @@ event OnConfigOpen()
 	pages = new string[4]
 	pages[0] = "$qlie_MainMCMPage"
 	pages[1] = "$qlie_WindMCMPage"
-	pages[2] = "$qlie_SortMCMPage"
-	pages[3] = "$qlie_CompMCMPage"
+	; pages[2] = "$qlie_SortMCMPage"
+	pages[2] = "$qlie_CompMCMPage"
 endEvent
 
 ;---------------------------------------------------
@@ -116,10 +116,10 @@ event OnPageReset(string page)
 		return
 	endIf
 	
-    if (CurrentPage == "$qlie_SortMCMPage")
-		BuildSortPage()
-		return
-	endIf
+    ; if (CurrentPage == "$qlie_SortMCMPage")
+	; 	BuildSortPage()
+	; 	return
+	; endIf
 
     if (CurrentPage == "$qlie_CompMCMPage")
 		BuildCompPage()
