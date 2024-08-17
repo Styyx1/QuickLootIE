@@ -138,7 +138,6 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	QuickLoot::API::APIServer::Init(message);
 	
 	Hooks::Install();
-	QuickLoot::Papyrus::Init();
 
 	return true;
 }
