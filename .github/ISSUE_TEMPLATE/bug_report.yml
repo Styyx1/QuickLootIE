@@ -24,6 +24,8 @@ body:
       options:
         - 1.0.0
         - 1.1.0
+        - 1.2.0
+        - 2.0.0
       default: 0
     validations:
       required: true

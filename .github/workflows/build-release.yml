@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (defaults to "Nightly")'
+        description: 'Release version (defaults to "Nightly" & always appends run ID)'
         required: false
         default: 'Nightly'
       publish-release:
@@ -199,15 +199,15 @@ jobs:
       - name: Compile SKSE plugin
         run: |
           cmake --preset ALL
-          cmake --build build --config Debug
+          cmake --build build --config RelWithDebInfo
 
       - name: Upload SKSE Plugin Artifact
         uses: actions/upload-artifact@v4
         with:
           name: skse-plugin
           path: |
-            ${{ github.workspace }}/build/Debug/QuickLootIE.dll
-            ${{ github.workspace }}/build/Debug/QuickLootIE.pdb
+           ${{ github.workspace }}/build/RelWithDebInfo/QuickLootIE.dll
+           ${{ github.workspace }}/build/RelWithDebInfo/QuickLootIE.pdb
 
   package-mod:
     name: Package all necessary files
@@ -297,7 +297,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           allowUpdates: true
-          name: ${{ inputs.version || 'nightly' }}
+          name: ${{ inputs.version || 'nightly' }} build-${{ github.run_id }}
           draft: false
           body: ${{ inputs.release-body }}
           tag: ${{ inputs.version || 'nightly' }}
