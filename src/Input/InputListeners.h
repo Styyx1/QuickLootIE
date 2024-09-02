@@ -150,7 +150,7 @@ namespace Input
 				auto controlMap = RE::ControlMap::GetSingleton();
 				const auto idCode =
 					controlMap ?
-						controlMap->GetMappedKey("Ready Weapon"sv, event->GetDevice()) :
+						controlMap->GetMappedKey("Favorites"sv, event->GetDevice()) :
 						RE::ControlMap::kInvalid;
 
 				if (event->GetIDCode() == idCode && event->IsDown()) {

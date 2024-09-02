@@ -542,9 +542,9 @@ namespace Scaleform
 			};
 
 			const std::array buttonDefs{
-				ButtonDefinition{ "sSearch", "Search", "sStealFrom", "Steal From", "Favorites" },
-				ButtonDefinition{ "sTake", "Take", "sSteal", "Steal", "Activate" },
-				ButtonDefinition{ "sTakeAll", "Take All", "sTakeAll", "Take All", "Ready Weapon" },
+				ButtonDefinition{ "sSearch", "Search", "sStealFrom", "Steal From", "Ready Weapon" },
+				ButtonDefinition{ "sTake", "Take", "sSteal", "Steal", "Activate" },				
+				ButtonDefinition{ "sTakeAll", "Take All", "sTakeAll", "Take All", "Favorites" },
 			};
 
 			const bool stealing = WouldBeStealing();
